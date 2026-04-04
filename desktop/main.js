@@ -163,7 +163,7 @@ function initAutoUpdater() {
 
 app.whenReady().then(() => {
   createWindow();
-  createTray();
+  try { createTray(); } catch (e) { console.log('[tray] Failed to create tray:', e.message); }
   initAutoUpdater();
 });
 

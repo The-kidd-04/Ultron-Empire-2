@@ -394,18 +394,18 @@ async function fetchMarketData(){
     const f=window.ultron?.fetchMarket||(()=>fetch(`${API}/market`).then(r=>r.json()));
     const d=await f();
     if(d.nifty!==undefined){
+      const fmt=v=>typeof v==='number'?v.toLocaleString('en-IN'):String(v);
       applyMarketData({
-        nifty:typeof d.nifty==='number'?d.nifty.toLocaleString('en-IN'):d.nifty,
-        sensex:typeof d.sensex==='number'?d.sensex.toLocaleString('en-IN'):(d.sensex||DEMO_MARKET.sensex),
-        vix:d.vix||DEMO_MARKET.vix,
-        fii_net:d.fii_net||DEMO_MARKET.fii_net,
-        dii_net:d.dii_net||DEMO_MARKET.dii_net
+        nifty:fmt(d.nifty),
+        sensex:fmt(d.sensex||73950),
+        vix:fmt(d.vix||13.2),
+        fii_net:fmt(d.fii_net||1280),
+        dii_net:fmt(d.dii_net||890)
       });
+      document.getElementById('netState').textContent='ONLINE';
+      document.getElementById('netState').style.color='#50c878';
     }
-    document.getElementById('netState').textContent='ONLINE';
-    document.getElementById('netState').style.color='#50c878';
   }catch(e){
-    // Keep demo data, just mark API offline
     document.getElementById('netState').textContent='DEMO MODE';
     document.getElementById('netState').style.color='#febc2e';
   }

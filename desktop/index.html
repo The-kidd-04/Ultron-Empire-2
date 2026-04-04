@@ -113,6 +113,10 @@ body{
 .membar{display:flex;gap:1px;flex-wrap:wrap;margin-bottom:0.4vh}
 .memcell{width:0.6vh;height:1.3vh;background:var(--c3)}
 .memcell.on{background:var(--c)}
+.fund-split{margin-bottom:0.5vh}
+.fs-bar{height:1.4vh;background:rgba(170,207,209,0.06);margin-bottom:0.3vh;position:relative;border-radius:0.2vh;overflow:hidden}
+.fs-fill{height:100%;border-radius:0.2vh;transition:width 0.5s}
+.fs-label{position:absolute;top:0;left:0.5vh;line-height:1.4vh;font-size:0.8vh;color:var(--c8);letter-spacing:0.05vh}
 .swap-row{font-size:0.8vh;display:flex;align-items:center;gap:0.5vh;opacity:0.4}
 .swap-bar{flex:1;height:0.2vh;background:var(--c3);position:relative}
 .swap-fill{position:absolute;top:0;left:0;height:100%;background:var(--c5)}
@@ -260,8 +264,13 @@ body{
       <div>CLIENTS<br><span class="val">3</span></div>
     </div>
     <div class="mem-section">
-      <div class="mem-head"><span>PORTFOLIO ALLOCATION</span><span>AUM &#8377;12.0 Cr</span></div>
-      <div class="membar" id="membar"></div>
+      <div class="mem-head"><span>FUND SPLIT</span><span>AUM &#8377;12.0 Cr</span></div>
+      <div class="fund-split" id="fundSplit">
+        <div class="fs-bar"><div class="fs-fill" style="width:45%;background:rgba(0,200,150,0.6)"></div><span class="fs-label">PMS 45%</span></div>
+        <div class="fs-bar"><div class="fs-fill" style="width:28%;background:rgba(100,160,255,0.6)"></div><span class="fs-label">AIF 28%</span></div>
+        <div class="fs-bar"><div class="fs-fill" style="width:15%;background:rgba(255,180,50,0.6)"></div><span class="fs-label">MF 15%</span></div>
+        <div class="fs-bar"><div class="fs-fill" style="width:12%;background:rgba(170,207,209,0.3)"></div><span class="fs-label">FD 12%</span></div>
+      </div>
       <div class="swap-row">FII NET <div class="swap-bar"><div class="swap-fill" style="width:30%" id="fiiBar"></div></div> <span id="fiiVal">--</span></div>
     </div>
     <div class="proc-section">
@@ -467,8 +476,7 @@ function tick(){
 }
 tick();setInterval(tick,1000);
 
-// === MEMORY BAR ===
-const mb=document.getElementById('membar');for(let i=0;i<60;i++){const d=document.createElement('div');d.className='memcell'+(i<42?' on':'');mb.appendChild(d)}
+// === FUND SPLIT (static) ===
 
 // === WAVES ===
 function initWave(id){const cv=document.getElementById(id);if(!cv)return;const ctx=cv.getContext('2d');let o=0;function draw(){const w=cv.width=cv.parentElement.clientWidth,h=cv.height=cv.parentElement.clientHeight;ctx.clearRect(0,0,w,h);ctx.strokeStyle='rgba(170,207,209,0.35)';ctx.lineWidth=1;ctx.beginPath();for(let x=0;x<w;x++){const y=h/2+Math.sin((x+o)*0.05)*h*0.3+Math.sin((x+o)*0.02)*h*0.15;x===0?ctx.moveTo(x,y):ctx.lineTo(x,y)}ctx.stroke();o+=0.8;requestAnimationFrame(draw)}draw()}

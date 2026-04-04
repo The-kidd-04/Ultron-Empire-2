@@ -101,7 +101,7 @@ body{
 .cpu-section{padding:0.5vh 1vh;border-top:0.1vh solid var(--c3)}
 .cpu-title{font-size:0.9vh;opacity:0.6;letter-spacing:0.1vh;margin-bottom:0.2vh}
 .cpu-sub{font-size:0.85vh;opacity:0.35;margin-bottom:0.4vh}
-.chart-box{height:8vh;margin-bottom:0.5vh;position:relative;overflow:hidden;cursor:pointer;border:1px solid rgba(170,207,209,0.06);border-radius:0.3vh;transition:border-color 0.2s}
+.chart-box{height:12vh;margin-bottom:0.5vh;position:relative;overflow:hidden;cursor:pointer;border:1px solid rgba(170,207,209,0.06);border-radius:0.3vh;transition:border-color 0.2s}
 .chart-box:hover{border-color:rgba(170,207,209,0.2)}
 .tv-chart{width:100%;height:100%}
 .tv-chart iframe{width:100%;height:100%;border:none}
@@ -265,12 +265,12 @@ body{
     <div class="cpu-section">
       <div class="cpu-title">NIFTY 50 — LIVE</div>
       <div class="chart-box" onclick="window.open('https://www.tradingview.com/chart/?symbol=NSE%3ANIFTY','_blank')">
-        <div class="tv-chart" id="tvNifty"></div>
+        <iframe src="https://s.tradingview.com/widgetembed/?hideideas=1&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en&utm_source=localhost#%7B%22symbol%22%3A%22NSE%3ANIFTY%22%2C%22frameElementId%22%3A%22tv1%22%2C%22interval%22%3A%225%22%2C%22hide_top_toolbar%22%3A%221%22%2C%22hide_legend%22%3A%221%22%2C%22hide_side_toolbar%22%3A%221%22%2C%22save_image%22%3A%220%22%2C%22studies%22%3A%5B%5D%2C%22theme%22%3A%22dark%22%2C%22style%22%3A%223%22%2C%22timezone%22%3A%22Asia%2FKolkata%22%2C%22withdateranges%22%3A%220%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%7D" style="width:100%;height:100%;border:none"></iframe>
         <div class="chart-click-hint">click to expand</div>
       </div>
       <div class="cpu-title">SENSEX — LIVE</div>
       <div class="chart-box" onclick="window.open('https://www.tradingview.com/chart/?symbol=BSE%3ASENSEX','_blank')">
-        <div class="tv-chart" id="tvSensex"></div>
+        <iframe src="https://s.tradingview.com/widgetembed/?hideideas=1&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en&utm_source=localhost#%7B%22symbol%22%3A%22BSE%3ASENSEX%22%2C%22frameElementId%22%3A%22tv2%22%2C%22interval%22%3A%225%22%2C%22hide_top_toolbar%22%3A%221%22%2C%22hide_legend%22%3A%221%22%2C%22hide_side_toolbar%22%3A%221%22%2C%22save_image%22%3A%220%22%2C%22studies%22%3A%5B%5D%2C%22theme%22%3A%22dark%22%2C%22style%22%3A%223%22%2C%22timezone%22%3A%22Asia%2FKolkata%22%2C%22withdateranges%22%3A%220%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%7D" style="width:100%;height:100%;border:none"></iframe>
         <div class="chart-click-hint">click to expand</div>
       </div>
     </div>
@@ -529,34 +529,7 @@ setInterval(fetchLiveNews,300000); // refresh every 5 min
 
 // === FUND SPLIT (static) ===
 
-// === TRADINGVIEW CHARTS ===
-function loadTVChart(containerId,symbol){
-  const el=document.getElementById(containerId);if(!el)return;
-  const s=document.createElement('script');
-  s.src='https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js';
-  s.async=true;
-  s.textContent=JSON.stringify({
-    symbol:symbol,
-    width:'100%',
-    height:'100%',
-    locale:'en',
-    dateRange:'1D',
-    colorTheme:'dark',
-    isTransparent:true,
-    autosize:true,
-    largeChartUrl:'',
-    noTimeScale:true,
-    chartOnly:true
-  });
-  const wrap=document.createElement('div');
-  wrap.className='tradingview-widget-container';
-  wrap.appendChild(s);
-  el.appendChild(wrap);
-}
-setTimeout(()=>{
-  loadTVChart('tvNifty','NSE:NIFTY');
-  loadTVChart('tvSensex','BSE:SENSEX');
-},500);
+// === TRADINGVIEW CHARTS (iframe embeds — no JS needed) ===
 
 // === KEYBOARD ===
 document.addEventListener('keydown',e=>{document.querySelectorAll('.kk').forEach(k=>{if(k.textContent.trim()===e.key.toUpperCase()||(e.key==='Enter'&&k.textContent==='ENTER')||(e.key===' '&&k.classList.contains('space'))||(e.key==='Backspace'&&k.textContent==='BACK')){k.classList.add('active');setTimeout(()=>k.classList.remove('active'),120)}})});

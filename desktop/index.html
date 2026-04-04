@@ -167,9 +167,15 @@ body{
 .net-row .lbl{opacity:0.4;letter-spacing:0.1vh}
 .net-row .val{opacity:0.7}
 .online{color:#50c878}
-.globe-wrap{flex:1;display:flex;align-items:center;justify-content:center;border-top:1px solid rgba(170,207,209,0.06);background:rgba(0,0,0,0.15)}
-.globe-svg{width:18vh;height:18vh;opacity:0.3;animation:gs 30s linear infinite}
-@keyframes gs{to{transform:rotate(360deg)}}
+.news-feed{flex:1;display:flex;flex-direction:column;border-top:1px solid rgba(170,207,209,0.06);overflow:hidden}
+.news-title{font-size:0.85vh;letter-spacing:0.2vh;padding:0.5vh 1vh;opacity:0.4;border-bottom:1px solid rgba(170,207,209,0.06)}
+.news-scroll{flex:1;overflow-y:auto;padding:0.3vh 0}
+.news-scroll::-webkit-scrollbar{width:0.3vh}
+.news-scroll::-webkit-scrollbar-thumb{background:var(--c15)}
+.news-item{padding:0.4vh 1vh;font-size:0.85vh;display:flex;gap:0.8vh;border-bottom:1px solid rgba(170,207,209,0.03);transition:background 0.2s}
+.news-item:hover{background:rgba(170,207,209,0.04)}
+.news-time{color:var(--c3);white-space:nowrap;min-width:3.5vh}
+.news-text{color:var(--c5);line-height:1.4}
 .traffic-section{padding:0.5vh 1vh;border-top:0.1vh solid var(--c3);font-size:0.8vh}
 .traffic-head{display:flex;justify-content:space-between;opacity:0.4;margin-bottom:0.3vh}
 .traffic-row{display:flex;justify-content:space-between;opacity:0.3;padding:0.1vh 0}
@@ -320,13 +326,20 @@ body{
       <div class="net-row"><span class="lbl">WORLD VIEW</span><span class="val">GLOBAL NETWORK MAP</span></div>
       <div class="net-row"><span class="lbl">ENDPOINT</span><span class="val">BKC, MUMBAI</span></div>
     </div>
-    <div class="globe-wrap">
-      <svg class="globe-svg" viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="0.5">
-        <circle cx="100" cy="100" r="80"/><ellipse cx="100" cy="100" rx="50" ry="80"/>
-        <ellipse cx="100" cy="100" rx="20" ry="80"/><line x1="20" y1="100" x2="180" y2="100"/>
-        <ellipse cx="100" cy="100" rx="80" ry="30"/><ellipse cx="100" cy="100" rx="80" ry="55"/>
-        <line x1="100" y1="20" x2="100" y2="180"/>
-      </svg>
+    <div class="news-feed">
+      <div class="news-title">LIVE FEED</div>
+      <div class="news-scroll" id="newsFeed">
+        <div class="news-item"><span class="news-time">14:30</span><span class="news-text">SEBI eases PMS monthly reporting norms — effective Q2 2026</span></div>
+        <div class="news-item"><span class="news-time">13:45</span><span class="news-text">FII net buyers at &#8377;1,280 Cr today — 3rd consecutive day</span></div>
+        <div class="news-item"><span class="news-time">12:20</span><span class="news-text">RBI holds repo rate at 6.5% — dovish commentary hints at June cut</span></div>
+        <div class="news-item"><span class="news-time">11:15</span><span class="news-text">Nifty 50 crosses 22,500 — Banking sector leads with +0.91%</span></div>
+        <div class="news-item"><span class="news-time">10:30</span><span class="news-text">Bajaj Finance Q4 preview: NII growth expected at 22% YoY</span></div>
+        <div class="news-item"><span class="news-time">09:45</span><span class="news-text">US Fed minutes signal patience — no rate cut before September</span></div>
+        <div class="news-item"><span class="news-time">09:15</span><span class="news-text">SGX Nifty flat at 22,430 — Crude at $82, Gold at $2,310</span></div>
+        <div class="news-item"><span class="news-time">08:30</span><span class="news-text">Quant Small Cap PMS NAV up 1.2% yesterday — top performer this week</span></div>
+        <div class="news-item"><span class="news-time">08:00</span><span class="news-text">India VIX drops to 13.2 — lowest in 3 months, bullish signal</span></div>
+        <div class="news-item"><span class="news-time">07:30</span><span class="news-text">DII bought &#8377;890 Cr — mutual fund inflows remain strong</span></div>
+      </div>
     </div>
     <div class="traffic-section">
       <div class="traffic-head"><span>NETWORK TRAFFIC</span><span>UP / DOWN, MB/S</span></div>

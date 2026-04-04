@@ -1,586 +1,949 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ultron Empire — AI-Powered Wealth Management OS</title>
-<meta name="description" content="India's 1st AI Powered PMS & AIF Marketplace. Your personal AI analyst, market monitor, and client manager.">
-<meta property="og:title" content="Ultron Empire — AI Wealth Management OS">
-<meta property="og:description" content="Like having a 50 lakh/year analyst in your pocket, available 24/7.">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><circle cx='24' cy='24' r='24' fill='%230a0a0a'/><text x='24' y='32' text-anchor='middle' fill='%2300ffc8' font-size='24' font-weight='bold'>U</text></svg>">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
-:root{
-  --bg:#030305;--bg2:#08080e;--surface:rgba(255,255,255,0.03);
-  --neon:#00ffc8;--neon2:#00e5b0;--purple:#8b5cf6;--cyan:#06b6d4;
-  --pink:#f43f5e;--blue:#3b82f6;
-  --glow:0 0 40px rgba(0,255,200,0.15),0 0 80px rgba(0,255,200,0.05);
-  --glow-purple:0 0 40px rgba(139,92,246,0.15),0 0 80px rgba(139,92,246,0.05);
-  --text:#f0f0f5;--dim:rgba(240,240,245,0.4);--muted:rgba(240,240,245,0.15);
-}
-html{scroll-behavior:smooth;scrollbar-width:none}
-::-webkit-scrollbar{display:none}
-body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;cursor:none}
-a{text-decoration:none;color:inherit;cursor:none}
-button{cursor:none;font-family:inherit}
-::selection{background:var(--neon);color:var(--bg)}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultron Empire — AI-Powered Wealth Management OS | PMS Sahi Hai</title>
+    <meta name="description" content="India's 1st AI Powered PMS & AIF Marketplace. Ultron Empire is your personal AI analyst, market monitor, and client manager.">
+    <meta property="og:title" content="Ultron Empire — AI Wealth Management OS">
+    <meta property="og:description" content="Like having a 50 lakh/year analyst in your pocket, available 24/7.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://the-kidd-04.github.io/Ultron-Empire-2/">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><circle cx='24' cy='24' r='24' fill='%230a0a0a'/><text x='24' y='32' text-anchor='middle' fill='%2300ffc8' font-size='24' font-weight='bold'>U</text></svg>">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* ========== RESET & ROOT ========== */
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg: #050508;
+            --bg2: #0a0a10;
+            --bg3: #0f0f18;
+            --surface: #12121c;
+            --surface2: #1a1a28;
+            --border: rgba(255,255,255,0.06);
+            --neon: #00ffc8;
+            --neon-dim: rgba(0,255,200,0.15);
+            --neon-glow: rgba(0,255,200,0.4);
+            --purple: #7b5cff;
+            --purple-dim: rgba(123,92,255,0.15);
+            --purple-glow: rgba(123,92,255,0.4);
+            --cyan: #00d4ff;
+            --pink: #ff3c8e;
+            --text: #e8e8f0;
+            --text-dim: rgba(232,232,240,0.5);
+            --text-muted: rgba(232,232,240,0.3);
+            --radius: 16px;
+            --radius-sm: 10px;
+        }
+        html { scroll-behavior: smooth; scrollbar-width: thin; scrollbar-color: var(--neon) var(--bg); }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--neon); border-radius: 3px; }
+        body {
+            font-family: 'Space Grotesk', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+            cursor: none;
+        }
+        a { text-decoration: none; color: inherit; cursor: none; }
+        button { cursor: none; }
+        ::selection { background: var(--neon); color: var(--bg); }
 
-/* === CURSOR === */
-.cur{position:fixed;pointer-events:none;z-index:99999;mix-blend-mode:difference}
-.cur-ring{width:40px;height:40px;border:1.5px solid var(--neon);border-radius:50%;transition:width .3s,height .3s,border-color .3s}
-.cur-dot{width:5px;height:5px;background:var(--neon);border-radius:50%;position:fixed;pointer-events:none;z-index:100000}
-body.hovering .cur-ring{width:70px;height:70px;border-color:var(--purple)}
+        /* ========== CUSTOM CURSOR ========== */
+        .cursor { position: fixed; width: 20px; height: 20px; border: 2px solid var(--neon); border-radius: 50%; pointer-events: none; z-index: 9999; transition: transform 0.15s ease, opacity 0.15s; mix-blend-mode: difference; }
+        .cursor-dot { position: fixed; width: 6px; height: 6px; background: var(--neon); border-radius: 50%; pointer-events: none; z-index: 10000; }
+        .cursor.hover { transform: scale(2.5); opacity: 0.5; }
 
-/* === LOADER === */
-.loader{position:fixed;inset:0;background:var(--bg);z-index:100000;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 1s cubic-bezier(.4,0,.2,1),visibility 1s}
-.loader.done{opacity:0;visibility:hidden;pointer-events:none}
-.loader svg{width:120px;height:120px;margin-bottom:32px}
-.loader svg path{stroke:var(--neon);stroke-width:2;fill:none;stroke-dasharray:400;stroke-dashoffset:400;animation:draw 2s ease forwards}
-@keyframes draw{to{stroke-dashoffset:0}}
-.loader-pct{font-family:'JetBrains Mono',monospace;font-size:48px;font-weight:700;color:var(--neon);text-shadow:var(--glow)}
-.loader-sub{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);letter-spacing:6px;margin-top:12px;text-transform:uppercase}
-.loader-line{width:200px;height:1px;background:var(--muted);margin-top:24px;position:relative;overflow:hidden}
-.loader-line::after{content:'';position:absolute;left:0;top:0;height:100%;width:0;background:var(--neon);box-shadow:var(--glow);animation:loadbar 2.2s ease forwards}
-@keyframes loadbar{to{width:100%}}
+        /* ========== NOISE OVERLAY ========== */
+        .noise {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none; z-index: 9998; opacity: 0.4;
+        }
 
-/* === SCAN LINE === */
-.scanline{position:fixed;top:0;left:0;width:100%;height:2px;background:linear-gradient(90deg,transparent,var(--neon),transparent);opacity:0.07;z-index:9999;pointer-events:none;animation:scanmove 8s linear infinite}
-@keyframes scanmove{0%{top:-2px}100%{top:100vh}}
+        /* ========== GRID BACKGROUND ========== */
+        .grid-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image:
+                linear-gradient(rgba(0,255,200,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,255,200,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none; z-index: 0;
+        }
 
-/* === NOISE === */
-.noise{position:fixed;inset:0;z-index:9998;pointer-events:none;opacity:0.035;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+        /* ========== GLOW ORBS ========== */
+        .orb {
+            position: fixed; border-radius: 50%; filter: blur(100px);
+            pointer-events: none; z-index: 0;
+        }
+        .orb-1 { width: 600px; height: 600px; background: var(--neon-dim); top: -200px; left: -200px; animation: float1 20s ease-in-out infinite; }
+        .orb-2 { width: 500px; height: 500px; background: var(--purple-dim); bottom: -200px; right: -200px; animation: float2 25s ease-in-out infinite; }
+        .orb-3 { width: 400px; height: 400px; background: rgba(0,212,255,0.08); top: 50%; left: 50%; transform: translate(-50%,-50%); animation: float3 18s ease-in-out infinite; }
+        @keyframes float1 { 0%,100%{ transform: translate(0,0); } 50%{ transform: translate(100px,80px); } }
+        @keyframes float2 { 0%,100%{ transform: translate(0,0); } 50%{ transform: translate(-80px,-100px); } }
+        @keyframes float3 { 0%,100%{ transform: translate(-50%,-50%) scale(1); } 50%{ transform: translate(-40%,-60%) scale(1.2); } }
 
-/* === CANVAS BG === */
-#bgCanvas{position:fixed;inset:0;z-index:0;pointer-events:none}
+        /* ========== PARTICLES ========== */
+        #particles { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
 
-/* === NAV === */
-nav{position:fixed;top:0;width:100%;z-index:9000;padding:24px 48px;display:flex;justify-content:space-between;align-items:center;transition:all .5s cubic-bezier(.4,0,.2,1)}
-nav.scrolled{padding:16px 48px;background:rgba(3,3,5,0.85);backdrop-filter:blur(30px) saturate(1.8);border-bottom:1px solid rgba(255,255,255,0.04)}
-.nav-left{display:flex;align-items:center;gap:14px}
-.nav-logo{width:38px;height:38px;border-radius:10px;border:1.5px solid var(--neon);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;color:var(--neon);transition:all .3s;box-shadow:var(--glow)}
-.nav-logo:hover{background:var(--neon);color:var(--bg)}
-.nav-name{font-family:'Syne',sans-serif;font-size:16px;font-weight:700;letter-spacing:1px}
-.nav-tag{font-size:10px;color:var(--dim);letter-spacing:3px;text-transform:uppercase}
-.nav-links{display:flex;gap:36px;align-items:center}
-.nav-links a{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);transition:color .3s,text-shadow .3s;position:relative}
-.nav-links a:hover{color:var(--neon);text-shadow:0 0 20px rgba(0,255,200,0.3)}
-.nav-cta{padding:10px 28px !important;border:1px solid var(--neon) !important;border-radius:6px;color:var(--neon) !important;transition:all .3s !important}
-.nav-cta:hover{background:var(--neon) !important;color:var(--bg) !important;box-shadow:var(--glow) !important}
-.hamburger{display:none;background:none;border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:8px;flex-direction:column;gap:4px;width:36px;height:36px;align-items:center;justify-content:center}
-.hamburger span{width:18px;height:1.5px;background:var(--text);transition:all .3s}
-.hamburger.open span:nth-child(1){transform:rotate(45deg) translate(4px,4px)}
-.hamburger.open span:nth-child(2){opacity:0}
-.hamburger.open span:nth-child(3){transform:rotate(-45deg) translate(4px,-4px)}
+        /* ========== LOADING SCREEN ========== */
+        .loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 99999; transition: opacity 0.8s ease, visibility 0.8s;
+        }
+        .loader.hidden { opacity: 0; visibility: hidden; }
+        .loader-text { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--neon); letter-spacing: 4px; }
+        .loader-bar { width: 200px; height: 2px; background: var(--surface2); margin-top: 20px; border-radius: 2px; overflow: hidden; }
+        .loader-fill { height: 100%; background: var(--neon); box-shadow: 0 0 10px var(--neon); animation: load 2s ease forwards; width: 0%; }
+        @keyframes load { to { width: 100%; } }
 
-/* === HERO === */
-.hero{min-height:100vh;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;overflow:hidden}
-.hero-inner{text-align:center;max-width:1000px;padding:0 24px}
-.hero-eyebrow{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:5px;color:var(--dim);text-transform:uppercase;margin-bottom:28px;display:flex;align-items:center;justify-content:center;gap:12px}
-.hero-eyebrow .dot{width:6px;height:6px;background:var(--neon);border-radius:50%;box-shadow:0 0 12px var(--neon);animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
-.hero h1{font-family:'Syne',sans-serif;font-size:clamp(52px,8vw,110px);font-weight:800;line-height:.95;letter-spacing:-4px;margin-bottom:32px}
-.hero h1 .line{display:block;overflow:hidden}
-.hero h1 .line span{display:inline-block;transform:translateY(120%);animation:slideUp .8s cubic-bezier(.16,1,.3,1) forwards}
-.hero h1 .line:nth-child(2) span{animation-delay:.15s}
-.hero h1 .line:nth-child(3) span{animation-delay:.3s}
-@keyframes slideUp{to{transform:translateY(0)}}
-.hero h1 .grad{background:linear-gradient(135deg,var(--neon),var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero-desc{font-size:17px;color:var(--dim);max-width:480px;margin:0 auto 48px;line-height:1.8;opacity:0;animation:fadeIn 1s .6s forwards}
-@keyframes fadeIn{to{opacity:1}}
-.hero-btns{display:flex;gap:16px;justify-content:center;opacity:0;animation:fadeIn 1s .8s forwards}
-.btn{padding:16px 40px;border-radius:8px;font-size:14px;font-weight:600;letter-spacing:1px;text-transform:uppercase;border:none;transition:all .4s cubic-bezier(.16,1,.3,1);position:relative;overflow:hidden}
-.btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.1),transparent);opacity:0;transition:opacity .3s}
-.btn:hover::before{opacity:1}
-.btn-primary{background:var(--neon);color:var(--bg)}
-.btn-primary:hover{box-shadow:0 0 60px rgba(0,255,200,.3),0 20px 40px rgba(0,255,200,.15);transform:translateY(-4px)}
-.btn-ghost{background:transparent;color:var(--dim);border:1px solid rgba(255,255,255,.08)}
-.btn-ghost:hover{border-color:var(--purple);color:var(--purple);box-shadow:var(--glow-purple);transform:translateY(-4px)}
+        /* ========== REVEAL ANIMATIONS ========== */
+        .reveal {
+            opacity: 0; transform: translateY(60px);
+            transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1);
+        }
+        .reveal.visible { opacity: 1; transform: translateY(0); }
+        .reveal-delay-1 { transition-delay: 0.1s; }
+        .reveal-delay-2 { transition-delay: 0.2s; }
+        .reveal-delay-3 { transition-delay: 0.3s; }
+        .reveal-delay-4 { transition-delay: 0.4s; }
 
-/* Scroll indicator */
-.scroll-hint{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0;animation:fadeIn 1s 1.5s forwards}
-.scroll-hint span{font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase}
-.scroll-arrow{width:1px;height:40px;background:linear-gradient(to bottom,var(--neon),transparent);animation:scrollPulse 2s infinite}
-@keyframes scrollPulse{0%,100%{opacity:.3;height:40px}50%{opacity:1;height:60px}}
+        /* ========== NAV ========== */
+        nav {
+            position: fixed; top: 0; width: 100%; z-index: 1000;
+            padding: 20px 48px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(5,5,8,0.6); backdrop-filter: blur(20px) saturate(1.5);
+            border-bottom: 1px solid var(--border);
+            transition: all 0.4s ease;
+        }
+        nav.scrolled { padding: 14px 48px; background: rgba(5,5,8,0.9); }
+        .nav-logo { display: flex; align-items: center; gap: 14px; }
+        .nav-icon {
+            width: 40px; height: 40px; border-radius: 12px;
+            background: linear-gradient(135deg, var(--neon), var(--cyan));
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 18px; color: var(--bg);
+            box-shadow: 0 0 20px var(--neon-dim);
+        }
+        .nav-brand { font-size: 18px; font-weight: 700; letter-spacing: -0.5px; }
+        .nav-sub { font-size: 11px; color: var(--text-dim); letter-spacing: 2px; text-transform: uppercase; }
+        .nav-links { display: flex; gap: 32px; align-items: center; }
+        .nav-links a {
+            font-size: 13px; color: var(--text-dim); letter-spacing: 1px; text-transform: uppercase;
+            transition: color 0.3s; position: relative;
+        }
+        .nav-links a::after {
+            content: ''; position: absolute; bottom: -4px; left: 0; width: 0; height: 1px;
+            background: var(--neon); transition: width 0.3s; box-shadow: 0 0 6px var(--neon);
+        }
+        .nav-links a:hover { color: var(--neon); }
+        .nav-links a:hover::after { width: 100%; }
+        .nav-cta {
+            background: transparent !important; color: var(--neon) !important;
+            padding: 10px 24px !important; border-radius: 8px;
+            border: 1px solid var(--neon) !important; font-weight: 600 !important;
+            transition: all 0.3s !important; text-transform: uppercase !important;
+        }
+        .nav-cta:hover {
+            background: var(--neon) !important; color: var(--bg) !important;
+            box-shadow: 0 0 30px var(--neon-dim) !important;
+        }
+        .nav-cta::after { display: none !important; }
 
-/* === MARQUEE === */
-.marquee-section{border-top:1px solid rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.04);padding:18px 0;position:relative;z-index:1;background:var(--bg2);overflow:hidden}
-.marquee-track{display:flex;gap:48px;animation:marq 40s linear infinite;width:max-content}
-.marquee-track span{font-family:'JetBrains Mono',monospace;font-size:12px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;white-space:nowrap;flex-shrink:0}
-.marquee-track .sep{color:var(--neon);opacity:.3}
-@keyframes marq{to{transform:translateX(-50%)}}
+        /* Mobile menu */
+        .hamburger { display: none; flex-direction: column; gap: 5px; cursor: none; background: none; border: none; padding: 4px; }
+        .hamburger span { width: 24px; height: 2px; background: var(--text); transition: all 0.3s; }
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
 
-/* === SECTIONS === */
-section{padding:140px 48px;position:relative;z-index:1}
-.s-head{margin-bottom:80px}
-.s-head.center{text-align:center}
-.s-label{font-family:'JetBrains Mono',monospace;font-size:11px;letter-spacing:5px;color:var(--neon);text-transform:uppercase;margin-bottom:16px;display:inline-block}
-.s-head h2{font-family:'Syne',sans-serif;font-size:clamp(36px,5vw,60px);font-weight:800;letter-spacing:-2px;line-height:1.1}
-.s-head p{font-size:16px;color:var(--dim);margin-top:16px;max-width:450px;line-height:1.7}
-.s-head.center p{margin:16px auto 0}
+        /* ========== HERO ========== */
+        .hero {
+            min-height: 100vh; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; text-align: center;
+            padding: 140px 40px 100px; position: relative; z-index: 1;
+        }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 8px;
+            padding: 8px 20px; border-radius: 100px;
+            background: var(--surface); border: 1px solid var(--border);
+            font-size: 13px; color: var(--text-dim); margin-bottom: 32px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .hero-badge-dot { width: 6px; height: 6px; background: var(--neon); border-radius: 50%; animation: blink 2s infinite; }
+        @keyframes blink { 0%,100%{ opacity: 1; } 50%{ opacity: 0.3; } }
+        .hero h1 {
+            font-size: clamp(48px, 7vw, 88px); font-weight: 700;
+            line-height: 1.05; letter-spacing: -3px;
+            max-width: 900px; margin-bottom: 28px;
+        }
+        .hero h1 .gradient {
+            background: linear-gradient(135deg, var(--neon), var(--cyan), var(--purple));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero p {
+            font-size: 18px; color: var(--text-dim); max-width: 540px;
+            line-height: 1.7; margin-bottom: 48px;
+        }
+        .hero-buttons { display: flex; gap: 16px; margin-bottom: 80px; }
+        .btn-neon {
+            padding: 16px 40px; border-radius: var(--radius-sm); font-size: 15px;
+            font-weight: 600; font-family: 'Space Grotesk', sans-serif;
+            border: none; transition: all 0.4s cubic-bezier(0.16,1,0.3,1);
+            letter-spacing: 0.5px; position: relative; overflow: hidden;
+        }
+        .btn-neon.primary {
+            background: var(--neon); color: var(--bg);
+            box-shadow: 0 0 30px var(--neon-dim), inset 0 1px 0 rgba(255,255,255,0.2);
+        }
+        .btn-neon.primary:hover {
+            box-shadow: 0 0 60px var(--neon-glow), 0 8px 32px rgba(0,255,200,0.2);
+            transform: translateY(-3px);
+        }
+        .btn-neon.secondary {
+            background: transparent; color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .btn-neon.secondary:hover {
+            border-color: var(--purple); color: var(--purple);
+            box-shadow: 0 0 30px var(--purple-dim);
+            transform: translateY(-3px);
+        }
 
-/* Reveal on scroll */
-[data-reveal]{opacity:0;transform:translateY(80px);transition:opacity .9s cubic-bezier(.16,1,.3,1),transform .9s cubic-bezier(.16,1,.3,1)}
-[data-reveal].vis{opacity:1;transform:none}
-[data-reveal="1"]{transition-delay:.1s}
-[data-reveal="2"]{transition-delay:.2s}
-[data-reveal="3"]{transition-delay:.3s}
-[data-reveal="4"]{transition-delay:.4s}
-[data-reveal="5"]{transition-delay:.5s}
+        /* Hero Stats */
+        .hero-stats { display: flex; gap: 1px; background: var(--border); border-radius: var(--radius); overflow: hidden; }
+        .hero-stat {
+            background: var(--surface); padding: 32px 48px; text-align: center;
+            transition: all 0.3s;
+        }
+        .hero-stat:hover { background: var(--surface2); }
+        .hero-stat-num {
+            font-size: 36px; font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            background: linear-gradient(135deg, var(--neon), var(--cyan));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .hero-stat-label { font-size: 12px; color: var(--text-muted); margin-top: 6px; letter-spacing: 1px; text-transform: uppercase; }
 
-/* === STATS BAR === */
-.stats-bar{display:flex;position:relative;z-index:1;border-top:1px solid rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.04)}
-.stat-item{flex:1;padding:48px;text-align:center;border-right:1px solid rgba(255,255,255,.04);transition:background .3s}
-.stat-item:last-child{border-right:none}
-.stat-item:hover{background:rgba(0,255,200,.02)}
-.stat-num{font-family:'JetBrains Mono',monospace;font-size:42px;font-weight:700;color:var(--neon);text-shadow:var(--glow)}
-.stat-label{font-size:11px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-top:8px}
+        /* ========== SECTION SHARED ========== */
+        section { padding: 120px 48px; position: relative; z-index: 1; }
+        .section-header { text-align: center; margin-bottom: 72px; }
+        .section-label {
+            font-family: 'JetBrains Mono', monospace; font-size: 12px;
+            color: var(--neon); letter-spacing: 4px; text-transform: uppercase;
+            margin-bottom: 16px; display: block;
+        }
+        .section-header h2 {
+            font-size: clamp(32px, 4vw, 52px); font-weight: 700;
+            letter-spacing: -1.5px; margin-bottom: 16px;
+        }
+        .section-header p { font-size: 17px; color: var(--text-dim); max-width: 520px; margin: 0 auto; line-height: 1.6; }
+        .section-divider {
+            width: 60px; height: 2px; margin: 0 auto 16px;
+            background: linear-gradient(90deg, var(--neon), var(--purple));
+            border-radius: 2px; box-shadow: 0 0 10px var(--neon-dim);
+        }
 
-/* === FEATURES === */
-.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:rgba(255,255,255,.04);max-width:1200px;margin:0 auto}
-.feat-card{background:var(--bg);padding:48px;transition:all .5s;position:relative;overflow:hidden}
-.feat-card::after{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--neon),transparent);transform:scaleX(0);transition:transform .5s;transform-origin:left}
-.feat-card:hover{background:var(--bg2)}
-.feat-card:hover::after{transform:scaleX(1)}
-.feat-num{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted);letter-spacing:2px;margin-bottom:20px}
-.feat-card h3{font-size:20px;font-weight:600;margin-bottom:12px;letter-spacing:-.3px}
-.feat-card p{font-size:13px;color:var(--dim);line-height:1.8}
+        /* ========== FEATURES ========== */
+        .features-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 2px; max-width: 1200px; margin: 0 auto;
+            background: var(--border); border-radius: var(--radius); overflow: hidden;
+        }
+        .feature-card {
+            background: var(--bg2); padding: 40px; position: relative;
+            transition: all 0.4s; overflow: hidden;
+        }
+        .feature-card::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--neon), transparent);
+            opacity: 0; transition: opacity 0.4s;
+        }
+        .feature-card:hover { background: var(--surface); }
+        .feature-card:hover::before { opacity: 1; }
+        .feature-icon {
+            width: 52px; height: 52px; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; margin-bottom: 20px;
+            background: var(--surface2); border: 1px solid var(--border);
+            transition: all 0.4s;
+        }
+        .feature-card:hover .feature-icon {
+            border-color: var(--neon);
+            box-shadow: 0 0 20px var(--neon-dim);
+        }
+        .feature-card h3 { font-size: 18px; font-weight: 600; margin-bottom: 10px; letter-spacing: -0.3px; }
+        .feature-card p { font-size: 14px; color: var(--text-dim); line-height: 1.7; }
 
-/* === TERMINAL === */
-.term-wrap{max-width:860px;margin:0 auto;position:relative}
-.term-wrap::before{content:'';position:absolute;inset:-1px;border-radius:18px;background:linear-gradient(135deg,var(--neon),var(--purple),var(--cyan));z-index:-1;opacity:.15;filter:blur(1px)}
-.term{background:var(--bg);border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.06);box-shadow:0 40px 80px rgba(0,0,0,.5),var(--glow)}
-.term-bar{display:flex;align-items:center;padding:16px 20px;background:rgba(255,255,255,.02);border-bottom:1px solid rgba(255,255,255,.04)}
-.term-dots{display:flex;gap:7px}
-.term-dots i{width:11px;height:11px;border-radius:50%;display:block}
-.term-dots .r{background:#ff5f57}.term-dots .y{background:#febc2e}.term-dots .g{background:#28c840}
-.term-title{flex:1;text-align:center;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--muted)}
-.term-body{padding:28px;font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:2;min-height:320px;max-height:420px;overflow-y:auto}
-.term-body::-webkit-scrollbar{width:3px}
-.term-body::-webkit-scrollbar-thumb{background:var(--neon);border-radius:3px}
-.tp{color:var(--neon)}.tc{color:var(--text)}.to{color:var(--dim)}.th{color:var(--cyan)}.tw{color:var(--pink)}
-.tcur{display:inline-block;width:7px;height:14px;background:var(--neon);animation:blink 1s step-end infinite;vertical-align:middle;box-shadow:0 0 8px var(--neon)}
-@keyframes blink{50%{opacity:0}}
+        /* ========== SURFACES ========== */
+        #surfaces { background: var(--bg2); }
+        .surfaces-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            gap: 16px; max-width: 1100px; margin: 0 auto;
+        }
+        .surface-card {
+            text-align: center; padding: 36px 20px;
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); transition: all 0.4s;
+            position: relative; overflow: hidden;
+        }
+        .surface-card::after {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(circle at 50% 0%, var(--neon-dim), transparent 60%);
+            opacity: 0; transition: opacity 0.4s;
+        }
+        .surface-card:hover { border-color: rgba(0,255,200,0.2); transform: translateY(-4px); }
+        .surface-card:hover::after { opacity: 1; }
+        .surface-icon { font-size: 36px; margin-bottom: 14px; position: relative; z-index: 1; }
+        .surface-card h4 { font-size: 15px; font-weight: 600; position: relative; z-index: 1; }
+        .surface-card p { font-size: 12px; color: var(--text-muted); margin-top: 6px; position: relative; z-index: 1; }
 
-/* === SURFACES === */
-#surfaces{background:var(--bg2)}
-.surf-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:1100px;margin:0 auto}
-.surf-card{padding:40px 24px;text-align:center;border:1px solid rgba(255,255,255,.04);border-radius:14px;transition:all .5s;position:relative;overflow:hidden;background:rgba(255,255,255,.01)}
-.surf-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 50% -20%,rgba(0,255,200,.08),transparent 70%);opacity:0;transition:opacity .5s}
-.surf-card:hover{border-color:rgba(0,255,200,.15);transform:translateY(-6px)}
-.surf-card:hover::before{opacity:1}
-.surf-icon{font-size:32px;margin-bottom:16px;position:relative;z-index:1}
-.surf-card h4{font-size:14px;font-weight:600;position:relative;z-index:1}
-.surf-card p{font-size:11px;color:var(--muted);margin-top:6px;position:relative;z-index:1}
+        /* ========== TERMINAL DEMO ========== */
+        .terminal-section { position: relative; overflow: hidden; }
+        .terminal-wrap { max-width: 900px; margin: 0 auto; }
+        .terminal {
+            background: var(--bg); border: 1px solid var(--border);
+            border-radius: var(--radius); overflow: hidden;
+            box-shadow: 0 0 60px rgba(0,255,200,0.05), 0 20px 60px rgba(0,0,0,0.5);
+        }
+        .terminal-header {
+            display: flex; align-items: center; gap: 8px;
+            padding: 14px 20px; background: var(--surface);
+            border-bottom: 1px solid var(--border);
+        }
+        .terminal-dot { width: 12px; height: 12px; border-radius: 50%; }
+        .terminal-dot.r { background: #ff5f57; }
+        .terminal-dot.y { background: #febc2e; }
+        .terminal-dot.g { background: #28c840; }
+        .terminal-title { flex: 1; text-align: center; font-size: 12px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+        .terminal-body {
+            padding: 24px; font-family: 'JetBrains Mono', monospace;
+            font-size: 13px; line-height: 2; min-height: 300px;
+        }
+        .t-prompt { color: var(--neon); }
+        .t-cmd { color: var(--text); }
+        .t-output { color: var(--text-dim); }
+        .t-highlight { color: var(--cyan); }
+        .t-warn { color: var(--pink); }
+        .t-cursor { display: inline-block; width: 8px; height: 16px; background: var(--neon); animation: blink 1s step-end infinite; vertical-align: middle; margin-left: 2px; }
 
-/* === DOWNLOAD === */
-.dl-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:1000px;margin:0 auto}
-.dl-card{display:flex;flex-direction:column;align-items:center;gap:14px;padding:36px 24px;border:1px solid rgba(255,255,255,.04);border-radius:14px;text-align:center;transition:all .5s;background:rgba(255,255,255,.01)}
-.dl-card:hover{border-color:var(--neon);transform:translateY(-6px);box-shadow:var(--glow)}
-.dl-card svg{width:28px;height:28px;fill:var(--dim);transition:fill .3s}
-.dl-card:hover svg{fill:var(--neon)}
-.dl-card h4{font-size:14px;font-weight:600}
-.dl-card p{font-size:11px;color:var(--muted)}
+        /* ========== DOWNLOAD ========== */
+        #download { background: var(--bg2); }
+        .download-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            gap: 16px; max-width: 1000px; margin: 0 auto;
+        }
+        .download-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 32px 24px; text-align: center;
+            transition: all 0.4s; display: flex; flex-direction: column;
+            align-items: center; gap: 12px;
+        }
+        .download-card:hover { border-color: var(--neon); transform: translateY(-4px); box-shadow: 0 0 40px var(--neon-dim); }
+        .download-card svg { width: 32px; height: 32px; fill: var(--text-dim); transition: fill 0.3s; }
+        .download-card:hover svg { fill: var(--neon); }
+        .download-card h4 { font-size: 15px; font-weight: 600; }
+        .download-card p { font-size: 12px; color: var(--text-muted); }
 
-/* === PRICING === */
-#pricing{background:var(--bg2)}
-.price-wrap{max-width:460px;margin:0 auto}
-.price-card{border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:52px 44px;text-align:center;position:relative;overflow:hidden;background:rgba(255,255,255,.01)}
-.price-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--neon),var(--purple),var(--cyan))}
-.price-card h3{font-family:'Syne',sans-serif;font-size:22px;font-weight:700}
-.price-amt{font-family:'JetBrains Mono',monospace;font-size:48px;font-weight:700;margin:24px 0;color:var(--neon);text-shadow:var(--glow)}
-.price-amt small{font-size:14px;color:var(--muted);text-shadow:none}
-.price-list{list-style:none;text-align:left;margin:28px 0}
-.price-list li{padding:10px 0;font-size:13px;color:var(--dim);border-bottom:1px solid rgba(255,255,255,.04);display:flex;align-items:center;gap:12px}
-.price-list li::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--neon);box-shadow:0 0 8px var(--neon);flex-shrink:0}
-.btn-full{width:100%;margin-top:20px}
+        /* ========== PRICING ========== */
+        .pricing-wrap { max-width: 480px; margin: 0 auto; }
+        .pricing-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 48px; text-align: center;
+            position: relative; overflow: hidden;
+        }
+        .pricing-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+            background: linear-gradient(90deg, var(--neon), var(--purple), var(--cyan));
+        }
+        .pricing-card h3 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
+        .pricing-price {
+            font-size: 52px; font-weight: 700; margin: 20px 0;
+            font-family: 'JetBrains Mono', monospace;
+            background: linear-gradient(135deg, var(--neon), var(--cyan));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+        }
+        .pricing-price span { font-size: 16px; -webkit-text-fill-color: var(--text-muted); }
+        .pricing-features { text-align: left; margin: 28px 0; list-style: none; }
+        .pricing-features li {
+            padding: 10px 0; font-size: 14px; color: var(--text-dim);
+            border-bottom: 1px solid var(--border);
+            display: flex; align-items: center; gap: 10px;
+        }
+        .pricing-features li::before {
+            content: ''; width: 6px; height: 6px; border-radius: 50%;
+            background: var(--neon); box-shadow: 0 0 6px var(--neon);
+            flex-shrink: 0;
+        }
+        .btn-full { width: 100%; margin-top: 16px; }
 
-/* === CONTACT === */
-.contact-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;max-width:1000px;margin:0 auto}
-.contact-card{border:1px solid rgba(255,255,255,.04);border-radius:14px;padding:32px;text-align:center;transition:all .3s;background:rgba(255,255,255,.01)}
-.contact-card:hover{border-color:rgba(0,255,200,.1)}
-.contact-card .ic{font-size:24px;margin-bottom:12px}
-.contact-card .lbl{font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:8px}
-.contact-card .val{font-size:13px}
-.contact-card a{color:var(--neon);transition:opacity .3s}
-.contact-card a:hover{opacity:.7}
+        /* ========== CONTACT ========== */
+        #contact { background: var(--bg2); }
+        .contact-grid {
+            display: grid; grid-template-columns: repeat(4, 1fr);
+            gap: 16px; max-width: 1000px; margin: 0 auto;
+        }
+        .contact-card {
+            background: var(--surface); border: 1px solid var(--border);
+            border-radius: var(--radius); padding: 28px; text-align: center;
+            transition: all 0.3s;
+        }
+        .contact-card:hover { border-color: rgba(0,255,200,0.2); }
+        .contact-icon { font-size: 28px; margin-bottom: 12px; }
+        .contact-label { font-size: 11px; color: var(--text-muted); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+        .contact-value { font-size: 14px; color: var(--text); }
+        .contact-value a { color: var(--neon); transition: opacity 0.3s; }
+        .contact-value a:hover { opacity: 0.7; }
 
-/* === FOOTER === */
-footer{border-top:1px solid rgba(255,255,255,.04);padding:48px;text-align:center;font-size:11px;color:var(--muted);position:relative;z-index:1}
-footer a{color:var(--neon)}
-footer .sebi{margin-top:16px;font-size:9px;opacity:.4}
+        /* ========== FOOTER ========== */
+        footer {
+            border-top: 1px solid var(--border); padding: 40px 48px;
+            text-align: center; font-size: 12px; color: var(--text-muted);
+            position: relative; z-index: 1;
+        }
+        footer a { color: var(--neon); transition: opacity 0.3s; }
+        footer a:hover { opacity: 0.7; }
+        .footer-sebi { margin-top: 12px; font-size: 10px; opacity: 0.4; }
 
-/* === SVG LINES === */
-.svg-lines{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
-.svg-lines line{stroke:rgba(0,255,200,.03);stroke-width:.5}
+        /* ========== LINE DECORATION ========== */
+        .line-h {
+            width: 100%; height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
+        }
 
-/* === GLITCH === */
-.glitch{position:relative}
-.glitch::before,.glitch::after{content:attr(data-text);position:absolute;top:0;left:0;width:100%;height:100%;opacity:0}
-.glitch:hover::before{opacity:.8;color:var(--cyan);animation:glitch1 .3s infinite;clip-path:polygon(0 0,100% 0,100% 45%,0 45%)}
-.glitch:hover::after{opacity:.8;color:var(--pink);animation:glitch2 .3s infinite;clip-path:polygon(0 55%,100% 55%,100% 100%,0 100%)}
-@keyframes glitch1{0%{transform:translate(0)}20%{transform:translate(-3px,3px)}40%{transform:translate(3px,-3px)}60%{transform:translate(-2px)}80%{transform:translate(3px,2px)}100%{transform:translate(0)}}
-@keyframes glitch2{0%{transform:translate(0)}20%{transform:translate(3px,-3px)}40%{transform:translate(-3px,3px)}60%{transform:translate(2px)}80%{transform:translate(-3px,-2px)}100%{transform:translate(0)}}
+        /* ========== MARQUEE ========== */
+        .marquee-wrap {
+            overflow: hidden; padding: 20px 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            background: var(--bg2); position: relative; z-index: 1;
+        }
+        .marquee {
+            display: flex; gap: 60px; animation: scroll 30s linear infinite;
+            font-family: 'JetBrains Mono', monospace; font-size: 13px;
+            color: var(--text-muted); white-space: nowrap;
+        }
+        .marquee span { flex-shrink: 0; }
+        .marquee .sep { color: var(--neon); opacity: 0.3; }
+        @keyframes scroll { to { transform: translateX(-50%); } }
 
-/* === MOBILE === */
-@media(max-width:1024px){
-  .feat-grid{grid-template-columns:repeat(2,1fr)}
-  .surf-grid,.dl-grid,.contact-grid{grid-template-columns:repeat(2,1fr)}
-  .stats-bar{flex-wrap:wrap}.stat-item{flex:1 1 50%;border-bottom:1px solid rgba(255,255,255,.04)}
-}
-@media(max-width:768px){
-  body,.cur-ring,.cur-dot{cursor:auto !important}
-  .cur-ring,.cur-dot,.scanline{display:none}
-  nav{padding:16px 20px}
-  .nav-links{display:none;position:fixed;inset:0;background:rgba(3,3,5,.97);backdrop-filter:blur(30px);flex-direction:column;align-items:center;justify-content:center;gap:28px;z-index:9999}
-  .nav-links.open{display:flex}
-  .hamburger{display:flex;z-index:10000}
-  section{padding:80px 20px}
-  .hero h1{letter-spacing:-2px}
-  .hero-btns{flex-direction:column;align-items:center}
-  .feat-grid,.surf-grid,.dl-grid,.contact-grid{grid-template-columns:1fr}
-  .stats-bar{flex-direction:column}.stat-item{border-right:none;border-bottom:1px solid rgba(255,255,255,.04)}
-}
-</style>
+        /* ========== MOBILE ========== */
+        @media (max-width: 1024px) {
+            .features-grid { grid-template-columns: repeat(2, 1fr); }
+            .surfaces-grid { grid-template-columns: repeat(2, 1fr); }
+            .download-grid { grid-template-columns: repeat(2, 1fr); }
+            .contact-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 768px) {
+            body { cursor: auto; }
+            a, button { cursor: auto; }
+            .cursor, .cursor-dot { display: none; }
+            nav { padding: 14px 20px; }
+            .nav-links { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100vh; background: rgba(5,5,8,0.97); backdrop-filter: blur(20px); flex-direction: column; align-items: center; justify-content: center; gap: 28px; z-index: 999; }
+            .nav-links.open { display: flex; }
+            .nav-links a { font-size: 18px; }
+            .hamburger { display: flex; z-index: 1001; }
+            .hero { padding: 120px 20px 60px; }
+            .hero h1 { letter-spacing: -1.5px; }
+            .hero p { font-size: 16px; }
+            .hero-buttons { flex-direction: column; align-items: center; }
+            .hero-stats { flex-direction: column; gap: 0; border-radius: var(--radius); }
+            .hero-stat { padding: 20px 32px; }
+            section { padding: 80px 20px; }
+            .features-grid, .surfaces-grid, .download-grid, .contact-grid { grid-template-columns: 1fr; }
+            .feature-card { padding: 28px; }
+            .terminal-body { font-size: 11px; padding: 16px; }
+        }
+    </style>
 </head>
 <body>
 
-<!-- Loader -->
+<!-- Loading Screen -->
 <div class="loader" id="loader">
-  <svg viewBox="0 0 100 100">
-    <path d="M50 10 L80 40 L70 40 L70 70 L58 70 L58 50 L42 50 L42 70 L30 70 L30 40 L20 40 Z" />
-  </svg>
-  <div class="loader-pct" id="pct">0</div>
-  <div class="loader-sub">Initializing Systems</div>
-  <div class="loader-line"></div>
+    <div class="loader-text">ULTRON EMPIRE</div>
+    <div class="loader-bar"><div class="loader-fill"></div></div>
 </div>
 
-<!-- BG layers -->
+<!-- Background Effects -->
 <div class="noise"></div>
-<div class="scanline"></div>
-<canvas id="bgCanvas"></canvas>
-<svg class="svg-lines" id="svgLines"><g id="svgLinesG"></g></svg>
+<div class="grid-bg"></div>
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+<canvas id="particles"></canvas>
 
-<!-- Cursor -->
-<div class="cur" id="cur"><div class="cur-ring"></div></div>
-<div class="cur-dot" id="curDot"></div>
+<!-- Custom Cursor -->
+<div class="cursor" id="cursor"></div>
+<div class="cursor-dot" id="cursorDot"></div>
 
 <!-- Nav -->
 <nav id="nav">
-  <div class="nav-left">
-    <div class="nav-logo glitch" data-text="U">U</div>
-    <div><div class="nav-name">ULTRON EMPIRE</div><div class="nav-tag">PMS Sahi Hai</div></div>
-  </div>
-  <button class="hamburger" id="ham" aria-label="Menu"><span></span><span></span><span></span></button>
-  <div class="nav-links" id="navLinks">
-    <a href="#features">Features</a>
-    <a href="#demo">Demo</a>
-    <a href="#surfaces">Surfaces</a>
-    <a href="#download">Download</a>
-    <a href="#pricing">Pricing</a>
-    <a href="#contact">Contact</a>
-    <a href="https://t.me/Ultron_Empire1_bot" target="_blank" class="nav-cta">Launch Bot</a>
-  </div>
+    <div class="nav-logo">
+        <div class="nav-icon">U</div>
+        <div>
+            <div class="nav-brand">Ultron Empire</div>
+            <div class="nav-sub">PMS Sahi Hai</div>
+        </div>
+    </div>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+        <span></span><span></span><span></span>
+    </button>
+    <div class="nav-links" id="navLinks">
+        <a href="#features">Features</a>
+        <a href="#terminal">Demo</a>
+        <a href="#surfaces">Surfaces</a>
+        <a href="#download">Download</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#contact">Contact</a>
+        <a href="https://t.me/Ultron_Empire1_bot" class="nav-cta" target="_blank">Launch Bot</a>
+    </div>
 </nav>
 
 <!-- Hero -->
 <section class="hero">
-  <div class="hero-inner">
-    <div class="hero-eyebrow"><div class="dot"></div>v4.0 Production Ready</div>
-    <h1>
-      <span class="line"><span>Your AI</span></span>
-      <span class="line"><span class="grad">Wealth Management</span></span>
-      <span class="line"><span>Operating System</span></span>
-    </h1>
-    <p class="hero-desc">Like having a &#8377;50 lakh/year analyst in your pocket. Fund analysis, market intelligence, client CRM, content engine &mdash; all AI-powered, 24/7.</p>
-    <div class="hero-btns">
-      <a href="https://t.me/Ultron_Empire1_bot" target="_blank"><button class="btn btn-primary">Try on Telegram</button></a>
-      <a href="#download"><button class="btn btn-ghost">Download</button></a>
+    <div class="reveal">
+        <div class="hero-badge">
+            <div class="hero-badge-dot"></div>
+            v4.0 — Production Ready
+        </div>
     </div>
-  </div>
-  <div class="scroll-hint"><span>Scroll</span><div class="scroll-arrow"></div></div>
+    <h1 class="reveal reveal-delay-1">Your AI <span class="gradient">Wealth Management</span> Operating System</h1>
+    <p class="reveal reveal-delay-2">Like having a 50 lakh/year analyst in your pocket. AI-powered fund analysis, market monitoring, client intelligence, content generation — 24/7.</p>
+    <div class="hero-buttons reveal reveal-delay-3">
+        <a href="https://t.me/Ultron_Empire1_bot" target="_blank"><button class="btn-neon primary">Try on Telegram</button></a>
+        <a href="#download"><button class="btn-neon secondary">Download App</button></a>
+    </div>
+    <div class="hero-stats reveal reveal-delay-4">
+        <div class="hero-stat"><div class="hero-stat-num">50+</div><div class="hero-stat-label">Funds Tracked</div></div>
+        <div class="hero-stat"><div class="hero-stat-num">24/7</div><div class="hero-stat-label">Monitoring</div></div>
+        <div class="hero-stat"><div class="hero-stat-num">&lt;10s</div><div class="hero-stat-label">Response</div></div>
+        <div class="hero-stat"><div class="hero-stat-num">10</div><div class="hero-stat-label">AI Tools</div></div>
+    </div>
 </section>
 
-<!-- Stats -->
-<div class="stats-bar" data-reveal>
-  <div class="stat-item"><div class="stat-num" data-count="50">0</div><div class="stat-label">Funds Tracked</div></div>
-  <div class="stat-item"><div class="stat-num">24/7</div><div class="stat-label">Monitoring</div></div>
-  <div class="stat-item"><div class="stat-num">&lt;10s</div><div class="stat-label">AI Response</div></div>
-  <div class="stat-item"><div class="stat-num" data-count="10">0</div><div class="stat-label">AI Tools</div></div>
-</div>
-
 <!-- Marquee -->
-<div class="marquee-section">
-  <div class="marquee-track">
-    <span>Claude AI Powered</span><span class="sep">&bull;</span>
-    <span>PMS &amp; AIF Analysis</span><span class="sep">&bull;</span>
-    <span>Monte Carlo Simulations</span><span class="sep">&bull;</span>
-    <span>Real-Time Market Data</span><span class="sep">&bull;</span>
-    <span>Smart Client CRM</span><span class="sep">&bull;</span>
-    <span>Voice Assistant</span><span class="sep">&bull;</span>
-    <span>Multi-Channel Alerts</span><span class="sep">&bull;</span>
-    <span>Content Engine</span><span class="sep">&bull;</span>
-    <span>Claude AI Powered</span><span class="sep">&bull;</span>
-    <span>PMS &amp; AIF Analysis</span><span class="sep">&bull;</span>
-    <span>Monte Carlo Simulations</span><span class="sep">&bull;</span>
-    <span>Real-Time Market Data</span><span class="sep">&bull;</span>
-    <span>Smart Client CRM</span><span class="sep">&bull;</span>
-    <span>Voice Assistant</span><span class="sep">&bull;</span>
-    <span>Multi-Channel Alerts</span><span class="sep">&bull;</span>
-    <span>Content Engine</span><span class="sep">&bull;</span>
-  </div>
+<div class="marquee-wrap">
+    <div class="marquee">
+        <span>CLAUDE AI POWERED</span><span class="sep">//</span>
+        <span>PMS & AIF ANALYSIS</span><span class="sep">//</span>
+        <span>MONTE CARLO SIMULATIONS</span><span class="sep">//</span>
+        <span>REAL-TIME MARKET MONITORING</span><span class="sep">//</span>
+        <span>SMART CLIENT CRM</span><span class="sep">//</span>
+        <span>VOICE ASSISTANT</span><span class="sep">//</span>
+        <span>MULTI-CHANNEL ALERTS</span><span class="sep">//</span>
+        <span>CONTENT GENERATION ENGINE</span><span class="sep">//</span>
+        <span>CLAUDE AI POWERED</span><span class="sep">//</span>
+        <span>PMS & AIF ANALYSIS</span><span class="sep">//</span>
+        <span>MONTE CARLO SIMULATIONS</span><span class="sep">//</span>
+        <span>REAL-TIME MARKET MONITORING</span><span class="sep">//</span>
+        <span>SMART CLIENT CRM</span><span class="sep">//</span>
+        <span>VOICE ASSISTANT</span><span class="sep">//</span>
+        <span>MULTI-CHANNEL ALERTS</span><span class="sep">//</span>
+        <span>CONTENT GENERATION ENGINE</span><span class="sep">//</span>
+    </div>
 </div>
 
 <!-- Features -->
 <section id="features">
-  <div class="s-head center" data-reveal>
-    <span class="s-label">// Capabilities</span>
-    <h2>Intelligence Modules</h2>
-    <p>9 AI systems working in concert to manage your wealth advisory</p>
-  </div>
-  <div class="feat-grid">
-    <div class="feat-card" data-reveal><div class="feat-num">01</div><h3>AI Analyst Brain</h3><p>Compare funds, analyze portfolios, get client briefs &mdash; powered by Claude AI with 10 specialized tools.</p></div>
-    <div class="feat-card" data-reveal="1"><div class="feat-num">02</div><h3>Market Monitoring</h3><p>News every 15 min, SEBI circulars hourly, FII/DII flows, earnings tracker. Never miss a market event.</p></div>
-    <div class="feat-card" data-reveal="2"><div class="feat-num">03</div><h3>Predictions &amp; Patterns</h3><p>Momentum scores, Monte Carlo sims, PE percentile, historical pattern matching with probabilities.</p></div>
-    <div class="feat-card" data-reveal><div class="feat-num">04</div><h3>Smart Client CRM</h3><p>Pre-meeting briefs in 30 seconds, review reminders, life events, gifting intelligence, family mapping.</p></div>
-    <div class="feat-card" data-reveal="1"><div class="feat-num">05</div><h3>Content Engine</h3><p>Morning briefs, weekly recaps, newsletters, Instagram posts, WhatsApp replies &mdash; auto-generated daily.</p></div>
-    <div class="feat-card" data-reveal="2"><div class="feat-num">06</div><h3>Smart Alerts</h3><p>Critical on ALL surfaces. Important on Telegram. Info batched daily. Priority routing with cooldowns.</p></div>
-    <div class="feat-card" data-reveal><div class="feat-num">07</div><h3>Voice Assistant</h3><p>&ldquo;Brief me on Rajesh Mehta&rdquo; &mdash; Ultron speaks back through your phone or AirPods. Hands-free.</p></div>
-    <div class="feat-card" data-reveal="1"><div class="feat-num">08</div><h3>Document Processing</h3><p>Upload CAS statements, PMS factsheets, AIF term sheets &mdash; Ultron reads, analyzes, and flags what matters.</p></div>
-    <div class="feat-card" data-reveal="2"><div class="feat-num">09</div><h3>Competitive Intel</h3><p>Track competitors, new fund launches, AUM flows, emerging managers. Always one step ahead.</p></div>
-  </div>
+    <div class="section-header reveal">
+        <span class="section-label">Capabilities</span>
+        <div class="section-divider"></div>
+        <h2>What Ultron Does For You</h2>
+        <p>9 intelligence modules working in concert to manage your wealth advisory practice</p>
+    </div>
+    <div class="features-grid">
+        <div class="feature-card reveal">
+            <div class="feature-icon">&#x1F9E0;</div>
+            <h3>AI Analyst Brain</h3>
+            <p>Compare funds, analyze portfolios, get client briefs — all powered by Claude AI with 10 specialized tools.</p>
+        </div>
+        <div class="feature-card reveal reveal-delay-1">
+            <div class="feature-icon">&#x1F4CA;</div>
+            <h3>24/7 Market Monitoring</h3>
+            <p>News every 15 min, SEBI circulars hourly, FII/DII flows, earnings tracker. Never miss a market event.</p>
+        </div>
+        <div class="feature-card reveal reveal-delay-2">
+            <div class="feature-icon">&#x1F4C8;</div>
+            <h3>Predictions & Patterns</h3>
+            <p>Momentum scores, Monte Carlo sims, PE percentile, historical pattern matching with probability estimates.</p>
+        </div>
+        <div class="feature-card reveal">
+            <div class="feature-icon">&#x1F465;</div>
+            <h3>Smart Client CRM</h3>
+            <p>Pre-meeting briefs in 30 seconds, review reminders, life events, gifting intelligence, family mapping.</p>
+        </div>
+        <div class="feature-card reveal reveal-delay-1">
+            <div class="feature-icon">&#x270D;&#xFE0F;</div>
+            <h3>Content Engine</h3>
+            <p>Morning briefs, weekly recaps, newsletters, Instagram posts, WhatsApp replies — auto-generated daily.</p>
+        </div>
+        <div class="feature-card reveal reveal-delay-2">
+            <div class="feature-icon">&#x1F514;</div>
+            <h3>Smart Alerts</h3>
+            <p>Critical on ALL surfaces. Important on Telegram. Info batched daily. Priority routing with cooldowns.</p>
+        </div>
+        <div class="feature-card reveal">
+            <div class="feature-icon">&#x1F3A4;</div>
+            <h3>Voice Assistant</h3>
+            <p>"Brief me on Rajesh Mehta" — Ultron speaks back through your phone or AirPods. Hands-free intelligence.</p>
+        </div>
+        <div class="feature-card reveal reveal-delay-1">
+            <div class="feature-icon">&#x1F4C4;</div>
+            <h3>Document Processing</h3>
+            <p>Upload CAS statements, PMS factsheets, AIF term sheets — Ultron reads, analyzes, and flags what matters.</p>
+        </div>
+        <div class="feature-card reveal reveal-delay-2">
+            <div class="feature-icon">&#x1F3C6;</div>
+            <h3>Competitive Intelligence</h3>
+            <p>Track competitors, new fund launches, AUM flows, emerging managers. Always stay one step ahead.</p>
+        </div>
+    </div>
 </section>
 
 <!-- Terminal Demo -->
-<section id="demo">
-  <div class="s-head center" data-reveal>
-    <span class="s-label">// Live Demo</span>
-    <h2>See Ultron Think</h2>
-    <p>Watch the AI analyst work through a real query</p>
-  </div>
-  <div class="term-wrap" data-reveal>
-    <div class="term">
-      <div class="term-bar">
-        <div class="term-dots"><i class="r"></i><i class="y"></i><i class="g"></i></div>
-        <div class="term-title">ultron@empire ~/analyst</div>
-      </div>
-      <div class="term-body" id="termBody"></div>
+<section class="terminal-section" id="terminal">
+    <div class="section-header reveal">
+        <span class="section-label">Live Demo</span>
+        <div class="section-divider"></div>
+        <h2>See Ultron In Action</h2>
+        <p>Watch the AI analyst work through a real query</p>
     </div>
-  </div>
+    <div class="terminal-wrap reveal">
+        <div class="terminal">
+            <div class="terminal-header">
+                <div class="terminal-dot r"></div>
+                <div class="terminal-dot y"></div>
+                <div class="terminal-dot g"></div>
+                <div class="terminal-title">ultron@empire ~ /analyst</div>
+            </div>
+            <div class="terminal-body" id="terminalBody">
+                <div><span class="t-prompt">ultron ~$</span> <span class="t-cmd" id="typewriter"></span><span class="t-cursor" id="twCursor"></span></div>
+            </div>
+        </div>
+    </div>
 </section>
 
 <!-- Surfaces -->
 <section id="surfaces">
-  <div class="s-head center" data-reveal>
-    <span class="s-label">// Omnipresence</span>
-    <h2>Available Everywhere</h2>
-    <p>Like Jarvis &mdash; on every surface of your life</p>
-  </div>
-  <div class="surf-grid">
-    <div class="surf-card" data-reveal><div class="surf-icon">&#x1F4BB;</div><h4>Web Dashboard</h4><p>Bloomberg-like war room</p></div>
-    <div class="surf-card" data-reveal="1"><div class="surf-icon">&#x1F4F1;</div><h4>Mobile App</h4><p>iOS + Android</p></div>
-    <div class="surf-card" data-reveal="2"><div class="surf-icon">&#x1F4AC;</div><h4>Telegram Bot</h4><p>Always-on commands</p></div>
-    <div class="surf-card" data-reveal="3"><div class="surf-icon">&#x1F4F2;</div><h4>WhatsApp</h4><p>Client-facing</p></div>
-    <div class="surf-card" data-reveal><div class="surf-icon">&#x1F3A4;</div><h4>Voice</h4><p>Whisper + Eleven Labs</p></div>
-    <div class="surf-card" data-reveal="1"><div class="surf-icon">&#x1F4E7;</div><h4>Email</h4><p>Newsletters + reports</p></div>
-    <div class="surf-card" data-reveal="2"><div class="surf-icon">&#x1F4C5;</div><h4>Calendar</h4><p>Auto meeting briefs</p></div>
-    <div class="surf-card" data-reveal="3"><div class="surf-icon">&#x231A;</div><h4>Desktop App</h4><p>eDEX-UI terminal</p></div>
-  </div>
+    <div class="section-header reveal">
+        <span class="section-label">Omnipresence</span>
+        <div class="section-divider"></div>
+        <h2>Available Everywhere</h2>
+        <p>Ultron lives on every surface — like Jarvis from Iron Man</p>
+    </div>
+    <div class="surfaces-grid">
+        <div class="surface-card reveal"><div class="surface-icon">&#x1F4BB;</div><h4>Web Dashboard</h4><p>Bloomberg-like war room</p></div>
+        <div class="surface-card reveal reveal-delay-1"><div class="surface-icon">&#x1F4F1;</div><h4>Mobile App</h4><p>iOS + Android</p></div>
+        <div class="surface-card reveal reveal-delay-2"><div class="surface-icon">&#x1F4AC;</div><h4>Telegram Bot</h4><p>Always-on commands</p></div>
+        <div class="surface-card reveal reveal-delay-3"><div class="surface-icon">&#x1F4F2;</div><h4>WhatsApp</h4><p>Client-facing + broadcast</p></div>
+        <div class="surface-card reveal"><div class="surface-icon">&#x1F3A4;</div><h4>Voice</h4><p>Whisper + Eleven Labs</p></div>
+        <div class="surface-card reveal reveal-delay-1"><div class="surface-icon">&#x1F4E7;</div><h4>Email</h4><p>Newsletters + reports</p></div>
+        <div class="surface-card reveal reveal-delay-2"><div class="surface-icon">&#x1F4C5;</div><h4>Calendar</h4><p>Auto meeting briefs</p></div>
+        <div class="surface-card reveal reveal-delay-3"><div class="surface-icon">&#x231A;</div><h4>Smart Watch</h4><p>Critical alert haptics</p></div>
+    </div>
 </section>
 
 <!-- Download -->
 <section id="download">
-  <div class="s-head center" data-reveal>
-    <span class="s-label">// Get Started</span>
-    <h2>Download Ultron</h2>
-    <p>Get Ultron on every device</p>
-  </div>
-  <div class="dl-grid">
-    <a href="https://t.me/Ultron_Empire1_bot" target="_blank" class="dl-card" data-reveal>
-      <svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.94 8.13l-2.01 9.47c-.15.68-.54.84-1.1.52l-3.03-2.24-1.46 1.41c-.16.16-.3.3-.62.3l.22-3.07 5.58-5.04c.24-.22-.05-.34-.38-.13l-6.89 4.34-2.97-.93c-.64-.2-.66-.64.14-.95l11.59-4.47c.53-.2 1-.05.93.79z"/></svg>
-      <h4>Telegram</h4><p>Live now</p>
-    </a>
-    <a href="#" class="dl-card" data-reveal="1" onclick="alert('Coming soon!');return false">
-      <svg viewBox="0 0 24 24"><path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.53 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
-      <h4>iOS</h4><p>Coming soon</p>
-    </a>
-    <a href="#" class="dl-card" data-reveal="2" onclick="alert('Coming soon!');return false">
-      <svg viewBox="0 0 24 24"><path d="M1 18h4.5v-7H1v7zm0-8h4.5V3H1v7zm5.5 8H11v-7H6.5v7zm0-8H11V3H6.5v7zm5.5 8h4.5v-7H12v7zm0-8h4.5V3H12v7zm5.5 8H22v-7h-4.5v7zm0-8H22V3h-4.5v7z"/></svg>
-      <h4>Android</h4><p>Coming soon</p>
-    </a>
-    <a href="https://github.com/The-kidd-04/Ultron-Empire-2" target="_blank" class="dl-card" data-reveal="3">
-      <svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
-      <h4>Source Code</h4><p>Open source</p>
-    </a>
-  </div>
+    <div class="section-header reveal">
+        <span class="section-label">Get Started</span>
+        <div class="section-divider"></div>
+        <h2>Download Ultron Empire</h2>
+        <p>Get Ultron on every device in your ecosystem</p>
+    </div>
+    <div class="download-grid">
+        <a href="https://t.me/Ultron_Empire1_bot" target="_blank" class="download-card reveal">
+            <svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.94 8.13l-2.01 9.47c-.15.68-.54.84-1.1.52l-3.03-2.24-1.46 1.41c-.16.16-.3.3-.62.3l.22-3.07 5.58-5.04c.24-.22-.05-.34-.38-.13l-6.89 4.34-2.97-.93c-.64-.2-.66-.64.14-.95l11.59-4.47c.53-.2 1-.05.93.79z"/></svg>
+            <h4>Telegram Bot</h4>
+            <p>Live now</p>
+        </a>
+        <a href="#" class="download-card reveal reveal-delay-1" onclick="alert('iOS app coming soon! Use Telegram bot for now.'); return false;">
+            <svg viewBox="0 0 24 24"><path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.53 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+            <h4>iOS App</h4>
+            <p>Coming soon</p>
+        </a>
+        <a href="#" class="download-card reveal reveal-delay-2" onclick="alert('Android app coming soon! Use Telegram bot for now.'); return false;">
+            <svg viewBox="0 0 24 24"><path d="M1 18h4.5v-7H1v7zm0-8h4.5V3H1v7zm5.5 8H11v-7H6.5v7zm0-8H11V3H6.5v7zm5.5 8h4.5v-7H12v7zm0-8h4.5V3H12v7zm5.5 8H22v-7h-4.5v7zm0-8H22V3h-4.5v7z"/></svg>
+            <h4>Android App</h4>
+            <p>Coming soon</p>
+        </a>
+        <a href="https://github.com/The-kidd-04/Ultron-Empire-2" target="_blank" class="download-card reveal reveal-delay-3">
+            <svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+            <h4>Source Code</h4>
+            <p>Open source</p>
+        </a>
+    </div>
 </section>
 
 <!-- Pricing -->
 <section id="pricing">
-  <div class="s-head center" data-reveal>
-    <span class="s-label">// Investment</span>
-    <h2>Simple Pricing</h2>
-    <p>Everything included. No hidden fees.</p>
-  </div>
-  <div class="price-wrap" data-reveal>
-    <div class="price-card">
-      <h3>Ultron Empire Premium</h3>
-      <div class="price-amt">&#8377;8K&ndash;20K<small>/mo</small></div>
-      <ul class="price-list">
-        <li>Claude AI analyst &mdash; unlimited queries</li>
-        <li>24/7 market monitoring &amp; smart alerts</li>
-        <li>50+ PMS/AIF fund database</li>
-        <li>Client CRM with AI-powered briefs</li>
-        <li>Content generation engine</li>
-        <li>Monte Carlo simulations &amp; predictions</li>
-        <li>Voice assistant (Whisper + Eleven Labs)</li>
-        <li>Telegram + WhatsApp delivery</li>
-        <li>Web dashboard + mobile + desktop</li>
-        <li>Compliance &amp; audit trail</li>
-        <li>Competitive intelligence module</li>
-        <li>Semantic knowledge base search</li>
-      </ul>
-      <a href="https://t.me/Ultron_Empire1_bot" target="_blank"><button class="btn btn-primary btn-full">Get Started Free</button></a>
+    <div class="section-header reveal">
+        <span class="section-label">Investment</span>
+        <div class="section-divider"></div>
+        <h2>Simple Pricing</h2>
+        <p>Everything included. No hidden fees.</p>
     </div>
-  </div>
+    <div class="pricing-wrap reveal">
+        <div class="pricing-card">
+            <h3>Ultron Empire Premium</h3>
+            <div class="pricing-price">&#8377;8K-20K<span>/month</span></div>
+            <ul class="pricing-features">
+                <li>Claude AI analyst — unlimited queries</li>
+                <li>24/7 market monitoring & smart alerts</li>
+                <li>50+ PMS/AIF fund database</li>
+                <li>Client CRM with AI-powered briefs</li>
+                <li>Content generation engine</li>
+                <li>Monte Carlo simulations & predictions</li>
+                <li>Voice assistant (Whisper + Eleven Labs)</li>
+                <li>Telegram + WhatsApp delivery</li>
+                <li>Web dashboard + mobile app</li>
+                <li>Compliance & audit trail</li>
+                <li>Competitive intelligence module</li>
+                <li>Semantic search across knowledge base</li>
+            </ul>
+            <a href="https://t.me/Ultron_Empire1_bot" target="_blank"><button class="btn-neon primary btn-full">Get Started Free</button></a>
+        </div>
+    </div>
 </section>
 
 <!-- Contact -->
 <section id="contact">
-  <div class="s-head center" data-reveal>
-    <span class="s-label">// Connect</span>
-    <h2>Get In Touch</h2>
-    <p>India's 1st AI Powered PMS &amp; AIF Marketplace</p>
-  </div>
-  <div class="contact-grid">
-    <div class="contact-card" data-reveal><div class="ic">&#x1F4DE;</div><div class="lbl">Phone</div><div class="val">+91 7455899555</div></div>
-    <div class="contact-card" data-reveal="1"><div class="ic">&#x1F4E7;</div><div class="lbl">Email</div><div class="val"><a href="mailto:info@pmssahihai.com">info@pmssahihai.com</a></div></div>
-    <div class="contact-card" data-reveal="2"><div class="ic">&#x1F310;</div><div class="lbl">Website</div><div class="val"><a href="https://www.pmssahihai.com" target="_blank">pmssahihai.com</a></div></div>
-    <div class="contact-card" data-reveal="3"><div class="ic">&#x1F4CD;</div><div class="lbl">Office</div><div class="val">BKC, Mumbai</div></div>
-  </div>
+    <div class="section-header reveal">
+        <span class="section-label">Connect</span>
+        <div class="section-divider"></div>
+        <h2>Get In Touch</h2>
+        <p>India's 1st AI Powered PMS & AIF Marketplace</p>
+    </div>
+    <div class="contact-grid">
+        <div class="contact-card reveal">
+            <div class="contact-icon">&#x1F4DE;</div>
+            <div class="contact-label">Phone</div>
+            <div class="contact-value">+91 7455899555</div>
+        </div>
+        <div class="contact-card reveal reveal-delay-1">
+            <div class="contact-icon">&#x1F4E7;</div>
+            <div class="contact-label">Email</div>
+            <div class="contact-value"><a href="mailto:info@pmssahihai.com">info@pmssahihai.com</a></div>
+        </div>
+        <div class="contact-card reveal reveal-delay-2">
+            <div class="contact-icon">&#x1F310;</div>
+            <div class="contact-label">Website</div>
+            <div class="contact-value"><a href="https://www.pmssahihai.com" target="_blank">pmssahihai.com</a></div>
+        </div>
+        <div class="contact-card reveal reveal-delay-3">
+            <div class="contact-icon">&#x1F4CD;</div>
+            <div class="contact-label">Office</div>
+            <div class="contact-value">C-20, G Block, BKC, Mumbai</div>
+        </div>
+    </div>
 </section>
 
 <!-- Footer -->
 <footer>
-  <p>&copy; 2026 PMS Sahi Hai (Nyra Capital Pvt Ltd). All rights reserved.</p>
-  <p style="margin-top:8px">Powered by <a href="https://github.com/The-kidd-04/Ultron-Empire-2" target="_blank">Ultron Empire v4.0</a></p>
-  <p class="sebi">SEBI-registered distributor &amp; advisor. Investments in PMS/AIF are subject to market risks.</p>
+    <p>&copy; 2026 PMS Sahi Hai (Nyra Capital Private Limited). All rights reserved.</p>
+    <p style="margin-top:8px">Powered by <a href="https://github.com/The-kidd-04/Ultron-Empire-2" target="_blank">Ultron Empire v4.0</a> — India's 1st AI Wealth Management OS</p>
+    <p class="footer-sebi">SEBI-registered distributor & advisor. Investments in PMS/AIF are subject to market risks.</p>
 </footer>
 
 <script>
-// === LOADER ===
-let pctVal=0;const pctEl=document.getElementById('pct');
-const pctInt=setInterval(()=>{pctVal+=Math.random()*8+2;if(pctVal>=100){pctVal=100;clearInterval(pctInt)}pctEl.textContent=Math.floor(pctVal)},80);
-function hideLoader(){document.getElementById('loader').classList.add('done')}
-if(document.readyState==='complete')setTimeout(hideLoader,600);
-else window.addEventListener('load',()=>setTimeout(hideLoader,2400));
-setTimeout(hideLoader,3500);
+// ========== LOADER ==========
+function hideLoader() { document.getElementById('loader').classList.add('hidden'); }
+if (document.readyState === 'complete') { setTimeout(hideLoader, 800); }
+else { window.addEventListener('load', () => setTimeout(hideLoader, 2200)); }
+// Failsafe — always hide after 3.5s no matter what
+setTimeout(hideLoader, 3500);
 
-// === CURSOR ===
-const cur=document.getElementById('cur'),dot=document.getElementById('curDot');
-let mx=0,my=0,cx=0,cy=0;
-document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;dot.style.transform=`translate(${mx-2.5}px,${my-2.5}px)`});
-(function aCur(){cx+=(mx-cx)*.12;cy+=(my-cy)*.12;cur.style.transform=`translate(${cx-20}px,${cy-20}px)`;requestAnimationFrame(aCur)})();
-document.querySelectorAll('a,button,.feat-card,.surf-card,.dl-card,.stat-item').forEach(el=>{
-  el.addEventListener('mouseenter',()=>document.body.classList.add('hovering'));
-  el.addEventListener('mouseleave',()=>document.body.classList.remove('hovering'));
+// ========== CUSTOM CURSOR ==========
+const cursor = document.getElementById('cursor');
+const cursorDot = document.getElementById('cursorDot');
+let mx = 0, my = 0, cx = 0, cy = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cursorDot.style.left = mx - 3 + 'px'; cursorDot.style.top = my - 3 + 'px'; });
+function animateCursor() { cx += (mx - cx) * 0.15; cy += (my - cy) * 0.15; cursor.style.left = cx - 10 + 'px'; cursor.style.top = cy - 10 + 'px'; requestAnimationFrame(animateCursor); }
+animateCursor();
+document.querySelectorAll('a, button, .feature-card, .surface-card, .download-card').forEach(el => {
+    el.addEventListener('mouseenter', () => cursor.classList.add('hover'));
+    el.addEventListener('mouseleave', () => cursor.classList.remove('hover'));
 });
 
-// === NAV ===
-window.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('scrolled',scrollY>60));
-const ham=document.getElementById('ham'),nl=document.getElementById('navLinks');
-ham.addEventListener('click',()=>{ham.classList.toggle('open');nl.classList.toggle('open')});
-nl.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>{ham.classList.remove('open');nl.classList.remove('open')}));
+// ========== NAV SCROLL ==========
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 50); });
 
-// === REVEAL ===
-const rObs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('vis')}),{threshold:.1,rootMargin:'0px 0px -60px 0px'});
-document.querySelectorAll('[data-reveal]').forEach(el=>rObs.observe(el));
+// ========== HAMBURGER ==========
+const hamburger = document.getElementById('hamburger');
+const navLinks = document.getElementById('navLinks');
+hamburger.addEventListener('click', () => { hamburger.classList.toggle('active'); navLinks.classList.toggle('open'); });
+navLinks.querySelectorAll('a').forEach(a => a.addEventListener('click', () => { hamburger.classList.remove('active'); navLinks.classList.remove('open'); }));
 
-// === COUNTER ===
-const cObs=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){const el=e.target;const to=parseInt(el.dataset.count);let v=0;const step=()=>{v+=Math.ceil(to/40);if(v>=to){el.textContent=to+'+';return}el.textContent=v;requestAnimationFrame(step)};step();cObs.unobserve(el)}}),{threshold:.5});
-document.querySelectorAll('[data-count]').forEach(el=>cObs.observe(el));
+// ========== SCROLL REVEAL ==========
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); } });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-// === PARTICLE NETWORK ===
-const cv=document.getElementById('bgCanvas'),c=cv.getContext('2d');
-function resize(){cv.width=innerWidth;cv.height=innerHeight}resize();
-addEventListener('resize',resize);
-const pts=[];for(let i=0;i<60;i++)pts.push({x:Math.random()*innerWidth,y:Math.random()*innerHeight,vx:(Math.random()-.5)*.25,vy:(Math.random()-.5)*.25,s:Math.random()*1.2+.3,a:Math.random()*.3+.05});
-(function draw(){c.clearRect(0,0,cv.width,cv.height);
-  for(const p of pts){p.x+=p.vx;p.y+=p.vy;if(p.x<0||p.x>cv.width)p.vx*=-1;if(p.y<0||p.y>cv.height)p.vy*=-1;c.beginPath();c.arc(p.x,p.y,p.s,0,Math.PI*2);c.fillStyle=`rgba(0,255,200,${p.a})`;c.fill()}
-  for(let i=0;i<pts.length;i++)for(let j=i+1;j<pts.length;j++){const dx=pts[i].x-pts[j].x,dy=pts[i].y-pts[j].y,d=Math.sqrt(dx*dx+dy*dy);if(d<140){c.beginPath();c.moveTo(pts[i].x,pts[i].y);c.lineTo(pts[j].x,pts[j].y);c.strokeStyle=`rgba(0,255,200,${.04*(1-d/140)})`;c.lineWidth=.5;c.stroke()}}
-  // Mouse attraction
-  for(const p of pts){const dx=mx-p.x,dy=my-p.y,d=Math.sqrt(dx*dx+dy*dy);if(d<200){p.x+=dx*.003;p.y+=dy*.003}}
-  requestAnimationFrame(draw)})();
+// ========== PARTICLES ==========
+const canvas = document.getElementById('particles');
+const ctx = canvas.getContext('2d');
+let particles = [];
+function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+resizeCanvas();
+window.addEventListener('resize', resizeCanvas);
 
-// === SVG GRID LINES ===
-const sg=document.getElementById('svgLinesG');
-for(let i=0;i<15;i++){const l=document.createElementNS('http://www.w3.org/2000/svg','line');
-  if(Math.random()>.5){l.setAttribute('x1','0');l.setAttribute('x2','100%');l.setAttribute('y1',Math.random()*100+'%');l.setAttribute('y2',Math.random()*100+'%')}
-  else{l.setAttribute('y1','0');l.setAttribute('y2','100%');l.setAttribute('x1',Math.random()*100+'%');l.setAttribute('x2',Math.random()*100+'%')}
-  sg.appendChild(l)}
+class Particle {
+    constructor() { this.reset(); }
+    reset() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.vx = (Math.random() - 0.5) * 0.3;
+        this.vy = (Math.random() - 0.5) * 0.3;
+        this.size = Math.random() * 1.5 + 0.5;
+        this.alpha = Math.random() * 0.4 + 0.1;
+    }
+    update() {
+        this.x += this.vx; this.y += this.vy;
+        if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset();
+    }
+    draw() {
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(0,255,200,${this.alpha})`;
+        ctx.fill();
+    }
+}
+for (let i = 0; i < 80; i++) particles.push(new Particle());
 
-// === TERMINAL DEMO ===
-const tb=document.getElementById('termBody');
-const demo=[
-  {t:'cmd',v:'Compare Quant Small Cap PMS vs Stallion Asset for a 2Cr aggressive client'},
-  {t:'wait',ms:600},
-  {t:'out',lines:[
-    '<span class="to">[tools: fund_lookup, portfolio_analyzer, calculator] Processing...</span>','',
-    '<span class="th">&#9608; Fund Comparison Report</span>',
-    '<span class="to">&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;&#9472;</span>','',
-    '<span class="to">                  Quant Small    Stallion</span>',
-    '<span class="to"> 1Y Returns       <span class="th">42.5%</span>          <span class="th">38.2%</span></span>',
-    '<span class="to"> 3Y CAGR          <span class="th">28.3%</span>          <span class="th">24.1%</span></span>',
-    '<span class="to"> Sharpe Ratio     <span class="th">1.45</span>           <span class="th">1.38</span></span>',
-    '<span class="to"> Max Drawdown     <span class="tw">-18.5%</span>         <span class="tw">-22.1%</span></span>',
-    '<span class="to"> AUM              &#8377;2,400 Cr      &#8377;850 Cr</span>','',
-    '<span class="th">&#9654; Recommendation:</span>',
-    '<span class="to">Quant Small Cap wins on risk-adjusted returns.</span>',
-    '<span class="to">Suggest 60% Quant + 40% Stallion for style diversification.</span>','',
-    '<span class="tw">&#9888; Both are small-cap. Add 20% large-cap PMS for downside protection.</span>','',
-    '<span class="to" style="opacity:.4">[4.2s | 3 tools | Confidence: High]</span>',
-  ]},
-  {t:'wait',ms:1500},
-  {t:'cmd',v:'/predict banking sector momentum'},
-  {t:'wait',ms:500},
-  {t:'out',lines:[
-    '<span class="to">[tools: market_data, momentum] Analyzing...</span>','',
-    '<span class="th">&#9608; Banking Sector Momentum</span>',
-    '<span class="to">RSI: 62 | Above 50 DMA &#10004; | Above 200 DMA &#10004;</span>',
-    '<span class="to">FII Flow: Accumulating (+&#8377;3,200 Cr this week)</span>','',
-    '<span class="th">Signal: BULLISH (78/100)</span>',
-    '<span class="to">Strong momentum. Good entry for 12-18 month horizon.</span>',
-  ]},
+function drawLines() {
+    for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 120) {
+                ctx.beginPath();
+                ctx.moveTo(particles[i].x, particles[i].y);
+                ctx.lineTo(particles[j].x, particles[j].y);
+                ctx.strokeStyle = `rgba(0,255,200,${0.06 * (1 - dist / 120)})`;
+                ctx.lineWidth = 0.5;
+                ctx.stroke();
+            }
+        }
+    }
+}
+
+function animateParticles() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach(p => { p.update(); p.draw(); });
+    drawLines();
+    requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+// ========== TERMINAL TYPEWRITER ==========
+const terminalBody = document.getElementById('terminalBody');
+const typewriterEl = document.getElementById('typewriter');
+const twCursor = document.getElementById('twCursor');
+
+const demoFlow = [
+    { type: 'cmd', text: 'Compare Quant Small Cap PMS vs Stallion Asset PMS for a 2Cr aggressive client' },
+    { type: 'pause', ms: 800 },
+    { type: 'output', lines: [
+        '<span class="t-output">[tools: fund_lookup, portfolio_analyzer, calculator] Processing...</span>',
+        '',
+        '<span class="t-highlight">Fund Comparison Report</span>',
+        '<span class="t-output">============================================</span>',
+        '',
+        '<span class="t-output">                  Quant Small    Stallion Asset</span>',
+        '<span class="t-output">1Y Returns        42.5%          38.2%</span>',
+        '<span class="t-output">3Y CAGR           28.3%          24.1%</span>',
+        '<span class="t-output">Sharpe Ratio      1.45           1.38</span>',
+        '<span class="t-output">Max Drawdown     -18.5%         -22.1%</span>',
+        '<span class="t-output">AUM               &#8377;2,400 Cr      &#8377;850 Cr</span>',
+        '',
+        '<span class="t-highlight">Recommendation for aggressive &#8377;2Cr client:</span>',
+        '<span class="t-output">Quant Small Cap has better risk-adjusted returns (higher</span>',
+        '<span class="t-output">Sharpe, lower drawdown). Recommend 60% Quant + 40% Stallion</span>',
+        '<span class="t-output">for diversification across fund manager styles.</span>',
+        '',
+        '<span class="t-warn">&#9888; Risk: Both are small-cap focused. Consider 20% allocation</span>',
+        '<span class="t-warn">to a large-cap PMS for downside protection.</span>',
+        '',
+        '<span class="t-output">[Response time: 4.2s | Tools: 3 | Confidence: High]</span>',
+    ]},
+    { type: 'pause', ms: 2000 },
+    { type: 'cmd', text: '/predict banking sector momentum' },
+    { type: 'pause', ms: 600 },
+    { type: 'output', lines: [
+        '<span class="t-output">[tools: market_data, momentum] Analyzing...</span>',
+        '',
+        '<span class="t-highlight">Banking Sector Momentum Signal</span>',
+        '<span class="t-output">RSI: 62 | Above 50 DMA | Above 200 DMA</span>',
+        '<span class="t-output">FII Flow: Accumulating (+&#8377;3,200 Cr this week)</span>',
+        '<span class="t-output">Relative Strength: Outperforming Nifty 50</span>',
+        '',
+        '<span class="t-highlight">Signal: BULLISH (Score: 78/100)</span>',
+        '<span class="t-output">Banking sector showing strong momentum. Good entry for</span>',
+        '<span class="t-output">clients with 12-18 month horizon.</span>',
+    ]},
 ];
 
-let termStarted=false;
-const tObs=new IntersectionObserver(es=>{if(es[0].isIntersecting&&!termStarted){termStarted=true;runTerm()}},{threshold:.3});
-tObs.observe(document.getElementById('demo'));
+let demoStarted = false;
+const terminalObserver = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting && !demoStarted) { demoStarted = true; runDemo(); }
+}, { threshold: 0.3 });
+terminalObserver.observe(document.querySelector('.terminal-section'));
 
-async function sl(ms){return new Promise(r=>setTimeout(r,ms))}
-async function typeCmd(text){
-  const row=document.createElement('div');
-  row.innerHTML='<span class="tp">$ </span><span class="tc"></span><span class="tcur"></span>';
-  tb.appendChild(row);
-  const sp=row.querySelector('.tc'),cu=row.querySelector('.tcur');
-  for(const ch of text){sp.textContent+=ch;tb.scrollTop=tb.scrollHeight;await sl(30)}
-  cu.remove();
+async function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+async function typeText(el, text, speed = 35) {
+    for (let i = 0; i < text.length; i++) { el.textContent += text[i]; await sleep(speed); }
 }
-async function runTerm(){
-  await sl(400);
-  for(const s of demo){
-    if(s.t==='cmd')await typeCmd(s.v);
-    else if(s.t==='wait')await sl(s.ms);
-    else if(s.t==='out'){for(const l of s.lines){const d=document.createElement('div');d.innerHTML=l||'&nbsp;';tb.appendChild(d);tb.scrollTop=tb.scrollHeight;await sl(40)}}
-  }
-  // final cursor
-  const fin=document.createElement('div');
-  fin.innerHTML='<span class="tp">$ </span><span class="tcur"></span>';
-  tb.appendChild(fin);
+
+let activeCmdEl = typewriterEl;
+let activeCursorEl = twCursor;
+
+async function runDemo() {
+    await sleep(500);
+    for (const step of demoFlow) {
+        if (step.type === 'cmd') {
+            activeCursorEl.style.display = 'inline-block';
+            await typeText(activeCmdEl, step.text);
+            activeCursorEl.style.display = 'none';
+            await sleep(400);
+        } else if (step.type === 'pause') {
+            await sleep(step.ms);
+        } else if (step.type === 'output') {
+            for (const line of step.lines) {
+                const div = document.createElement('div');
+                div.innerHTML = line || '&nbsp;';
+                terminalBody.appendChild(div);
+                terminalBody.scrollTop = terminalBody.scrollHeight;
+                await sleep(50);
+            }
+            // Create new prompt line for next command
+            const newPrompt = document.createElement('div');
+            const cmdSpan = document.createElement('span');
+            cmdSpan.className = 't-cmd';
+            const curSpan = document.createElement('span');
+            curSpan.className = 't-cursor';
+            curSpan.style.display = 'none';
+            newPrompt.innerHTML = '<span class="t-prompt">ultron ~$</span> ';
+            newPrompt.appendChild(cmdSpan);
+            newPrompt.appendChild(curSpan);
+            terminalBody.appendChild(newPrompt);
+            terminalBody.scrollTop = terminalBody.scrollHeight;
+            activeCmdEl = cmdSpan;
+            activeCursorEl = curSpan;
+        }
+    }
+    // Final blinking cursor
+    activeCursorEl.style.display = 'inline-block';
 }
 </script>
+
 </body>
 </html>

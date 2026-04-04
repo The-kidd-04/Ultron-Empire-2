@@ -304,34 +304,91 @@
         .surface-card h4 { font-size: 15px; font-weight: 600; position: relative; z-index: 1; }
         .surface-card p { font-size: 12px; color: var(--text-muted); margin-top: 6px; position: relative; z-index: 1; }
 
-        /* ========== TERMINAL DEMO ========== */
+        /* ========== eDEX-UI TERMINAL APP ========== */
         .terminal-section { position: relative; overflow: hidden; }
-        .terminal-wrap { max-width: 900px; margin: 0 auto; }
-        .terminal {
-            background: var(--bg); border: 1px solid var(--border);
-            border-radius: var(--radius); overflow: hidden;
-            box-shadow: 0 0 60px rgba(0,255,200,0.05), 0 20px 60px rgba(0,0,0,0.5);
+        .edex-wrap { max-width: 1200px; margin: 0 auto; }
+        .edex {
+            background: #05080d; border: 1px solid rgba(170,207,209,0.2);
+            border-radius: 12px; overflow: hidden;
+            box-shadow: 0 0 80px rgba(0,255,200,0.06), 0 30px 80px rgba(0,0,0,0.6);
+            font-family: 'JetBrains Mono', 'Fira Mono', monospace; color: rgb(170,207,209);
+            font-size: 11px; user-select: none; position: relative;
         }
-        .terminal-header {
-            display: flex; align-items: center; gap: 8px;
-            padding: 14px 20px; background: var(--surface);
-            border-bottom: 1px solid var(--border);
+        .edex-grid { display: grid; grid-template-columns: 200px 1fr 210px; min-height: 420px; }
+        /* Left Panel */
+        .edex-left { border-right: 1px solid rgba(170,207,209,0.12); display: flex; flex-direction: column; }
+        .edex-panel-title { font-size: 9px; letter-spacing: 2px; padding: 8px 12px; border-bottom: 1px solid rgba(170,207,209,0.1); display: flex; justify-content: space-between; opacity: 0.5; }
+        .edex-clock { text-align: center; padding: 12px 0; border-bottom: 1px solid rgba(170,207,209,0.1); }
+        .edex-clock h2 { font-size: 28px; font-weight: 300; letter-spacing: 3px; }
+        .edex-clock .date { font-size: 9px; opacity: 0.4; margin-top: 4px; }
+        .edex-wave { height: 32px; border-bottom: 1px solid rgba(170,207,209,0.1); position: relative; overflow: hidden; }
+        .edex-wave canvas { width: 100%; height: 100%; }
+        .edex-stats { padding: 8px 12px; border-bottom: 1px solid rgba(170,207,209,0.1); }
+        .edex-stat-row { display: flex; justify-content: space-between; padding: 2px 0; font-size: 10px; }
+        .edex-stat-row .lbl { opacity: 0.4; }
+        .edex-stat-row .val { opacity: 0.8; }
+        .edex-stat-row .up { color: #50c878; }
+        .edex-stat-row .down { color: #e85050; }
+        .edex-funds { padding: 8px 12px; flex: 1; overflow: hidden; }
+        .edex-funds-title { font-size: 9px; opacity: 0.4; letter-spacing: 1px; margin-bottom: 6px; }
+        .edex-fund-row { display: flex; font-size: 10px; padding: 1px 0; gap: 4px; }
+        .edex-fund-row .tag { width: 28px; opacity: 0.4; }
+        .edex-fund-row .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .edex-fund-row .ret { width: 40px; text-align: right; opacity: 0.7; }
+        /* Center - Terminal */
+        .edex-center { display: flex; flex-direction: column; }
+        .edex-tabs { display: flex; border-bottom: 1px solid rgba(170,207,209,0.2); }
+        .edex-tab { flex: 1; text-align: center; padding: 8px 0; font-size: 9px; letter-spacing: 2px; cursor: pointer; border-right: 1px solid rgba(170,207,209,0.08); transition: background 0.2s; background: rgba(170,207,209,0.02); }
+        .edex-tab:last-child { border-right: none; }
+        .edex-tab:hover { background: rgba(170,207,209,0.05); }
+        .edex-tab.active { background: rgba(170,207,209,0.06); border-bottom: 1px solid rgb(170,207,209); }
+        .edex-term { flex: 1; padding: 12px; overflow-y: auto; font-size: 11px; line-height: 1.8; }
+        .edex-term::-webkit-scrollbar { width: 4px; }
+        .edex-term::-webkit-scrollbar-thumb { background: rgba(170,207,209,0.3); }
+        .et-sys { opacity: 0.3; font-size: 10px; }
+        .et-usr { color: rgb(170,207,209); }
+        .et-usr::before { content: 'PS C:\\Ultron> '; opacity: 0.4; }
+        .et-ai { color: rgb(170,207,209); opacity: 0.85; white-space: pre-wrap; }
+        .et-hl { color: #06b6d4; }
+        .et-warn { color: #f43f5e; }
+        .et-tool { opacity: 0.4; font-size: 10px; }
+        .edex-input { display: flex; border-top: 1px solid rgba(170,207,209,0.2); }
+        .edex-prompt { padding: 8px 12px; opacity: 0.4; font-size: 10px; white-space: nowrap; }
+        .edex-field { flex: 1; background: transparent; border: none; color: rgb(170,207,209); font-family: 'JetBrains Mono', monospace; font-size: 11px; padding: 8px 0; outline: none; }
+        .edex-cursor { display: inline-block; width: 7px; height: 13px; background: rgb(170,207,209); animation: blink 1s step-end infinite; vertical-align: middle; }
+        @keyframes blink { 50% { opacity: 0; } }
+        /* Right Panel */
+        .edex-right { border-left: 1px solid rgba(170,207,209,0.12); display: flex; flex-direction: column; }
+        .edex-net-row { display: flex; justify-content: space-between; padding: 2px 0; font-size: 10px; }
+        .edex-net-row .lbl { opacity: 0.4; }
+        .edex-net-row .online { color: #50c878; }
+        .edex-globe-wrap { flex: 1; display: flex; align-items: center; justify-content: center; border-top: 1px solid rgba(170,207,209,0.1); border-bottom: 1px solid rgba(170,207,209,0.1); min-height: 120px; }
+        .edex-globe { width: 100px; height: 100px; opacity: 0.25; animation: globeSpin 25s linear infinite; }
+        @keyframes globeSpin { to { transform: rotate(360deg); } }
+        .edex-traffic { padding: 8px 12px; font-size: 9px; }
+        .edex-traffic-head { display: flex; justify-content: space-between; opacity: 0.4; margin-bottom: 4px; }
+        /* Bottom bar */
+        .edex-bottom { display: grid; grid-template-columns: 1fr 1.5fr; border-top: 1px solid rgba(170,207,209,0.12); }
+        .edex-files { padding: 8px 12px; border-right: 1px solid rgba(170,207,209,0.12); }
+        .edex-files-bar { font-size: 9px; opacity: 0.4; margin-bottom: 6px; display: flex; justify-content: space-between; }
+        .edex-files-grid { display: flex; flex-wrap: wrap; gap: 6px; }
+        .edex-file { text-align: center; width: 54px; font-size: 9px; opacity: 0.4; padding: 4px; border: 1px solid transparent; border-radius: 3px; transition: all 0.15s; cursor: pointer; }
+        .edex-file:hover { opacity: 1; border-color: rgba(170,207,209,0.2); background: rgba(170,207,209,0.03); }
+        .edex-file-icon { font-size: 18px; margin-bottom: 2px; }
+        .edex-kb { padding: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+        .edex-krow { display: flex; gap: 3px; }
+        .edex-key { width: 24px; height: 22px; border-radius: 3px; border: 1px solid rgba(170,207,209,0.0); display: flex; align-items: center; justify-content: center; font-size: 9px; transition: all 0.08s; }
+        .edex-key.active { background: rgb(170,207,209); color: #05080d; }
+        .edex-key.wide { width: 56px; font-size: 8px; letter-spacing: 0.5px; }
+        .edex-key.space { width: 180px; height: 24px; border: 1px solid rgba(170,207,209,0.15); }
+        .edex-key.enter { border: 1px solid rgba(170,207,209,0.15); width: 48px; }
+        /* Mobile hide complex parts */
+        @media (max-width: 900px) {
+            .edex-grid { grid-template-columns: 1fr; }
+            .edex-left, .edex-right { display: none; }
+            .edex-bottom { grid-template-columns: 1fr; }
+            .edex-kb { display: none; }
         }
-        .terminal-dot { width: 12px; height: 12px; border-radius: 50%; }
-        .terminal-dot.r { background: #ff5f57; }
-        .terminal-dot.y { background: #febc2e; }
-        .terminal-dot.g { background: #28c840; }
-        .terminal-title { flex: 1; text-align: center; font-size: 12px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
-        .terminal-body {
-            padding: 24px; font-family: 'JetBrains Mono', monospace;
-            font-size: 13px; line-height: 2; min-height: 300px;
-        }
-        .t-prompt { color: var(--neon); }
-        .t-cmd { color: var(--text); }
-        .t-output { color: var(--text-dim); }
-        .t-highlight { color: var(--cyan); }
-        .t-warn { color: var(--pink); }
-        .t-cursor { display: inline-block; width: 8px; height: 16px; background: var(--neon); animation: blink 1s step-end infinite; vertical-align: middle; margin-left: 2px; }
 
         /* ========== DOWNLOAD ========== */
         #download { background: var(--bg2); }
@@ -606,24 +663,114 @@
     </div>
 </section>
 
-<!-- Terminal Demo -->
+<!-- eDEX-UI Desktop App Demo -->
 <section class="terminal-section" id="terminal">
     <div class="section-header reveal">
         <span class="section-label">Live Demo</span>
         <div class="section-divider"></div>
-        <h2>See Ultron In Action</h2>
-        <p>Watch the AI analyst work through a real query</p>
+        <h2>The Ultron Command Center</h2>
+        <p>This is the actual desktop app — watch it run through real AI queries</p>
     </div>
-    <div class="terminal-wrap reveal">
-        <div class="terminal">
-            <div class="terminal-header">
-                <div class="terminal-dot r"></div>
-                <div class="terminal-dot y"></div>
-                <div class="terminal-dot g"></div>
-                <div class="terminal-title">ultron@empire ~ /analyst</div>
+    <div class="edex-wrap reveal">
+        <div class="edex">
+            <div class="edex-grid">
+                <!-- LEFT PANEL -->
+                <div class="edex-left">
+                    <div class="edex-panel-title"><span>PANEL</span><span>SYSTEM</span></div>
+                    <div class="edex-clock"><h2 id="edexClock">--:--:--</h2><div class="date" id="edexDate">2026</div></div>
+                    <div class="edex-wave"><canvas id="edexWave"></canvas></div>
+                    <div class="edex-stats">
+                        <div class="edex-stat-row"><span class="lbl">NIFTY 50</span><span class="val up">22,480 +0.6%</span></div>
+                        <div class="edex-stat-row"><span class="lbl">SENSEX</span><span class="val up">73,950 +0.5%</span></div>
+                        <div class="edex-stat-row"><span class="lbl">INDIA VIX</span><span class="val down">13.2 -4.1%</span></div>
+                        <div class="edex-stat-row"><span class="lbl">FII NET</span><span class="val up">+&#8377;1,280 Cr</span></div>
+                        <div class="edex-stat-row"><span class="lbl">DII NET</span><span class="val up">+&#8377;890 Cr</span></div>
+                    </div>
+                    <div class="edex-stats">
+                        <div class="edex-stat-row"><span class="lbl">AUM</span><span class="val">&#8377;12.0 Cr</span></div>
+                        <div class="edex-stat-row"><span class="lbl">CLIENTS</span><span class="val">3</span></div>
+                        <div class="edex-stat-row"><span class="lbl">ALERTS</span><span class="val" style="color:#febc2e">2 pending</span></div>
+                    </div>
+                    <div class="edex-funds">
+                        <div class="edex-funds-title">TOP FUNDS &nbsp; NAME | 1Y | SHARPE</div>
+                        <div class="edex-fund-row"><span class="tag">PMS</span><span class="name">Quant Small Cap</span><span class="ret">42.5%</span></div>
+                        <div class="edex-fund-row"><span class="tag">PMS</span><span class="name">Buoyant Capital</span><span class="ret">48.5%</span></div>
+                        <div class="edex-fund-row"><span class="tag">PMS</span><span class="name">Valentis Rising</span><span class="ret">52.8%</span></div>
+                        <div class="edex-fund-row"><span class="tag">PMS</span><span class="name">Stallion Asset</span><span class="ret">38.2%</span></div>
+                        <div class="edex-fund-row"><span class="tag">AIF</span><span class="name">Avendus Abs Ret</span><span class="ret">12.5%</span></div>
+                        <div class="edex-fund-row"><span class="tag">PMS</span><span class="name">Marcellus CCP</span><span class="ret">18.5%</span></div>
+                    </div>
+                </div>
+                <!-- CENTER TERMINAL -->
+                <div class="edex-center">
+                    <div class="edex-tabs">
+                        <div class="edex-tab active">MAIN</div>
+                        <div class="edex-tab">BRIEF</div>
+                        <div class="edex-tab">MARKET</div>
+                        <div class="edex-tab">PREDICT</div>
+                        <div class="edex-tab">CLIENTS</div>
+                    </div>
+                    <div class="edex-term" id="edexTerm">
+                        <div class="et-sys">Ultron Empire v4.0 — Command Center</div>
+                        <div class="et-sys">Connected to Claude AI. 50+ funds. 3 clients. 10 tools.</div>
+                        <div class="et-ai">Ready. Watching you type...</div>
+                    </div>
+                    <div class="edex-input">
+                        <div class="edex-prompt">PS C:\Ultron></div>
+                        <div class="edex-field" id="edexField"></div>
+                    </div>
+                </div>
+                <!-- RIGHT PANEL -->
+                <div class="edex-right">
+                    <div class="edex-panel-title"><span>PANEL</span><span>NETWORK</span></div>
+                    <div style="padding:8px 12px">
+                        <div class="edex-net-row"><span class="lbl">STATE</span><span class="online">ONLINE</span></div>
+                        <div class="edex-net-row"><span class="lbl">API</span><span style="opacity:.7">localhost:8000</span></div>
+                        <div class="edex-net-row"><span class="lbl">TELEGRAM</span><span class="online">CONNECTED</span></div>
+                        <div class="edex-net-row"><span class="lbl">PING</span><span style="opacity:.7">8ms</span></div>
+                    </div>
+                    <div class="edex-globe-wrap">
+                        <svg class="edex-globe" viewBox="0 0 200 200" fill="none" stroke="currentColor" stroke-width="0.5">
+                            <circle cx="100" cy="100" r="80"/><ellipse cx="100" cy="100" rx="50" ry="80"/>
+                            <ellipse cx="100" cy="100" rx="20" ry="80"/><line x1="20" y1="100" x2="180" y2="100"/>
+                            <ellipse cx="100" cy="100" rx="80" ry="30"/><ellipse cx="100" cy="100" rx="80" ry="55"/>
+                            <line x1="100" y1="20" x2="100" y2="180"/>
+                        </svg>
+                    </div>
+                    <div style="padding:8px 12px">
+                        <div class="edex-net-row"><span class="lbl">ENDPOINT</span><span style="opacity:.7">BKC, MUMBAI</span></div>
+                    </div>
+                    <div class="edex-traffic">
+                        <div class="edex-traffic-head"><span>NETWORK TRAFFIC</span><span>MB/S</span></div>
+                        <div class="edex-net-row"><span class="lbl">OUT</span><span style="opacity:.4">0.12</span></div>
+                        <div class="edex-net-row"><span class="lbl">IN</span><span style="opacity:.4">0.48</span></div>
+                    </div>
+                </div>
             </div>
-            <div class="terminal-body" id="terminalBody">
-                <div><span class="t-prompt">ultron ~$</span> <span class="t-cmd" id="typewriter"></span><span class="t-cursor" id="twCursor"></span></div>
+            <!-- BOTTOM -->
+            <div class="edex-bottom">
+                <div class="edex-files">
+                    <div class="edex-files-bar"><span>FUND BROWSER — 50+ STRATEGIES</span><span>C:\Ultron\knowledge_base</span></div>
+                    <div class="edex-files-grid">
+                        <div class="edex-file"><div class="edex-file-icon">&#x1F4CA;</div>Quant</div>
+                        <div class="edex-file"><div class="edex-file-icon">&#x1F4CA;</div>Stallion</div>
+                        <div class="edex-file"><div class="edex-file-icon">&#x1F4CA;</div>Marcellus</div>
+                        <div class="edex-file"><div class="edex-file-icon">&#x1F4CA;</div>Buoyant</div>
+                        <div class="edex-file"><div class="edex-file-icon">&#x1F464;</div>Rajesh</div>
+                        <div class="edex-file"><div class="edex-file-icon">&#x1F464;</div>Amit</div>
+                        <div class="edex-file"><div class="edex-file-icon">&#x1F464;</div>Sunita</div>
+                        <div class="edex-file"><div class="edex-file-icon">&#x1F522;</div>Calc</div>
+                        <div class="edex-file"><div class="edex-file-icon">&#x1F4F1;</div>Content</div>
+                        <div class="edex-file"><div class="edex-file-icon">&#x1F4C4;</div>Reports</div>
+                    </div>
+                </div>
+                <div class="edex-kb">
+                    <div class="edex-krow"><div class="edex-key wide">ESC</div><div class="edex-key">`</div><div class="edex-key">1</div><div class="edex-key">2</div><div class="edex-key">3</div><div class="edex-key">4</div><div class="edex-key">5</div><div class="edex-key">6</div><div class="edex-key">7</div><div class="edex-key">8</div><div class="edex-key">9</div><div class="edex-key">0</div><div class="edex-key">-</div><div class="edex-key">=</div><div class="edex-key wide">BACK</div></div>
+                    <div class="edex-krow"><div class="edex-key wide">TAB</div><div class="edex-key">Q</div><div class="edex-key">W</div><div class="edex-key">E</div><div class="edex-key">R</div><div class="edex-key">T</div><div class="edex-key">Y</div><div class="edex-key">U</div><div class="edex-key">I</div><div class="edex-key">O</div><div class="edex-key">P</div><div class="edex-key">[</div><div class="edex-key">]</div><div class="edex-key enter">ENTER</div></div>
+                    <div class="edex-krow"><div class="edex-key wide">CAPS</div><div class="edex-key">A</div><div class="edex-key">S</div><div class="edex-key">D</div><div class="edex-key">F</div><div class="edex-key">G</div><div class="edex-key">H</div><div class="edex-key">J</div><div class="edex-key">K</div><div class="edex-key">L</div><div class="edex-key">;</div><div class="edex-key">'</div><div class="edex-key">\</div></div>
+                    <div class="edex-krow"><div class="edex-key wide">SHIFT</div><div class="edex-key">Z</div><div class="edex-key">X</div><div class="edex-key">C</div><div class="edex-key">V</div><div class="edex-key">B</div><div class="edex-key">N</div><div class="edex-key">M</div><div class="edex-key">,</div><div class="edex-key">.</div><div class="edex-key">/</div><div class="edex-key wide">SHIFT</div></div>
+                    <div class="edex-krow"><div class="edex-key wide">CTRL</div><div class="edex-key">FN</div><div class="edex-key space"></div><div class="edex-key wide">ALT</div><div class="edex-key wide">CTRL</div></div>
+                </div>
             </div>
         </div>
     </div>
@@ -844,104 +991,246 @@ function animateParticles() {
 }
 animateParticles();
 
-// ========== TERMINAL TYPEWRITER ==========
-const terminalBody = document.getElementById('terminalBody');
-const typewriterEl = document.getElementById('typewriter');
-const twCursor = document.getElementById('twCursor');
+// ========== eDEX-UI CLOCK ==========
+function edexTick() {
+    const n = new Date();
+    const el = document.getElementById('edexClock');
+    if (el) el.textContent = n.toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour12: false });
+    const d = document.getElementById('edexDate');
+    if (d) d.textContent = n.toLocaleDateString('en-IN', { timeZone: 'Asia/Kolkata', year: 'numeric', month: 'short', day: 'numeric' }).toUpperCase();
+}
+edexTick(); setInterval(edexTick, 1000);
 
-const demoFlow = [
-    { type: 'cmd', text: 'Compare Quant Small Cap PMS vs Stallion Asset PMS for a 2Cr aggressive client' },
-    { type: 'pause', ms: 800 },
-    { type: 'output', lines: [
-        '<span class="t-output">[tools: fund_lookup, portfolio_analyzer, calculator] Processing...</span>',
-        '',
-        '<span class="t-highlight">Fund Comparison Report</span>',
-        '<span class="t-output">============================================</span>',
-        '',
-        '<span class="t-output">                  Quant Small    Stallion Asset</span>',
-        '<span class="t-output">1Y Returns        42.5%          38.2%</span>',
-        '<span class="t-output">3Y CAGR           28.3%          24.1%</span>',
-        '<span class="t-output">Sharpe Ratio      1.45           1.38</span>',
-        '<span class="t-output">Max Drawdown     -18.5%         -22.1%</span>',
-        '<span class="t-output">AUM               &#8377;2,400 Cr      &#8377;850 Cr</span>',
-        '',
-        '<span class="t-highlight">Recommendation for aggressive &#8377;2Cr client:</span>',
-        '<span class="t-output">Quant Small Cap has better risk-adjusted returns (higher</span>',
-        '<span class="t-output">Sharpe, lower drawdown). Recommend 60% Quant + 40% Stallion</span>',
-        '<span class="t-output">for diversification across fund manager styles.</span>',
-        '',
-        '<span class="t-warn">&#9888; Risk: Both are small-cap focused. Consider 20% allocation</span>',
-        '<span class="t-warn">to a large-cap PMS for downside protection.</span>',
-        '',
-        '<span class="t-output">[Response time: 4.2s | Tools: 3 | Confidence: High]</span>',
+// ========== eDEX WAVE ==========
+(function initEdexWave() {
+    const cv = document.getElementById('edexWave'); if (!cv) return;
+    const c = cv.getContext('2d'); let off = 0;
+    function draw() {
+        const w = cv.width = cv.parentElement.clientWidth, h = cv.height = cv.parentElement.clientHeight;
+        c.clearRect(0, 0, w, h); c.strokeStyle = 'rgba(170,207,209,0.3)'; c.lineWidth = 1; c.beginPath();
+        for (let x = 0; x < w; x++) { const y = h/2 + Math.sin((x+off)*0.06)*h*0.3 + Math.sin((x+off)*0.02)*h*0.15; x === 0 ? c.moveTo(x, y) : c.lineTo(x, y); }
+        c.stroke(); off += 0.7; requestAnimationFrame(draw);
+    }
+    setTimeout(draw, 200);
+})();
+
+// ========== eDEX KEYBOARD HIGHLIGHT ==========
+function pressKey(ch) {
+    const keys = document.querySelectorAll('.edex-key');
+    const upper = ch.toUpperCase();
+    keys.forEach(k => { if (k.textContent.trim() === upper) { k.classList.add('active'); setTimeout(() => k.classList.remove('active'), 120); } });
+}
+
+// ========== eDEX TERMINAL DEMO (5 min loop) ==========
+const edexTerm = document.getElementById('edexTerm');
+const edexField = document.getElementById('edexField');
+
+const QUERIES = [
+    // 1 - Fund Comparison
+    { cmd: 'Compare Quant Small Cap PMS vs Stallion Asset PMS for a 2Cr aggressive client', out: [
+        {c:'et-tool',t:'[tools: fund_lookup, portfolio_analyzer, calculator] Processing...'},
+        {c:'',t:''},
+        {c:'et-hl',t:'Fund Comparison Report'},
+        {c:'et-ai',t:'══════════════════════════════════════════════'},
+        {c:'',t:''},
+        {c:'et-ai',t:'                  Quant Small    Stallion'},
+        {c:'et-ai',t:' 1Y Returns       42.5%          38.2%'},
+        {c:'et-ai',t:' 3Y CAGR          28.3%          24.1%'},
+        {c:'et-ai',t:' Sharpe Ratio     1.45           1.38'},
+        {c:'et-ai',t:' Max Drawdown    -18.5%         -22.1%'},
+        {c:'et-ai',t:' AUM             \u20B92,400 Cr      \u20B9850 Cr'},
+        {c:'',t:''},
+        {c:'et-hl',t:'Recommendation: 60% Quant + 40% Stallion for style diversification.'},
+        {c:'et-warn',t:'\u26A0 Both small-cap. Add 20% large-cap PMS for downside protection.'},
+        {c:'',t:''},
+        {c:'et-tool',t:'[4.2s | 3 tools | Confidence: High]'},
     ]},
-    { type: 'pause', ms: 2000 },
-    { type: 'cmd', text: '/predict banking sector momentum' },
-    { type: 'pause', ms: 600 },
-    { type: 'output', lines: [
-        '<span class="t-output">[tools: market_data, momentum] Analyzing...</span>',
-        '',
-        '<span class="t-highlight">Banking Sector Momentum Signal</span>',
-        '<span class="t-output">RSI: 62 | Above 50 DMA | Above 200 DMA</span>',
-        '<span class="t-output">FII Flow: Accumulating (+&#8377;3,200 Cr this week)</span>',
-        '<span class="t-output">Relative Strength: Outperforming Nifty 50</span>',
-        '',
-        '<span class="t-highlight">Signal: BULLISH (Score: 78/100)</span>',
-        '<span class="t-output">Banking sector showing strong momentum. Good entry for</span>',
-        '<span class="t-output">clients with 12-18 month horizon.</span>',
+    // 2 - Prediction
+    { cmd: '/predict banking sector momentum', out: [
+        {c:'et-tool',t:'[tools: market_data, momentum] Analyzing...'},
+        {c:'',t:''},
+        {c:'et-hl',t:'Banking Sector Momentum Signal'},
+        {c:'et-ai',t:'RSI: 62 | Above 50 DMA \u2714 | Above 200 DMA \u2714'},
+        {c:'et-ai',t:'FII Flow: Accumulating (+\u20B93,200 Cr this week)'},
+        {c:'et-ai',t:'Relative Strength: Outperforming Nifty 50'},
+        {c:'',t:''},
+        {c:'et-hl',t:'Signal: BULLISH (Score: 78/100)'},
+        {c:'et-ai',t:'Strong momentum. Good entry for 12-18 month horizon.'},
+        {c:'',t:''},
+        {c:'et-tool',t:'[2.1s | 2 tools]'},
+    ]},
+    // 3 - Client Brief
+    { cmd: '/client Rajesh Mehta', out: [
+        {c:'et-tool',t:'[tools: client_lookup] Fetching...'},
+        {c:'',t:''},
+        {c:'et-hl',t:'Client Brief: Rajesh Mehta'},
+        {c:'et-ai',t:'Age: 55 | Risk: Conservative | AUM: \u20B95.2 Cr'},
+        {c:'et-ai',t:'Holdings: Marcellus CCP (40%), Avendus AIF (35%), FD (25%)'},
+        {c:'et-ai',t:'Last Review: 15 days ago | Next Due: 2 weeks'},
+        {c:'',t:''},
+        {c:'et-ai',t:'Recent Events:'},
+        {c:'et-ai',t:'  \u2022 Wife birthday next week (Mar 12)'},
+        {c:'et-ai',t:'  \u2022 FD maturing \u20B980L on Apr 1 \u2014 discuss PMS top-up'},
+        {c:'',t:''},
+        {c:'et-hl',t:'Talking Points:'},
+        {c:'et-ai',t:'1. Marcellus CCP up 4.2% since last review \u2014 reassure stability'},
+        {c:'et-ai',t:'2. Suggest moving maturing FD into low-vol PMS'},
+        {c:'et-ai',t:'3. Wish happy birthday to Mrs. Mehta (personalized touch)'},
+        {c:'',t:''},
+        {c:'et-tool',t:'[3.8s | 1 tool | Client Score: A+]'},
+    ]},
+    // 4 - Market
+    { cmd: '/market', out: [
+        {c:'et-tool',t:'[tools: market_data, news_search] Scanning...'},
+        {c:'',t:''},
+        {c:'et-hl',t:'Market Snapshot \u2014 Live'},
+        {c:'et-ai',t:'Nifty 50:    22,480  (+0.62%)   \u25B2'},
+        {c:'et-ai',t:'Sensex:      73,950  (+0.48%)   \u25B2'},
+        {c:'et-ai',t:'Bank Nifty:  48,120  (+0.91%)   \u25B2'},
+        {c:'et-ai',t:'India VIX:   13.2    (-4.10%)   \u25BC'},
+        {c:'',t:''},
+        {c:'et-ai',t:'FII: +\u20B91,280 Cr | DII: +\u20B9890 Cr | Advance/Decline: 1420/580'},
+        {c:'',t:''},
+        {c:'et-hl',t:'Top Sectors:'},
+        {c:'et-ai',t:'  Banking +0.91% | Auto +0.73% | Pharma +0.42%'},
+        {c:'et-warn',t:'  IT -0.31% | Metal -0.18%'},
+        {c:'',t:''},
+        {c:'et-ai',t:'Key News: SEBI eases PMS reporting norms. RBI holds rate at 6.5%.'},
+        {c:'',t:''},
+        {c:'et-tool',t:'[1.9s | 2 tools]'},
+    ]},
+    // 5 - Calculator
+    { cmd: '/calc cagr 1 3 5', out: [
+        {c:'et-tool',t:'[tools: calculator] Computing...'},
+        {c:'',t:''},
+        {c:'et-hl',t:'CAGR Calculation'},
+        {c:'et-ai',t:'Initial:  \u20B91.00 Cr'},
+        {c:'et-ai',t:'Final:    \u20B93.00 Cr'},
+        {c:'et-ai',t:'Period:   5 years'},
+        {c:'',t:''},
+        {c:'et-hl',t:'CAGR = 24.57%'},
+        {c:'',t:''},
+        {c:'et-ai',t:'Rule of 72: Money doubles every 2.9 years at this rate.'},
+        {c:'et-ai',t:'At 24.57% CAGR: \u20B91 Cr \u2192 \u20B93 Cr (5Y) \u2192 \u20B99 Cr (10Y) \u2192 \u20B927 Cr (15Y)'},
+        {c:'',t:''},
+        {c:'et-tool',t:'[0.3s | 1 tool]'},
+    ]},
+    // 6 - Content
+    { cmd: '/content instagram top-5-pms', out: [
+        {c:'et-tool',t:'[tools: fund_lookup, content_writer] Generating...'},
+        {c:'',t:''},
+        {c:'et-hl',t:'Instagram Post Draft'},
+        {c:'et-ai',t:''},
+        {c:'et-ai',t:'\uD83C\uDFC6 Top 5 PMS Returns This Month:'},
+        {c:'et-ai',t:''},
+        {c:'et-ai',t:'1. Valentis Rising Stars   52.8% (1Y)'},
+        {c:'et-ai',t:'2. Buoyant Capital Value   48.5% (1Y)'},
+        {c:'et-ai',t:'3. Quant Small Cap         42.5% (1Y)'},
+        {c:'et-ai',t:'4. Stallion Asset Core      38.2% (1Y)'},
+        {c:'et-ai',t:'5. Alchemy High Growth     35.2% (1Y)'},
+        {c:'et-ai',t:''},
+        {c:'et-ai',t:'\uD83D\uDCA1 Past performance \u2260 future returns'},
+        {c:'et-ai',t:'Min investment: \u20B950L | SEBI regulated'},
+        {c:'et-ai',t:''},
+        {c:'et-ai',t:'#PMS #Investing #WealthManagement #PMSSahiHai'},
+        {c:'',t:''},
+        {c:'et-tool',t:'[5.1s | 2 tools]'},
+    ]},
+    // 7 - Monte Carlo
+    { cmd: 'If Rajesh invests 2Cr 60% equity PMS + 40% debt AIF, chance of reaching 5Cr in 10 years?', out: [
+        {c:'et-tool',t:'[tools: monte_carlo, portfolio_analyzer] Running 10,000 simulations...'},
+        {c:'',t:''},
+        {c:'et-hl',t:'Monte Carlo Projection'},
+        {c:'et-ai',t:'Allocation: 60% Large Cap PMS + 40% Debt AIF'},
+        {c:'et-ai',t:'Investment: \u20B92.00 Cr | Target: \u20B95.00 Cr | Horizon: 10Y'},
+        {c:'',t:''},
+        {c:'et-ai',t:'Results (10,000 simulations):'},
+        {c:'et-ai',t:'  Best Case (95th):   \u20B98.4 Cr'},
+        {c:'et-ai',t:'  Median (50th):      \u20B94.8 Cr'},
+        {c:'et-ai',t:'  Worst Case (5th):   \u20B93.1 Cr'},
+        {c:'',t:''},
+        {c:'et-hl',t:'Probability of reaching \u20B95 Cr: 42%'},
+        {c:'',t:''},
+        {c:'et-ai',t:'To boost to 65% probability: increase equity to 75%'},
+        {c:'et-warn',t:'\u26A0 Higher equity = higher drawdown risk for conservative client'},
+        {c:'',t:''},
+        {c:'et-tool',t:'[6.8s | 2 tools | Simulations: 10,000]'},
+    ]},
+    // 8 - News
+    { cmd: '/news SEBI latest circular for PMS distributors', out: [
+        {c:'et-tool',t:'[tools: news_search, sebi_checker] Searching...'},
+        {c:'',t:''},
+        {c:'et-hl',t:'SEBI Update: PMS Regulatory Changes'},
+        {c:'',t:''},
+        {c:'et-ai',t:'1. \uD83D\uDCCB SEBI/HO/IMD/PMS/2026/001 (Mar 28, 2026)'},
+        {c:'et-ai',t:'   PMS minimum investment stays at \u20B950L'},
+        {c:'et-ai',t:'   New: Monthly portfolio disclosure mandatory'},
+        {c:'',t:''},
+        {c:'et-ai',t:'2. \uD83D\uDCCB SEBI/HO/IMD/AIF/2026/003 (Mar 20, 2026)'},
+        {c:'et-ai',t:'   AIF Cat III: Enhanced risk disclosure format'},
+        {c:'et-ai',t:'   Deadline: June 30, 2026'},
+        {c:'',t:''},
+        {c:'et-hl',t:'Impact on your practice:'},
+        {c:'et-ai',t:'Update client agreements with new disclosure format.'},
+        {c:'et-ai',t:'No fee structure changes. Compliance deadline: 90 days.'},
+        {c:'',t:''},
+        {c:'et-tool',t:'[3.4s | 2 tools]'},
     ]},
 ];
 
-let demoStarted = false;
-const terminalObserver = new IntersectionObserver((entries) => {
-    if (entries[0].isIntersecting && !demoStarted) { demoStarted = true; runDemo(); }
-}, { threshold: 0.3 });
-terminalObserver.observe(document.querySelector('.terminal-section'));
+let edexDemoStarted = false;
+const edexObserver = new IntersectionObserver((entries) => {
+    if (entries[0].isIntersecting && !edexDemoStarted) { edexDemoStarted = true; runEdexDemo(); }
+}, { threshold: 0.15 });
+edexObserver.observe(document.querySelector('.terminal-section'));
 
 async function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
-async function typeText(el, text, speed = 35) {
-    for (let i = 0; i < text.length; i++) { el.textContent += text[i]; await sleep(speed); }
+
+async function edexType(text) {
+    edexField.textContent = '';
+    for (const ch of text) {
+        edexField.textContent += ch;
+        pressKey(ch);
+        await sleep(28 + Math.random() * 20);
+    }
 }
 
-let activeCmdEl = typewriterEl;
-let activeCursorEl = twCursor;
+function edexAddLine(cls, text) {
+    const d = document.createElement('div');
+    if (cls) d.className = cls;
+    d.textContent = text;
+    edexTerm.appendChild(d);
+    edexTerm.scrollTop = edexTerm.scrollHeight;
+}
 
-async function runDemo() {
-    await sleep(500);
-    for (const step of demoFlow) {
-        if (step.type === 'cmd') {
-            activeCursorEl.style.display = 'inline-block';
-            await typeText(activeCmdEl, step.text);
-            activeCursorEl.style.display = 'none';
-            await sleep(400);
-        } else if (step.type === 'pause') {
-            await sleep(step.ms);
-        } else if (step.type === 'output') {
-            for (const line of step.lines) {
-                const div = document.createElement('div');
-                div.innerHTML = line || '&nbsp;';
-                terminalBody.appendChild(div);
-                terminalBody.scrollTop = terminalBody.scrollHeight;
-                await sleep(50);
+async function runEdexDemo() {
+    await sleep(600);
+    while (true) {
+        for (const q of QUERIES) {
+            // Type command with keyboard highlighting
+            await edexType(q.cmd);
+            await sleep(300);
+            // Show as user line
+            edexAddLine('et-usr', q.cmd);
+            edexField.textContent = '';
+            await sleep(600);
+            // Output lines
+            for (const line of q.out) {
+                if (!line.t) { edexAddLine('', '\u00A0'); }
+                else { edexAddLine(line.c, line.t); }
+                edexTerm.scrollTop = edexTerm.scrollHeight;
+                await sleep(55);
             }
-            // Create new prompt line for next command
-            const newPrompt = document.createElement('div');
-            const cmdSpan = document.createElement('span');
-            cmdSpan.className = 't-cmd';
-            const curSpan = document.createElement('span');
-            curSpan.className = 't-cursor';
-            curSpan.style.display = 'none';
-            newPrompt.innerHTML = '<span class="t-prompt">ultron ~$</span> ';
-            newPrompt.appendChild(cmdSpan);
-            newPrompt.appendChild(curSpan);
-            terminalBody.appendChild(newPrompt);
-            terminalBody.scrollTop = terminalBody.scrollHeight;
-            activeCmdEl = cmdSpan;
-            activeCursorEl = curSpan;
+            edexAddLine('', '\u00A0');
+            // Wait between queries
+            await sleep(8000);
+            // Keep terminal manageable - trim old lines if too many
+            while (edexTerm.children.length > 80) edexTerm.removeChild(edexTerm.firstChild);
         }
+        // After all queries, pause then loop
+        edexAddLine('et-sys', '--- Demo loop restarting ---');
+        await sleep(5000);
     }
-    // Final blinking cursor
-    activeCursorEl.style.display = 'inline-block';
 }
 </script>
 

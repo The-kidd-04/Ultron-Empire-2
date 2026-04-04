@@ -103,10 +103,8 @@ body{
 .cpu-sub{font-size:0.85vh;opacity:0.35;margin-bottom:0.4vh}
 .chart-box{height:12vh;margin-bottom:0.5vh;position:relative;overflow:hidden;cursor:pointer;border:1px solid rgba(170,207,209,0.06);border-radius:0.3vh;transition:border-color 0.2s}
 .chart-box:hover{border-color:rgba(170,207,209,0.2)}
-.tv-chart{width:100%;height:100%}
-.tv-chart iframe{width:100%;height:100%;border:none}
-.chart-click-hint{position:absolute;bottom:0.3vh;right:0.5vh;font-size:0.65vh;color:var(--c15);opacity:0;transition:opacity 0.2s;letter-spacing:0.05vh}
-.chart-box:hover .chart-click-hint{opacity:1}
+.chart-box iframe{border:none}
+.chart-box .tradingview-widget-container,.chart-box .tradingview-widget-container__widget{width:100% !important;height:100% !important}
 
 .stat-grid{display:flex;gap:0.5vh;font-size:0.9vh;border-top:0.1vh solid var(--c3);padding:0.5vh 1vh}
 .stat-grid div{flex:1;text-align:center}
@@ -263,15 +261,13 @@ body{
     <div class="info-row"><b>PLATFORM</b> PMS Sahi Hai Wealth OS</div>
     <div class="info-row"><b>ENGINE</b> Claude AI + LangGraph</div>
     <div class="cpu-section">
-      <div class="cpu-title">NIFTY 50 — LIVE</div>
+      <div class="cpu-title">NIFTY 50 — LIVE <span style="float:right;opacity:0.3;font-size:0.7vh">click to expand</span></div>
       <div class="chart-box" onclick="window.open('https://www.tradingview.com/chart/?symbol=NSE%3ANIFTY','_blank')">
-        <iframe src="https://s.tradingview.com/widgetembed/?hideideas=1&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en&utm_source=localhost#%7B%22symbol%22%3A%22NSE%3ANIFTY%22%2C%22frameElementId%22%3A%22tv1%22%2C%22interval%22%3A%225%22%2C%22hide_top_toolbar%22%3A%221%22%2C%22hide_legend%22%3A%221%22%2C%22hide_side_toolbar%22%3A%221%22%2C%22save_image%22%3A%220%22%2C%22studies%22%3A%5B%5D%2C%22theme%22%3A%22dark%22%2C%22style%22%3A%223%22%2C%22timezone%22%3A%22Asia%2FKolkata%22%2C%22withdateranges%22%3A%220%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%7D" style="width:100%;height:100%;border:none"></iframe>
-        <div class="chart-click-hint">click to expand</div>
+        <div id="tvNifty"></div>
       </div>
-      <div class="cpu-title">SENSEX — LIVE</div>
+      <div class="cpu-title">SENSEX — LIVE <span style="float:right;opacity:0.3;font-size:0.7vh">click to expand</span></div>
       <div class="chart-box" onclick="window.open('https://www.tradingview.com/chart/?symbol=BSE%3ASENSEX','_blank')">
-        <iframe src="https://s.tradingview.com/widgetembed/?hideideas=1&overrides=%7B%7D&enabled_features=%5B%5D&disabled_features=%5B%5D&locale=en&utm_source=localhost#%7B%22symbol%22%3A%22BSE%3ASENSEX%22%2C%22frameElementId%22%3A%22tv2%22%2C%22interval%22%3A%225%22%2C%22hide_top_toolbar%22%3A%221%22%2C%22hide_legend%22%3A%221%22%2C%22hide_side_toolbar%22%3A%221%22%2C%22save_image%22%3A%220%22%2C%22studies%22%3A%5B%5D%2C%22theme%22%3A%22dark%22%2C%22style%22%3A%223%22%2C%22timezone%22%3A%22Asia%2FKolkata%22%2C%22withdateranges%22%3A%220%22%2C%22width%22%3A%22100%25%22%2C%22height%22%3A%22100%25%22%7D" style="width:100%;height:100%;border:none"></iframe>
-        <div class="chart-click-hint">click to expand</div>
+        <div id="tvSensex"></div>
       </div>
     </div>
     <div class="stat-grid">
@@ -529,7 +525,51 @@ setInterval(fetchLiveNews,300000); // refresh every 5 min
 
 // === FUND SPLIT (static) ===
 
-// === TRADINGVIEW CHARTS (iframe embeds — no JS needed) ===
+// === TRADINGVIEW CHARTS ===
+function loadTV(id,symbol){
+  const el=document.getElementById(id);if(!el)return;
+  const wrap=document.createElement('div');
+  wrap.className='tradingview-widget-container';
+  wrap.style.cssText='width:100%;height:100%';
+  const inner=document.createElement('div');
+  inner.className='tradingview-widget-container__widget';
+  inner.style.cssText='width:100%;height:100%';
+  wrap.appendChild(inner);
+  const s=document.createElement('script');
+  s.type='text/javascript';
+  s.src='https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js';
+  s.async=true;
+  s.textContent=JSON.stringify({
+    symbols:[[symbol]],
+    chartOnly:true,
+    width:'100%',
+    height:'100%',
+    locale:'en',
+    colorTheme:'dark',
+    autosize:true,
+    showVolume:false,
+    showMA:false,
+    hideDateRanges:true,
+    hideMarketStatus:true,
+    hideSymbolLogo:true,
+    scalePosition:'no',
+    scaleMode:'Normal',
+    fontFamily:'Fira Mono, monospace',
+    fontSize:'10',
+    noTimeScale:true,
+    valuesTracking:'0',
+    changeMode:'no-values',
+    chartType:'area',
+    lineColor:'rgba(170,207,209,0.6)',
+    bottomColor:'rgba(170,207,209,0.05)',
+    topColor:'rgba(170,207,209,0.15)',
+    gridLineColor:'rgba(170,207,209,0.03)',
+    backgroundColor:'rgba(0,0,0,0)'
+  });
+  wrap.appendChild(s);
+  el.appendChild(wrap);
+}
+setTimeout(()=>{loadTV('tvNifty','NSE:NIFTY');loadTV('tvSensex','BSE:SENSEX')},300);
 
 // === KEYBOARD ===
 document.addEventListener('keydown',e=>{document.querySelectorAll('.kk').forEach(k=>{if(k.textContent.trim()===e.key.toUpperCase()||(e.key==='Enter'&&k.textContent==='ENTER')||(e.key===' '&&k.classList.contains('space'))||(e.key==='Backspace'&&k.textContent==='BACK')){k.classList.add('active');setTimeout(()=>k.classList.remove('active'),120)}})});

@@ -21,13 +21,25 @@
         "backgroundColor": "#003235"
       }
     },
+    "web": {
+      "bundler": "metro",
+      "output": "static",
+      "favicon": "./assets/favicon.png"
+    },
     "plugins": [
       "expo-router",
       "expo-notifications",
-      "expo-av"
+      "expo-av",
+      "expo-secure-store"
     ],
+    "experiments": {
+      "typedRoutes": true
+    },
     "extra": {
       "apiUrl": "https://api.ultron.pmssahihai.com",
+      "router": {
+        "origin": false
+      },
       "eas": {
         "projectId": "ultron-empire"
       }

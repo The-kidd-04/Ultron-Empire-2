@@ -1,0 +1,59 @@
+{
+  "name": "ultron-empire-desktop",
+  "version": "3.0.0",
+  "description": "Ultron Empire — eDEX-UI Style AI Wealth Command Center",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dev": "electron . --dev",
+    "build": "electron-builder",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux"
+  },
+  "build": {
+    "appId": "com.pmssahihai.ultron",
+    "productName": "Ultron Empire",
+    "directories": { "output": "dist" },
+    "files": [
+      "main.js",
+      "preload.js",
+      "index.html",
+      "icon.png"
+    ],
+    "win": {
+      "target": ["nsis", "portable"],
+      "icon": "icon.png",
+      "artifactName": "UltronEmpire-${version}-win.${ext}"
+    },
+    "mac": {
+      "target": ["dmg", "zip"],
+      "icon": "icon.png",
+      "category": "public.app-category.finance",
+      "artifactName": "UltronEmpire-${version}-mac.${ext}"
+    },
+    "linux": {
+      "target": ["AppImage", "deb"],
+      "category": "Office;Finance",
+      "artifactName": "UltronEmpire-${version}-linux.${ext}"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "icon.png"
+    },
+    "publish": {
+      "provider": "github",
+      "owner": "The-kidd-04",
+      "repo": "Ultron-V1"
+    }
+  },
+  "dependencies": {
+    "electron": "^33.0.0",
+    "electron-updater": "^6.3.0",
+    "electron-log": "^5.2.0"
+  },
+  "devDependencies": {
+    "electron-builder": "^25.0.0"
+  }
+}

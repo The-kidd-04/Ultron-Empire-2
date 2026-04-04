@@ -59,6 +59,13 @@ class Settings(BaseSettings):
     APP_PORT: int = 8000
     SECRET_KEY: str = "change-me-in-production"
 
+    # API Security
+    API_KEYS: str = ""                  # comma-separated valid API keys
+    JWT_SECRET: str = "change-me"
+    JWT_ALGORITHM: str = "HS256"
+    JWT_EXPIRE_MINUTES: int = 1440      # 24 hours
+    RATE_LIMIT_PER_MINUTE: int = 60
+
     # Brand
     BRAND_NAME: str = "PMS Sahi Hai"
     BRAND_WEBSITE: str = "https://www.pmssahihai.com"

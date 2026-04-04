@@ -27,6 +27,7 @@ from backend.tools.client_lookup import client_lookup_tool
 from backend.tools.portfolio_analyzer import portfolio_analyzer_tool
 from backend.tools.calculator import calculator_tool
 from backend.tools.backtester import backtester_tool
+from backend.tools.semantic_search import semantic_search_tool
 from backend.prompts.analyst_system import ANALYST_SYSTEM_PROMPT
 from backend.config import settings
 
@@ -82,6 +83,7 @@ tools = [
     portfolio_analyzer_tool,
     calculator_tool,
     backtester_tool,
+    semantic_search_tool,
 ]
 
 # Create the ReAct agent using LangGraph prebuilt

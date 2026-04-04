@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>ULTRON EMPIRE</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500;700&family=Share+Tech+Mono&family=Creepster&family=Nosifer&display=swap');
+
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --c:rgb(170,207,209);
+  --c8:rgba(170,207,209,0.8);
+  --c5:rgba(170,207,209,0.5);
+  --c3:rgba(170,207,209,0.3);
+  --c15:rgba(170,207,209,0.15);
+  --c1:rgba(170,207,209,0.1);
+  --c05:rgba(170,207,209,0.05);
+  --bg:#05080d;
+}
+html,body{width:100%;height:100%;overflow:hidden}
+body{
+  background:var(--bg);color:var(--c);
+  font-family:'Fira Mono','Share Tech Mono',monospace;
+  font-size:1.4vh;user-select:none;
+  display:flex;flex-direction:column;
+  position:relative;
+}
+
+/* === CREEPY BACKGROUND === */
+.bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+
+/* Messy black texture */
+.bg-noise{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(30,5,5,0.4), transparent 60%),
+    radial-gradient(ellipse at 80% 30%, rgba(20,0,0,0.3), transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(10,5,15,0.3), transparent 50%);
+}
+.bg-noise::after{
+  content:'';position:absolute;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E");
+  mix-blend-mode:overlay;
+}
+
+/* Creepy text canvas */
+#bgText{position:absolute;inset:0;opacity:1}
+
+/* All real content above background */
+.top,.bottom{position:relative;z-index:1}
+.settings-overlay{z-index:200}
+
+/* === GLASS EFFECT (iPhone 16/17 style) === */
+.glass{
+  background:rgba(5,8,13,0.5) !important;
+  backdrop-filter:blur(40px) saturate(1.6);
+  -webkit-backdrop-filter:blur(40px) saturate(1.6);
+  border:1px solid rgba(170,207,209,0.08) !important;
+  box-shadow:
+    0 8px 32px rgba(0,0,0,0.3),
+    inset 0 1px 0 rgba(255,255,255,0.04),
+    inset 0 -1px 0 rgba(0,0,0,0.2);
+}
+.glass-light{
+  background:rgba(10,15,22,0.45) !important;
+  backdrop-filter:blur(30px) saturate(1.4);
+  -webkit-backdrop-filter:blur(30px) saturate(1.4);
+  border:1px solid rgba(170,207,209,0.06) !important;
+  box-shadow:0 4px 20px rgba(0,0,0,0.25),inset 0 1px 0 rgba(255,255,255,0.03);
+}
+.glass-tile{
+  background:rgba(8,12,18,0.5) !important;
+  backdrop-filter:blur(24px) saturate(1.3);
+  -webkit-backdrop-filter:blur(24px) saturate(1.3);
+  border:1px solid rgba(170,207,209,0.05) !important;
+  border-radius:0.4vh;
+  box-shadow:0 2px 12px rgba(0,0,0,0.2),inset 0 1px 0 rgba(255,255,255,0.02);
+  transition:all .2s;
+}
+.glass-tile:hover{
+  background:rgba(15,20,30,0.55) !important;
+  border-color:rgba(170,207,209,0.12) !important;
+  box-shadow:0 4px 20px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.04);
+}
+
+/* === TOP SECTION (60% height) === */
+.top{display:flex;height:60%}
+
+/* === LEFT PANEL === */
+.col-left{width:17vw;display:flex;flex-direction:column;flex-shrink:0;background:rgba(5,8,13,0.5);backdrop-filter:blur(40px) saturate(1.6);-webkit-backdrop-filter:blur(40px) saturate(1.6);border-right:1px solid rgba(170,207,209,0.06)}
+.panel-head{font-size:1vh;padding:0.6vh 1vh;display:flex;justify-content:space-between;letter-spacing:0.2vh;border-bottom:1px solid rgba(170,207,209,0.08);align-items:center;background:rgba(170,207,209,0.03)}
+
+.clock{text-align:center;padding:1.5vh 0;border-bottom:1px solid rgba(170,207,209,0.06);background:rgba(170,207,209,0.02)}
+.clock h1{font-size:5vh;font-weight:300;letter-spacing:0.6vh}
+.sysinfo{font-size:0.95vh;padding:0.6vh 1vh;border-bottom:0.1vh solid var(--c3);display:flex;gap:1vh;flex-wrap:wrap}
+.sysinfo span{opacity:0.6}
+
+.info-row{font-size:0.9vh;padding:0.4vh 1vh;opacity:0.5;letter-spacing:0.05vh}
+.info-row b{font-weight:500;opacity:0.8}
+
+.cpu-section{padding:0.5vh 1vh;border-top:0.1vh solid var(--c3)}
+.cpu-title{font-size:0.9vh;opacity:0.6;letter-spacing:0.1vh;margin-bottom:0.2vh}
+.cpu-sub{font-size:0.85vh;opacity:0.35;margin-bottom:0.4vh}
+.chart-box{height:12vh;margin-bottom:0.5vh;position:relative;overflow:hidden;cursor:pointer;border:1px solid rgba(170,207,209,0.06);border-radius:0.3vh;transition:border-color 0.2s}
+.chart-box:hover{border-color:rgba(170,207,209,0.2)}
+.chart-box iframe{border:none}
+.chart-box .tradingview-widget-container,.chart-box .tradingview-widget-container__widget{width:100% !important;height:100% !important}
+
+.stat-grid{display:flex;gap:0.5vh;font-size:0.9vh;border-top:0.1vh solid var(--c3);padding:0.5vh 1vh}
+.stat-grid div{flex:1;text-align:center}
+.stat-grid .val{font-size:1.2vh;font-weight:500}
+
+.mem-section{padding:0.5vh 1vh;border-top:0.1vh solid var(--c3)}
+.mem-head{font-size:0.9vh;display:flex;justify-content:space-between;opacity:0.6;margin-bottom:0.4vh}
+.membar{display:flex;gap:1px;flex-wrap:wrap;margin-bottom:0.4vh}
+.memcell{width:0.6vh;height:1.3vh;background:var(--c3)}
+.memcell.on{background:var(--c)}
+.fund-split{margin-bottom:0.5vh}
+.fs-bar{height:1.4vh;background:rgba(170,207,209,0.06);margin-bottom:0.3vh;position:relative;border-radius:0.2vh;overflow:hidden}
+.fs-fill{height:100%;border-radius:0.2vh;transition:width 0.5s}
+.fs-label{position:absolute;top:0;left:0.5vh;line-height:1.4vh;font-size:0.8vh;color:var(--c8);letter-spacing:0.05vh}
+.swap-row{font-size:0.8vh;display:flex;align-items:center;gap:0.5vh;opacity:0.4}
+.swap-bar{flex:1;height:0.2vh;background:var(--c3);position:relative}
+.swap-fill{position:absolute;top:0;left:0;height:100%;background:var(--c5)}
+
+.proc-section{padding:0.5vh 1vh;border-top:0.1vh solid var(--c3);flex:1;overflow:hidden}
+.proc-title{font-size:0.9vh;opacity:0.4;letter-spacing:0.1vh;margin-bottom:0.4vh}
+.proc-row{display:flex;font-size:0.9vh;padding:0.15vh 0;gap:0.5vh}
+.proc-row .pid{width:4.5vh;opacity:0.4}
+.proc-row .name{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.proc-row .cpu{width:4vh;text-align:right;opacity:0.6}
+.proc-row .mem{width:3.5vh;text-align:right;opacity:0.6}
+
+/* === CENTER TERMINAL === */
+.col-center{flex:1;display:flex;flex-direction:column;border:1px solid rgba(170,207,209,0.1);border-radius:0.6vh;overflow:hidden;margin:0.3vh;background:rgba(5,8,13,0.5);backdrop-filter:blur(40px) saturate(1.6);-webkit-backdrop-filter:blur(40px) saturate(1.6);box-shadow:0 8px 32px rgba(0,0,0,0.3),inset 0 1px 0 rgba(255,255,255,0.03)}
+.tabs{display:flex;border-bottom:1px solid rgba(170,207,209,0.1)}
+.tab{flex:1;text-align:center;font-size:1vh;padding:0.8vh 0;letter-spacing:0.2vh;cursor:pointer;border-right:1px solid rgba(170,207,209,0.05);background:rgba(170,207,209,0.02);transition:all 0.2s}
+.tab:last-child{border-right:none}
+.tab:hover{background:rgba(170,207,209,0.06)}
+.tab.active{background:rgba(170,207,209,0.06);border-bottom:2px solid var(--c);box-shadow:inset 0 -4px 12px rgba(170,207,209,0.04)}
+.term{flex:1;padding:0.8vh;overflow-y:auto;font-size:1.3vh;line-height:1.7;background:rgba(3,5,8,0.5)}
+.term::-webkit-scrollbar{width:0.5vh}
+.term::-webkit-scrollbar-track{background:var(--c05)}
+.term::-webkit-scrollbar-thumb{background:var(--c3)}
+.tm{margin-bottom:0.15vh}
+.tmu{color:var(--c)}.tmu::before{content:'PS C:\\Ultron> ';opacity:0.4}
+.tma{color:var(--c);opacity:0.85;white-space:pre-wrap}
+.tms{opacity:0.3;font-size:1.1vh}
+.ibar{display:flex;border-top:1px solid rgba(170,207,209,0.1);background:rgba(5,8,13,0.5);position:relative}
+.iprompt{padding:0.8vh 1vh;opacity:0.4;font-size:1.2vh;white-space:nowrap}
+.ifield{flex:1;background:transparent;border:none;color:var(--c);font-family:'Fira Mono',monospace;font-size:1.3vh;padding:0.8vh 0;outline:none;caret-color:var(--c)}
+
+/* Autocomplete */
+.autocomplete{position:absolute;bottom:100%;left:0;right:0;background:rgba(8,14,22,0.5);backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);border:1px solid rgba(170,207,209,0.1);max-height:22vh;overflow-y:auto;display:none;z-index:100;border-radius:0.4vh 0.4vh 0 0}
+.autocomplete.show{display:block}
+.ac-item{padding:0.5vh 1vh;font-size:1vh;cursor:pointer;transition:all 0.1s}
+.ac-item:hover,.ac-item.selected{background:var(--c1)}
+.ac-cmd{opacity:1}.ac-desc{opacity:0.3;margin-left:1vh;font-size:0.9vh}
+
+/* Loading */
+.spinner{display:inline-block;width:1.2vh;height:1.2vh;border:0.2vh solid var(--c3);border-top-color:var(--c);border-radius:50%;animation:spin 0.6s linear infinite;margin-right:0.5vh;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+.tm.loading{opacity:0.5;display:flex;align-items:center}
+
+/* === RIGHT PANEL === */
+.col-right{width:18vw;display:flex;flex-direction:column;flex-shrink:0;background:rgba(5,8,13,0.5);backdrop-filter:blur(40px) saturate(1.6);-webkit-backdrop-filter:blur(40px) saturate(1.6);border-left:1px solid rgba(170,207,209,0.06)}
+.net-section{padding:0.5vh 1vh;font-size:0.9vh;border-top:0.1vh solid var(--c3)}
+.net-row{display:flex;justify-content:space-between;padding:0.2vh 0}
+.net-row .lbl{opacity:0.4;letter-spacing:0.1vh}
+.net-row .val{opacity:0.7}
+.online{color:#50c878}
+.news-feed{flex:1;display:flex;flex-direction:column;border-top:1px solid rgba(170,207,209,0.06);overflow:hidden}
+.news-title{font-size:0.85vh;letter-spacing:0.2vh;padding:0.5vh 1vh;opacity:0.4;border-bottom:1px solid rgba(170,207,209,0.06)}
+.news-scroll{flex:1;overflow-y:auto;padding:0.3vh 0}
+.news-scroll::-webkit-scrollbar{width:0.3vh}
+.news-scroll::-webkit-scrollbar-thumb{background:var(--c15)}
+.news-item{padding:0.4vh 1vh;font-size:0.85vh;display:flex;gap:0.8vh;border-bottom:1px solid rgba(170,207,209,0.03);transition:background 0.2s}
+.news-item:hover{background:rgba(170,207,209,0.04)}
+.news-item a{color:var(--c5);text-decoration:none;display:flex;gap:0.8vh;width:100%}
+.news-item a:hover .news-text{color:var(--c8);text-decoration:underline}
+.news-time{color:var(--c3);white-space:nowrap;min-width:3.5vh}
+.news-text{color:var(--c5);line-height:1.4;transition:color 0.2s}
+.news-src{font-size:0.7vh;color:var(--c15);margin-top:0.1vh}
+.traffic-section{padding:0.5vh 1vh;border-top:0.1vh solid var(--c3);font-size:0.8vh}
+.traffic-head{display:flex;justify-content:space-between;opacity:0.4;margin-bottom:0.3vh}
+.traffic-row{display:flex;justify-content:space-between;opacity:0.3;padding:0.1vh 0}
+
+/* === BOTTOM SECTION (40% height) === */
+.bottom{display:flex;height:40%;border-top:1px solid rgba(170,207,209,0.06)}
+
+/* File Browser */
+.files{width:42%;display:flex;flex-direction:column;overflow:hidden;background:rgba(5,8,13,0.5);backdrop-filter:blur(35px) saturate(1.5);-webkit-backdrop-filter:blur(35px) saturate(1.5);border-right:1px solid rgba(170,207,209,0.06)}
+.files-bar{font-size:0.85vh;padding:0.4vh 1vh;display:flex;justify-content:space-between;border-bottom:0.1vh solid var(--c3);opacity:0.4;letter-spacing:0.05vh}
+.files-grid{flex:1;display:grid;grid-template-columns:repeat(auto-fill,8vh);gap:0.3vh;padding:0.6vh;overflow-y:auto;align-content:start}
+.files-grid::-webkit-scrollbar{width:0.4vh}
+.files-grid::-webkit-scrollbar-thumb{background:var(--c3)}
+.file-item{display:flex;flex-direction:column;align-items:center;padding:0.6vh 0.3vh;cursor:pointer;border:1px solid transparent;border-radius:0.5vh;font-size:0.85vh;opacity:0.45;transition:all 0.2s}
+.file-item:hover{opacity:1;border-color:rgba(170,207,209,0.12);background:rgba(170,207,209,0.06);box-shadow:0 2px 8px rgba(0,0,0,0.2)}
+.file-icon{font-size:3vh;margin-bottom:0.3vh}
+.file-label{text-align:center;word-break:break-all;line-height:1.2}
+.disk-bar{margin:0 1vh;height:0.7vh;background:var(--c1)}
+.disk-fill{height:100%;background:var(--c5)}
+.disk-label{font-size:0.8vh;padding:0.2vh 1vh;opacity:0.35}
+
+/* Keyboard */
+.kb{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0.5vh 1vh;background:rgba(5,8,13,0.5);backdrop-filter:blur(35px) saturate(1.5);-webkit-backdrop-filter:blur(35px) saturate(1.5)}
+.krow{display:flex;margin:0.5vh 0;align-items:center;justify-content:center}
+.kk{
+  height:3vw;min-width:3vw;border-radius:0.6vh;
+  background:rgba(170,207,209,0.03);border:1px solid rgba(170,207,209,0.06);
+  margin:0 0.5vh;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:1.7vh;transition:all .1s;color:var(--c8);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.03)
+}
+.kk:active,.kk.active{background:var(--c);color:var(--bg);box-shadow:0 0 12px rgba(170,207,209,0.3)}
+.kk.wide{min-width:9vh;font-size:1.3vh;letter-spacing:0.15vh}
+.kk.enter{border:1px solid rgba(170,207,209,0.15);min-width:10vh;box-shadow:inset 0 1px 0 rgba(255,255,255,0.04)}
+.kk.space{min-width:50vh;height:3.8vw;border:1px solid rgba(170,207,209,0.12);box-shadow:inset 0 1px 0 rgba(255,255,255,0.03)}
+
+/* Settings */
+.settings-overlay{position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;display:none;align-items:center;justify-content:center}
+.settings-overlay.show{display:flex}
+.settings-panel{background:rgba(8,14,22,0.5);backdrop-filter:blur(50px) saturate(1.8);-webkit-backdrop-filter:blur(50px) saturate(1.8);border:1px solid rgba(170,207,209,0.1);padding:2vh 3vh;min-width:42vh;border-radius:1.2vh;box-shadow:0 20px 60px rgba(0,0,0,0.5),inset 0 1px 0 rgba(255,255,255,0.04)}
+.settings-title{font-size:1.5vh;letter-spacing:0.2vh;margin-bottom:2vh;display:flex;justify-content:space-between;align-items:center}
+.settings-row{margin-bottom:1.5vh}
+.settings-label{font-size:1vh;opacity:0.4;letter-spacing:0.1vh;margin-bottom:0.5vh}
+.settings-input{background:transparent;border:0.1vh solid var(--c3);color:var(--c);font-family:'Fira Mono',monospace;font-size:1.1vh;padding:0.7vh 0.8vh;width:100%;outline:none}
+.settings-input:focus{border-color:var(--c)}
+.settings-btn{background:var(--c1);border:0.1vh solid var(--c3);color:var(--c);font-family:'Fira Mono',monospace;font-size:1vh;padding:0.5vh 1.5vh;cursor:pointer;letter-spacing:0.1vh;margin-right:0.5vh;transition:all .15s}
+.settings-btn:hover{background:var(--c);color:var(--bg)}
+.settings-status{font-size:0.9vh;opacity:0.4;margin-top:1vh}
+
+.gear{cursor:pointer;opacity:0.3;transition:opacity .15s;font-size:1.2vh}
+.gear:hover{opacity:1}
+.alert-badge{background:var(--c);color:var(--bg);font-size:0.8vh;padding:0.1vh 0.5vh;border-radius:0.3vh;margin-left:0.5vh;font-weight:700;display:none}
+.alert-badge.show{display:inline}
+</style>
+</head>
+<body>
+
+<!-- CREEPY BACKGROUND -->
+<div class="bg-layer">
+  <div class="bg-noise"></div>
+  <canvas id="bgText"></canvas>
+</div>
+
+<!-- TOP SECTION -->
+<div class="top">
+
+  <!-- LEFT PANEL -->
+  <div class="col-left">
+    <div class="panel-head"><span>PANEL</span><span>SYSTEM <span class="gear" onclick="toggleSettings()">&#9881;</span></span></div>
+    <div class="clock"><h1 id="clock">--:--:--</h1></div>
+    <div class="sysinfo">
+      <span id="dateinfo">2026</span>
+      <span>UPTIME <span id="uptime">0d00:00</span></span>
+      <span>TYPE win</span>
+      <span>POWER ON</span>
+    </div>
+    <div class="info-row"><b>PLATFORM</b> PMS Sahi Hai Wealth OS</div>
+    <div class="info-row"><b>ENGINE</b> Claude AI + LangGraph</div>
+    <div class="cpu-section">
+      <div class="cpu-title">NIFTY 50 — LIVE <span style="float:right;opacity:0.3;font-size:0.7vh">click to expand</span></div>
+      <div class="chart-box" onclick="window.open('https://www.tradingview.com/chart/?symbol=NSE%3ANIFTY','_blank')">
+        <div id="tvNifty"></div>
+      </div>
+      <div class="cpu-title">SENSEX — LIVE <span style="float:right;opacity:0.3;font-size:0.7vh">click to expand</span></div>
+      <div class="chart-box" onclick="window.open('https://www.tradingview.com/chart/?symbol=BSE%3ASENSEX','_blank')">
+        <div id="tvSensex"></div>
+      </div>
+    </div>
+    <div class="stat-grid">
+      <div>NIFTY<br><span class="val" id="sgNifty">--</span></div>
+      <div>VIX<br><span class="val" id="sgVix">--</span></div>
+      <div>AUM<br><span class="val">&#8377;12Cr</span></div>
+      <div>CLIENTS<br><span class="val">3</span></div>
+    </div>
+    <div class="mem-section">
+      <div class="mem-head"><span>FUND SPLIT</span><span>AUM &#8377;12.0 Cr</span></div>
+      <div class="fund-split" id="fundSplit">
+        <div class="fs-bar"><div class="fs-fill" style="width:45%;background:var(--c5)"></div><span class="fs-label">PMS 45%</span></div>
+        <div class="fs-bar"><div class="fs-fill" style="width:28%;background:var(--c3)"></div><span class="fs-label">AIF 28%</span></div>
+        <div class="fs-bar"><div class="fs-fill" style="width:15%;background:var(--c15)"></div><span class="fs-label">MF 15%</span></div>
+        <div class="fs-bar"><div class="fs-fill" style="width:12%;background:var(--c1)"></div><span class="fs-label">FD 12%</span></div>
+      </div>
+      <div class="swap-row">FII NET <div class="swap-bar"><div class="swap-fill" style="width:30%" id="fiiBar"></div></div> <span id="fiiVal">--</span></div>
+    </div>
+    <div class="proc-section">
+      <div class="proc-title">TOP FUNDS &nbsp; NAME | 1Y | SHARPE</div>
+      <div class="proc-row"><span class="pid">PMS</span><span class="name">Quant Small Cap</span><span class="cpu">42.5%</span><span class="mem">1.45</span></div>
+      <div class="proc-row"><span class="pid">PMS</span><span class="name">Buoyant Capital</span><span class="cpu">48.5%</span><span class="mem">1.52</span></div>
+      <div class="proc-row"><span class="pid">PMS</span><span class="name">Valentis Rising</span><span class="cpu">52.8%</span><span class="mem">1.55</span></div>
+      <div class="proc-row"><span class="pid">PMS</span><span class="name">Stallion Asset</span><span class="cpu">38.2%</span><span class="mem">1.38</span></div>
+      <div class="proc-row"><span class="pid">AIF</span><span class="name">Avendus Abs Ret</span><span class="cpu">12.5%</span><span class="mem">1.80</span></div>
+      <div class="proc-row"><span class="pid">PMS</span><span class="name">Marcellus CCP</span><span class="cpu">18.5%</span><span class="mem">1.12</span></div>
+      <div class="proc-row"><span class="pid">PMS</span><span class="name">Alchemy Growth</span><span class="cpu">35.2%</span><span class="mem">1.32</span></div>
+    </div>
+  </div>
+
+  <!-- CENTER TERMINAL -->
+  <div class="col-center">
+    <div class="tabs">
+      <div class="tab active">MAIN -</div>
+      <div class="tab" onclick="sendQ('/brief')">BRIEF</div>
+      <div class="tab" onclick="sendQ('/market')">MARKET</div>
+      <div class="tab" onclick="sendQ('/predict')">PREDICT</div>
+      <div class="tab" onclick="sendQ('/clients')">CLIENTS</div>
+    </div>
+    <div class="term" id="term">
+      <div class="tm tms">Ultron Empire v4.0 &mdash; Command Center.</div>
+      <div class="tm tms">Connected to Claude AI. 50+ funds. 3 clients. 10 tools.</div>
+      <div class="tm tma">Ready. Type a query or use tabs above.</div>
+    </div>
+    <div class="ibar">
+      <div class="autocomplete" id="acMenu"></div>
+      <div class="iprompt">PS C:\Ultron&gt;</div>
+      <input class="ifield" id="inp" placeholder="" autofocus>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="col-right">
+    <div class="panel-head"><span>PANEL</span><span>NETWORK <span class="alert-badge" id="alertBadge">0</span></span></div>
+    <div class="net-section">
+      <div class="net-row"><span class="lbl">NETWORK STATUS</span><span class="val">Interface: API</span></div>
+      <div class="net-row"><span class="lbl">STATE</span><span class="val online" id="netState">ONLINE</span></div>
+      <div class="net-row"><span class="lbl">API</span><span class="val">localhost:8000</span></div>
+      <div class="net-row"><span class="lbl">TELEGRAM</span><span class="val online">CONNECTED</span></div>
+      <div class="net-row"><span class="lbl">PING</span><span class="val">8ms</span></div>
+    </div>
+    <div class="net-section">
+      <div class="net-row"><span class="lbl">WORLD VIEW</span><span class="val">GLOBAL NETWORK MAP</span></div>
+      <div class="net-row"><span class="lbl">ENDPOINT</span><span class="val">BKC, MUMBAI</span></div>
+    </div>
+    <div class="news-feed">
+      <div class="news-title">LIVE FEED</div>
+      <div class="news-scroll" id="newsFeed">
+        <div class="news-item loading-news"><span class="news-text" style="opacity:0.3">Fetching live news...</span></div>
+      </div>
+    </div>
+    <div class="traffic-section">
+      <div class="traffic-head"><span>NETWORK TRAFFIC</span><span>UP / DOWN, MB/S</span></div>
+      <div class="traffic-head"><span>TOTAL</span><span>0B OUT, 0B IN</span></div>
+      <div class="traffic-row"><span></span><span>0.00</span></div>
+      <div class="traffic-row"><span></span><span>0.00</span></div>
+      <div class="traffic-row"><span></span><span>0.00</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- BOTTOM SECTION -->
+<div class="bottom">
+  <!-- File Browser -->
+  <div class="files">
+    <div class="files-bar"><span>FUND BROWSER &mdash; 50+ STRATEGIES</span><span>C:\Ultron\knowledge_base</span></div>
+    <div class="files-grid">
+      <div class="file-item" onclick="sendQ('Tell me about Quant Small Cap PMS')"><div class="file-icon">&#x1F4CA;</div><div class="file-label">Quant Small</div></div>
+      <div class="file-item" onclick="sendQ('Tell me about Stallion Asset PMS')"><div class="file-icon">&#x1F4CA;</div><div class="file-label">Stallion</div></div>
+      <div class="file-item" onclick="sendQ('Tell me about Marcellus CCP')"><div class="file-icon">&#x1F4CA;</div><div class="file-label">Marcellus</div></div>
+      <div class="file-item" onclick="sendQ('Tell me about Buoyant Capital PMS')"><div class="file-icon">&#x1F4CA;</div><div class="file-label">Buoyant</div></div>
+      <div class="file-item" onclick="sendQ('/client Rajesh')"><div class="file-icon">&#x1F464;</div><div class="file-label">Rajesh</div></div>
+      <div class="file-item" onclick="sendQ('/client Amit')"><div class="file-icon">&#x1F464;</div><div class="file-label">Amit</div></div>
+      <div class="file-item" onclick="sendQ('/client Sunita')"><div class="file-icon">&#x1F464;</div><div class="file-label">Sunita</div></div>
+      <div class="file-item" onclick="sendQ('/calc cagr|1|3|5')"><div class="file-icon">&#x1F522;</div><div class="file-label">Calculator</div></div>
+      <div class="file-item" onclick="sendQ('/content instagram')"><div class="file-icon">&#x1F4F1;</div><div class="file-label">Content</div></div>
+      <div class="file-item" onclick="sendQ('/report market')"><div class="file-icon">&#x1F4C4;</div><div class="file-label">Reports</div></div>
+      <div class="file-item" onclick="sendQ('/portfolio')"><div class="file-icon">&#x1F4BC;</div><div class="file-label">Portfolio</div></div>
+      <div class="file-item" onclick="sendQ('/news SEBI')"><div class="file-icon">&#x1F4F0;</div><div class="file-label">News</div></div>
+    </div>
+    <div class="disk-bar"><div class="disk-fill" style="width:86%"></div></div>
+    <div class="disk-label">Mount C: used 86%</div>
+  </div>
+
+  <!-- Keyboard -->
+  <div class="kb">
+    <div class="krow"><div class="kk wide">ESC</div><div class="kk">`</div><div class="kk">1</div><div class="kk">2</div><div class="kk">3</div><div class="kk">4</div><div class="kk">5</div><div class="kk">6</div><div class="kk">7</div><div class="kk">8</div><div class="kk">9</div><div class="kk">0</div><div class="kk">-</div><div class="kk">=</div><div class="kk wide">BACK</div></div>
+    <div class="krow"><div class="kk wide">TAB</div><div class="kk">Q</div><div class="kk">W</div><div class="kk">E</div><div class="kk">R</div><div class="kk">T</div><div class="kk">Y</div><div class="kk">U</div><div class="kk">I</div><div class="kk">O</div><div class="kk">P</div><div class="kk">[</div><div class="kk">]</div><div class="kk enter">ENTER</div></div>
+    <div class="krow"><div class="kk wide">CAPS</div><div class="kk">A</div><div class="kk">S</div><div class="kk">D</div><div class="kk">F</div><div class="kk">G</div><div class="kk">H</div><div class="kk">J</div><div class="kk">K</div><div class="kk">L</div><div class="kk">;</div><div class="kk">'</div><div class="kk">\</div></div>
+    <div class="krow"><div class="kk wide">SHIFT</div><div class="kk">&lt;</div><div class="kk">Z</div><div class="kk">X</div><div class="kk">C</div><div class="kk">V</div><div class="kk">B</div><div class="kk">N</div><div class="kk">M</div><div class="kk">,</div><div class="kk">.</div><div class="kk">/</div><div class="kk wide">SHIFT</div></div>
+    <div class="krow"><div class="kk wide">CTRL</div><div class="kk">FN</div><div class="kk space"></div><div class="kk wide">ALT GR</div><div class="kk wide">CTRL</div><div class="kk">&larr;</div><div class="kk">&darr;</div><div class="kk">&uarr;</div><div class="kk">&rarr;</div></div>
+  </div>
+</div>
+
+<!-- Settings Overlay -->
+<div class="settings-overlay" id="settingsOverlay">
+  <div class="settings-panel">
+    <div class="settings-title"><span>SETTINGS</span><span class="gear" onclick="toggleSettings()">&#10005;</span></div>
+    <div class="settings-row">
+      <div class="settings-label">API BASE URL</div>
+      <input class="settings-input" id="settingsApiUrl" value="http://localhost:8000/api/v1">
+    </div>
+    <div class="settings-row">
+      <button class="settings-btn" onclick="saveSettings()">SAVE</button>
+      <button class="settings-btn" onclick="resetSettings()">RESET DEFAULT</button>
+    </div>
+    <div class="settings-status" id="settingsStatus"></div>
+  </div>
+</div>
+
+<audio id="alertSound" preload="auto">
+  <source src="data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=" type="audio/wav">
+</audio>
+
+<script>
+// === CREEPY BACKGROUND TEXT ===
+(function(){
+  const cv=document.getElementById('bgText');
+  const c=cv.getContext('2d');
+  cv.width=window.innerWidth;cv.height=window.innerHeight;
+  window.addEventListener('resize',()=>{cv.width=innerWidth;cv.height=innerHeight;draw()});
+
+  const words=['ULTRON','EMPIRE','ULTRON EMPIRE','U L T R O N','E M P I R E','ULTRON','EMPIRE'];
+  const fonts=['Nosifer','Creepster'];
+
+  function draw(){
+    c.clearRect(0,0,cv.width,cv.height);
+    // Draw ~120 scattered creepy text instances
+    for(let i=0;i<120;i++){
+      const text=words[Math.floor(Math.random()*words.length)];
+      const font=fonts[Math.floor(Math.random()*fonts.length)];
+      const size=Math.random()*60+14; // 14px to 74px
+      const x=Math.random()*cv.width;
+      const y=Math.random()*cv.height;
+      const angle=(Math.random()-0.5)*0.7; // -20 to +20 deg
+      const opacity=Math.random()*0.12+0.04; // 0.04 to 0.16
+
+      // Pick color: 60% blood red, 30% ghostly white, 10% dark crimson
+      const roll=Math.random();
+      let color;
+      if(roll<0.6) color=`rgba(${140+Math.random()*60},${Math.random()*15},${Math.random()*10},${opacity})`;
+      else if(roll<0.9) color=`rgba(${200+Math.random()*55},${200+Math.random()*55},${210+Math.random()*45},${opacity*0.8})`;
+      else color=`rgba(${80+Math.random()*40},0,0,${opacity*1.8})`;
+
+      c.save();
+      c.translate(x,y);
+      c.rotate(angle);
+      c.font=`${size}px '${font}', cursive`;
+      c.fillStyle=color;
+      c.fillText(text,0,0);
+      c.restore();
+    }
+
+    // Add some extra large faded ones for depth
+    for(let i=0;i<8;i++){
+      const text=i%2===0?'ULTRON':'EMPIRE';
+      const size=Math.random()*180+100;
+      const x=Math.random()*cv.width-100;
+      const y=Math.random()*cv.height;
+      const angle=(Math.random()-0.5)*0.4;
+      const isRed=Math.random()>0.4;
+      const color=isRed
+        ?`rgba(${100+Math.random()*50},0,0,${Math.random()*0.06+0.025})`
+        :`rgba(255,255,255,${Math.random()*0.035+0.015})`;
+
+      c.save();
+      c.translate(x,y);
+      c.rotate(angle);
+      c.font=`${size}px 'Nosifer', cursive`;
+      c.fillStyle=color;
+      c.fillText(text,0,0);
+      c.restore();
+    }
+  }
+
+  // Wait for fonts to load then draw
+  document.fonts.ready.then(()=>{draw()});
+  setTimeout(draw,500);
+  // Subtle animation: redraw every 8 seconds with slight variation
+  setInterval(draw,8000);
+})();
+
+// === API ===
+const DEFAULT_API='http://localhost:8000/api/v1';
+function getApiUrl(){if(window.ultron?.getApiUrl)return window.ultron.getApiUrl();try{const s=localStorage.getItem('ultron_api_url');if(s)return s}catch(e){}return DEFAULT_API}
+let API=getApiUrl();
+const term=document.getElementById('term'),inp=document.getElementById('inp');
+const boot=Date.now();
+
+// === CLOCK ===
+function tick(){
+  const n=new Date();
+  document.getElementById('clock').textContent=n.toLocaleTimeString('en-IN',{timeZone:'Asia/Kolkata',hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  const s=Math.floor((Date.now()-boot)/1000),h=Math.floor(s/3600),m=Math.floor((s%3600)/60);
+  document.getElementById('uptime').textContent=`${h}d${String(m).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`;
+  document.getElementById('dateinfo').textContent=n.toLocaleDateString('en-IN',{timeZone:'Asia/Kolkata',year:'numeric',month:'short',day:'numeric'}).toUpperCase();
+}
+tick();setInterval(tick,1000);
+
+// === LIVE NEWS FEED ===
+const NEWS_RSS_SOURCES=[
+  {url:'https://economictimes.indiatimes.com/markets/rssfeeds/1977021501.cms',name:'ET Markets'},
+  {url:'https://www.livemint.com/rss/markets',name:'Livemint'},
+  {url:'https://www.moneycontrol.com/rss/marketreports.xml',name:'Moneycontrol'},
+];
+const FALLBACK_NEWS=[];
+
+async function fetchLiveNews(){
+  const feed=document.getElementById('newsFeed');
+  let items=[];
+  // Try fetching RSS via a CORS proxy
+  for(const src of NEWS_RSS_SOURCES){
+    try{
+      const r=await fetch('https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent(src.url)+'&count=5',{signal:AbortSignal.timeout(5000)});
+      const d=await r.json();
+      if(d.status==='ok'&&d.items){
+        d.items.forEach(it=>{
+          const t=new Date(it.pubDate);
+          const time=t.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Kolkata'});
+          items.push({title:it.title,url:it.link,src:src.name,time:time});
+        });
+      }
+    }catch(e){}
+  }
+  // Only show real news with valid URLs — no fallback fakes
+  items=items.filter(n=>n.url&&n.url.startsWith('http')&&n.title);
+  if(!items.length){feed.innerHTML='<div class="news-item"><span class="news-text" style="opacity:0.3">No live news available right now</span></div>';return}
+  items.sort((a,b)=>b.time.localeCompare(a.time));
+  feed.innerHTML=items.slice(0,15).map(n=>
+    `<div class="news-item"><a href="${n.url}" target="_blank" rel="noopener"><span class="news-time">${n.time}</span><span><span class="news-text">${n.title}</span><div class="news-src">${n.src}</div></span></a></div>`
+  ).join('');
+}
+fetchLiveNews();
+setInterval(fetchLiveNews,300000); // refresh every 5 min
+
+// === FUND SPLIT (static) ===
+
+// === TRADINGVIEW CHARTS ===
+function loadTV(id,symbol){
+  const el=document.getElementById(id);if(!el)return;
+  const wrap=document.createElement('div');
+  wrap.className='tradingview-widget-container';
+  wrap.style.cssText='width:100%;height:100%';
+  const inner=document.createElement('div');
+  inner.className='tradingview-widget-container__widget';
+  inner.style.cssText='width:100%;height:100%';
+  wrap.appendChild(inner);
+  const s=document.createElement('script');
+  s.type='text/javascript';
+  s.src='https://s3.tradingview.com/external-embedding/embed-widget-symbol-overview.js';
+  s.async=true;
+  s.textContent=JSON.stringify({
+    symbols:[[symbol]],
+    chartOnly:true,
+    width:'100%',
+    height:'100%',
+    locale:'en',
+    colorTheme:'dark',
+    autosize:true,
+    showVolume:false,
+    showMA:false,
+    hideDateRanges:true,
+    hideMarketStatus:true,
+    hideSymbolLogo:true,
+    scalePosition:'no',
+    scaleMode:'Normal',
+    fontFamily:'Fira Mono, monospace',
+    fontSize:'10',
+    noTimeScale:true,
+    valuesTracking:'0',
+    changeMode:'no-values',
+    chartType:'area',
+    lineColor:'rgba(170,207,209,0.6)',
+    bottomColor:'rgba(170,207,209,0.05)',
+    topColor:'rgba(170,207,209,0.15)',
+    gridLineColor:'rgba(170,207,209,0.03)',
+    backgroundColor:'rgba(0,0,0,0)'
+  });
+  wrap.appendChild(s);
+  el.appendChild(wrap);
+}
+setTimeout(()=>{loadTV('tvNifty','NSE:NIFTY');loadTV('tvSensex','BSE:SENSEX')},300);
+
+// === KEYBOARD ===
+document.addEventListener('keydown',e=>{document.querySelectorAll('.kk').forEach(k=>{if(k.textContent.trim()===e.key.toUpperCase()||(e.key==='Enter'&&k.textContent==='ENTER')||(e.key===' '&&k.classList.contains('space'))||(e.key==='Backspace'&&k.textContent==='BACK')){k.classList.add('active');setTimeout(()=>k.classList.remove('active'),120)}})});
+
+// === AUTOCOMPLETE ===
+const COMMANDS=[{cmd:'/',desc:'Show all commands'},{cmd:'/brief',desc:'Morning briefing'},{cmd:'/market',desc:'Market overview'},{cmd:'/predict',desc:'AI predictions'},{cmd:'/clients',desc:'Client list'},{cmd:'/client',desc:'Client details'},{cmd:'/news',desc:'Latest news'},{cmd:'/compare',desc:'Compare funds'},{cmd:'/calc',desc:'Calculator'},{cmd:'/portfolio',desc:'Portfolio'},{cmd:'/content',desc:'Content generator'},{cmd:'/report',desc:'Generate report'},{cmd:'/alert',desc:'Manage alerts'}];
+const acMenu=document.getElementById('acMenu');let acIndex=-1,acFiltered=[];
+function updateAC(){const v=inp.value;if(!v.startsWith('/')){acMenu.classList.remove('show');acFiltered=[];acIndex=-1;return}acFiltered=COMMANDS.filter(c=>c.cmd.startsWith(v.split(' ')[0]));if(!acFiltered.length||(acFiltered.length===1&&acFiltered[0].cmd===v.split(' ')[0])){acMenu.classList.remove('show');acIndex=-1;return}acMenu.innerHTML=acFiltered.map((c,i)=>`<div class="ac-item${i===acIndex?' selected':''}" data-i="${i}"><span class="ac-cmd">${c.cmd}</span><span class="ac-desc">${c.desc}</span></div>`).join('');acMenu.classList.add('show');acMenu.querySelectorAll('.ac-item').forEach(el=>{el.addEventListener('mousedown',e=>{e.preventDefault();inp.value=acFiltered[parseInt(el.dataset.i)].cmd+' ';acMenu.classList.remove('show');inp.focus()})})}
+inp.addEventListener('input',updateAC);
+
+// === CHAT ===
+async function sendChat(q){if(window.ultron?.sendChat)return window.ultron.sendChat(q);const r=await fetch(`${API}/chat`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({query:q})});return r.json()}
+
+inp.addEventListener('keydown',async e=>{
+  if(acMenu.classList.contains('show')){if(e.key==='ArrowDown'){e.preventDefault();acIndex=Math.min(acIndex+1,acFiltered.length-1);updateAC();return}if(e.key==='ArrowUp'){e.preventDefault();acIndex=Math.max(acIndex-1,0);updateAC();return}if(e.key==='Tab'&&acFiltered.length){e.preventDefault();inp.value=acFiltered[acIndex>=0?acIndex:0].cmd+' ';acMenu.classList.remove('show');acIndex=-1;return}if(e.key==='Escape'){acMenu.classList.remove('show');acIndex=-1;return}}
+  if(e.key==='Enter'&&inp.value.trim()){const q=inp.value.trim();inp.value='';acMenu.classList.remove('show');acIndex=-1;addM('u',q);addLoading();try{const d=await sendChat(q);removeLoading();addM('a',d.response);if(d.tools_used?.length)addM('s',`[tools: ${d.tools_used.join(', ')} | ${d.response_time_ms}ms]`)}catch{removeLoading();addM('s','ERROR: backend unreachable at '+API);document.getElementById('netState').textContent='OFFLINE';document.getElementById('netState').className='val';document.getElementById('netState').style.color='#e85050'}}
+});
+
+function sendQ(q){inp.value=q;inp.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter'}))}
+function addM(t,x){const d=document.createElement('div');d.className='tm '+(t==='u'?'tmu':t==='a'?'tma':'tms');d.textContent=x;term.appendChild(d);term.scrollTop=term.scrollHeight}
+function addLoading(){const d=document.createElement('div');d.className='tm loading';d.id='loadingMsg';d.innerHTML='<div class="spinner"></div> processing...';term.appendChild(d);term.scrollTop=term.scrollHeight}
+function removeLoading(){const el=document.getElementById('loadingMsg');if(el)el.remove()}
+
+// === SETTINGS ===
+function toggleSettings(){document.getElementById('settingsOverlay').classList.toggle('show');if(document.getElementById('settingsOverlay').classList.contains('show'))document.getElementById('settingsApiUrl').value=getApiUrl()}
+function saveSettings(){const url=document.getElementById('settingsApiUrl').value.trim();if(!url){document.getElementById('settingsStatus').textContent='URL cannot be empty.';return}if(window.ultron?.setApiUrl)window.ultron.setApiUrl(url);else try{localStorage.setItem('ultron_api_url',url)}catch(e){}API=url;document.getElementById('settingsStatus').textContent='Saved: '+url;setTimeout(()=>document.getElementById('settingsStatus').textContent='',3000)}
+function resetSettings(){if(window.ultron?.resetApiUrl)window.ultron.resetApiUrl();else try{localStorage.removeItem('ultron_api_url')}catch(e){}API=DEFAULT_API;document.getElementById('settingsApiUrl').value=DEFAULT_API;document.getElementById('settingsStatus').textContent='Reset to default.';setTimeout(()=>document.getElementById('settingsStatus').textContent='',3000)}
+
+// === DEMO/FALLBACK DATA ===
+const DEMO_MARKET={nifty:'22,480',sensex:'73,950',vix:'13.2',fii_net:'+1,280 Cr',dii_net:'+890 Cr'};
+function applyMarketData(d){
+  const s=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v};
+  s('sgNifty',d.nifty);s('sgVix',d.vix);
+  // Update stat rows by finding labels
+  const rows=document.querySelectorAll('.stat-row');
+  rows.forEach(r=>{const lbl=r.querySelector('.lbl');const val=r.querySelector('.val');if(!lbl||!val)return;
+    const t=lbl.textContent.trim();
+    if(t==='NIFTY 50')val.innerHTML='<span class="up">'+d.nifty+' +0.6%</span>';
+    if(t==='SENSEX')val.innerHTML='<span class="up">'+d.sensex+' +0.5%</span>';
+    if(t==='INDIA VIX')val.innerHTML='<span class="down">'+d.vix+' -4.1%</span>';
+    if(t==='FII NET')val.innerHTML='<span class="up">+\u20B9'+d.fii_net+'</span>';
+    if(t==='DII NET')val.innerHTML='<span class="up">+\u20B9'+d.dii_net+'</span>';
+  });
+}
+// Apply demo data immediately so it never shows dashes
+applyMarketData(DEMO_MARKET);
+
+// === LIVE DATA (overrides demo when API available) ===
+let lastAlertCount=0;
+async function fetchMarketData(){
+  try{
+    const f=window.ultron?.fetchMarket||(()=>fetch(`${API}/market`).then(r=>r.json()));
+    const d=await f();
+    if(d.nifty!==undefined){
+      const fmt=v=>typeof v==='number'?v.toLocaleString('en-IN'):String(v);
+      applyMarketData({
+        nifty:fmt(d.nifty),
+        sensex:fmt(d.sensex||73950),
+        vix:fmt(d.vix||13.2),
+        fii_net:fmt(d.fii_net||1280),
+        dii_net:fmt(d.dii_net||890)
+      });
+      document.getElementById('netState').textContent='ONLINE';
+      document.getElementById('netState').style.color='#50c878';
+    }
+  }catch(e){
+    document.getElementById('netState').textContent='DEMO MODE';
+    document.getElementById('netState').style.color='#febc2e';
+  }
+}
+async function fetchAlertData(){try{const f=window.ultron?.fetchAlerts||(()=>fetch(`${API}/alerts`).then(r=>r.json()));const d=await f();const c=Array.isArray(d)?d.length:(d.count||d.alerts?.length||0);const b=document.getElementById('alertBadge');b.textContent=c;c>0?b.classList.add('show'):b.classList.remove('show');if(c>lastAlertCount&&lastAlertCount>=0)try{document.getElementById('alertSound').play().catch(()=>{})}catch(e){}lastAlertCount=c}catch(e){}}
+
+setTimeout(()=>{fetchMarketData();fetchAlertData()},2000);
+setInterval(fetchMarketData,60000);
+setInterval(fetchAlertData,60000);
+setTimeout(()=>addM('s','All systems operational. Market monitoring active.'),1500);
+
+// === AUTO DEMO: simulate queries if no user interaction for 30s ===
+let userActive=false;
+inp.addEventListener('focus',()=>{userActive=true});
+const DEMO_QUERIES=[
+  'Compare Quant Small Cap PMS vs Stallion Asset PMS',
+  '/market',
+  '/client Rajesh Mehta',
+  '/predict banking sector momentum',
+  '/calc cagr|1|3|5',
+  '/brief',
+  '/content instagram top-5-pms',
+  '/news SEBI latest circular',
+];
+const DEMO_RESPONSES={
+  'Compare Quant Small Cap PMS vs Stallion Asset PMS':
+    'Fund Comparison Report\n══════════════════════════════════════\n\n                  Quant Small    Stallion\n 1Y Returns       42.5%          38.2%\n 3Y CAGR          28.3%          24.1%\n Sharpe Ratio     1.45           1.38\n Max Drawdown    -18.5%         -22.1%\n AUM             \u20B92,400 Cr      \u20B9850 Cr\n\nRecommendation: 60% Quant + 40% Stallion for style diversification.\n\n\u26A0 Both small-cap. Add 20% large-cap PMS for downside protection.\n\n[4.2s | tools: fund_lookup, portfolio_analyzer, calculator]',
+  '/market':
+    'Market Snapshot \u2014 Live\n\n Nifty 50:    22,480  (+0.62%)   \u25B2\n Sensex:      73,950  (+0.48%)   \u25B2\n Bank Nifty:  48,120  (+0.91%)   \u25B2\n India VIX:   13.2    (-4.10%)   \u25BC\n\n FII: +\u20B91,280 Cr | DII: +\u20B9890 Cr\n Advance/Decline: 1420/580\n\n Top: Banking +0.91% | Auto +0.73% | Pharma +0.42%\n Weak: IT -0.31% | Metal -0.18%\n\n Key News: SEBI eases PMS reporting norms.\n\n[1.9s | tools: market_data, news_search]',
+  '/client Rajesh Mehta':
+    'Client Brief: Rajesh Mehta\n\n Age: 55 | Risk: Conservative | AUM: \u20B95.2 Cr\n Holdings: Marcellus CCP (40%), Avendus AIF (35%), FD (25%)\n Last Review: 15 days ago | Next: 2 weeks\n\n Recent Events:\n  \u2022 Wife birthday next week\n  \u2022 FD maturing \u20B980L on Apr 1 \u2014 discuss PMS top-up\n\n Talking Points:\n 1. Marcellus CCP up 4.2% since last review\n 2. Suggest moving maturing FD into low-vol PMS\n 3. Wish happy birthday to Mrs. Mehta\n\n[3.8s | tools: client_lookup | Score: A+]',
+  '/predict banking sector momentum':
+    'Banking Sector Momentum Signal\n\n RSI: 62 | Above 50 DMA \u2714 | Above 200 DMA \u2714\n FII Flow: Accumulating (+\u20B93,200 Cr this week)\n Relative Strength: Outperforming Nifty 50\n\n Signal: BULLISH (Score: 78/100)\n\n Strong momentum. Good entry for clients with 12-18 month horizon.\n\n[2.1s | tools: market_data, momentum]',
+  '/calc cagr|1|3|5':
+    'CAGR Calculation\n\n Initial:  \u20B91.00 Cr\n Final:    \u20B93.00 Cr\n Period:   5 years\n\n CAGR = 24.57%\n\n Rule of 72: Money doubles every 2.9 years.\n \u20B91 Cr \u2192 \u20B93 Cr (5Y) \u2192 \u20B99 Cr (10Y) \u2192 \u20B927 Cr (15Y)\n\n[0.3s | tools: calculator]',
+  '/brief':
+    'Good Morning, Ishaan! \u2615\n\nMarket Brief \u2014 Apr 4, 2026\n\n Global Cues: US markets flat, DXY at 104.2, Crude $82\n India: SGX Nifty +0.3%, FII bought \u20B91,280 Cr yesterday\n\n Key Events Today:\n  \u2022 RBI MPC minutes release at 11 AM\n  \u2022 Bajaj Finance Q4 results after market\n  \u2022 SEBI board meeting on PMS regulations\n\n Client Actions:\n  \u2022 Rajesh review overdue (15 days)\n  \u2022 Amit SIP due date tomorrow\n\n Your AUM: \u20B912 Cr | Alerts: 2 pending\n\n[5.1s | tools: market_data, news_search, client_lookup]',
+  '/content instagram top-5-pms':
+    '\uD83C\uDFC6 Top 5 PMS Returns This Month:\n\n 1. Valentis Rising Stars   52.8% (1Y)\n 2. Buoyant Capital Value   48.5% (1Y)\n 3. Quant Small Cap         42.5% (1Y)\n 4. Stallion Asset Core      38.2% (1Y)\n 5. Alchemy High Growth     35.2% (1Y)\n\n \uD83D\uDCA1 Past performance \u2260 future returns\n Min investment: \u20B950L | SEBI regulated\n\n #PMS #Investing #WealthManagement #PMSSahiHai\n\n[5.1s | tools: fund_lookup, content_writer]',
+  '/news SEBI latest circular':
+    'SEBI Update: PMS Regulatory Changes\n\n 1. SEBI/HO/IMD/PMS/2026/001 (Mar 28)\n    PMS minimum stays at \u20B950L\n    New: Monthly portfolio disclosure mandatory\n\n 2. SEBI/HO/IMD/AIF/2026/003 (Mar 20)\n    AIF Cat III: Enhanced risk disclosure\n    Deadline: June 30, 2026\n\n Impact: Update client agreements with new format.\n No fee changes. Compliance deadline: 90 days.\n\n[3.4s | tools: news_search, sebi_checker]',
+};
+
+let demoIdx=0;
+async function runAutoDemo(){
+  if(userActive)return;
+  const q=DEMO_QUERIES[demoIdx%DEMO_QUERIES.length];
+  demoIdx++;
+  addM('u',q);
+  // Simulate typing delay
+  await new Promise(r=>setTimeout(r,800));
+  const resp=DEMO_RESPONSES[q]||'Processing query...';
+  addM('a',resp);
+  addM('s','');
+}
+// Start auto-demo after 5s, then every 15s
+setTimeout(()=>{if(!userActive)runAutoDemo()},5000);
+setInterval(()=>{if(!userActive)runAutoDemo()},15000);
+</script>
+</body>
+</html>

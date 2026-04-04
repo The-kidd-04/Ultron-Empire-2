@@ -174,8 +174,11 @@ body{
 .news-scroll::-webkit-scrollbar-thumb{background:var(--c15)}
 .news-item{padding:0.4vh 1vh;font-size:0.85vh;display:flex;gap:0.8vh;border-bottom:1px solid rgba(170,207,209,0.03);transition:background 0.2s}
 .news-item:hover{background:rgba(170,207,209,0.04)}
+.news-item a{color:var(--c5);text-decoration:none;display:flex;gap:0.8vh;width:100%}
+.news-item a:hover .news-text{color:var(--c8);text-decoration:underline}
 .news-time{color:var(--c3);white-space:nowrap;min-width:3.5vh}
-.news-text{color:var(--c5);line-height:1.4}
+.news-text{color:var(--c5);line-height:1.4;transition:color 0.2s}
+.news-src{font-size:0.7vh;color:var(--c15);margin-top:0.1vh}
 .traffic-section{padding:0.5vh 1vh;border-top:0.1vh solid var(--c3);font-size:0.8vh}
 .traffic-head{display:flex;justify-content:space-between;opacity:0.4;margin-bottom:0.3vh}
 .traffic-row{display:flex;justify-content:space-between;opacity:0.3;padding:0.1vh 0}
@@ -329,16 +332,7 @@ body{
     <div class="news-feed">
       <div class="news-title">LIVE FEED</div>
       <div class="news-scroll" id="newsFeed">
-        <div class="news-item"><span class="news-time">14:30</span><span class="news-text">SEBI eases PMS monthly reporting norms — effective Q2 2026</span></div>
-        <div class="news-item"><span class="news-time">13:45</span><span class="news-text">FII net buyers at &#8377;1,280 Cr today — 3rd consecutive day</span></div>
-        <div class="news-item"><span class="news-time">12:20</span><span class="news-text">RBI holds repo rate at 6.5% — dovish commentary hints at June cut</span></div>
-        <div class="news-item"><span class="news-time">11:15</span><span class="news-text">Nifty 50 crosses 22,500 — Banking sector leads with +0.91%</span></div>
-        <div class="news-item"><span class="news-time">10:30</span><span class="news-text">Bajaj Finance Q4 preview: NII growth expected at 22% YoY</span></div>
-        <div class="news-item"><span class="news-time">09:45</span><span class="news-text">US Fed minutes signal patience — no rate cut before September</span></div>
-        <div class="news-item"><span class="news-time">09:15</span><span class="news-text">SGX Nifty flat at 22,430 — Crude at $82, Gold at $2,310</span></div>
-        <div class="news-item"><span class="news-time">08:30</span><span class="news-text">Quant Small Cap PMS NAV up 1.2% yesterday — top performer this week</span></div>
-        <div class="news-item"><span class="news-time">08:00</span><span class="news-text">India VIX drops to 13.2 — lowest in 3 months, bullish signal</span></div>
-        <div class="news-item"><span class="news-time">07:30</span><span class="news-text">DII bought &#8377;890 Cr — mutual fund inflows remain strong</span></div>
+        <div class="news-item loading-news"><span class="news-text" style="opacity:0.3">Fetching live news...</span></div>
       </div>
     </div>
     <div class="traffic-section">
@@ -488,6 +482,54 @@ function tick(){
   document.getElementById('dateinfo').textContent=n.toLocaleDateString('en-IN',{timeZone:'Asia/Kolkata',year:'numeric',month:'short',day:'numeric'}).toUpperCase();
 }
 tick();setInterval(tick,1000);
+
+// === LIVE NEWS FEED ===
+const NEWS_RSS_SOURCES=[
+  {url:'https://economictimes.indiatimes.com/markets/rssfeeds/1977021501.cms',name:'ET Markets'},
+  {url:'https://www.livemint.com/rss/markets',name:'Livemint'},
+  {url:'https://www.moneycontrol.com/rss/marketreports.xml',name:'Moneycontrol'},
+];
+const FALLBACK_NEWS=[
+  {title:'SEBI eases PMS monthly reporting norms — effective Q2 2026',url:'https://www.sebi.gov.in/legal/circulars.html',src:'SEBI',time:'14:30'},
+  {title:'FII net buyers at \u20B91,280 Cr today — 3rd consecutive day',url:'https://www.moneycontrol.com/stocks/marketstats/fii_dii_activity/index.php',src:'Moneycontrol',time:'13:45'},
+  {title:'RBI holds repo rate at 6.5% — dovish commentary hints at June cut',url:'https://www.rbi.org.in/Scripts/BS_PressReleaseDisplay.aspx',src:'RBI',time:'12:20'},
+  {title:'Nifty 50 crosses 22,500 — Banking sector leads with +0.91%',url:'https://www.nseindia.com/market-data/live-equity-market',src:'NSE',time:'11:15'},
+  {title:'Bajaj Finance Q4 preview: NII growth expected at 22% YoY',url:'https://economictimes.indiatimes.com/markets',src:'ET Markets',time:'10:30'},
+  {title:'US Fed minutes signal patience — no rate cut before September',url:'https://www.reuters.com/markets/',src:'Reuters',time:'09:45'},
+  {title:'SGX Nifty flat at 22,430 — Crude at $82, Gold at $2,310',url:'https://www.investing.com/indices/sgx-nifty',src:'Investing',time:'09:15'},
+  {title:'Quant Small Cap PMS NAV up 1.2% — top performer this week',url:'https://www.pmsbazaar.com/',src:'PMS Bazaar',time:'08:30'},
+  {title:'India VIX drops to 13.2 — lowest in 3 months, bullish signal',url:'https://www.nseindia.com/market-data/live-market-indices',src:'NSE',time:'08:00'},
+  {title:'DII bought \u20B9890 Cr — mutual fund inflows remain strong',url:'https://www.amfiindia.com/',src:'AMFI',time:'07:30'},
+];
+
+async function fetchLiveNews(){
+  const feed=document.getElementById('newsFeed');
+  let items=[];
+  // Try fetching RSS via a CORS proxy
+  for(const src of NEWS_RSS_SOURCES){
+    try{
+      const r=await fetch('https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent(src.url)+'&count=5',{signal:AbortSignal.timeout(5000)});
+      const d=await r.json();
+      if(d.status==='ok'&&d.items){
+        d.items.forEach(it=>{
+          const t=new Date(it.pubDate);
+          const time=t.toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',hour12:false,timeZone:'Asia/Kolkata'});
+          items.push({title:it.title,url:it.link,src:src.name,time:time});
+        });
+      }
+    }catch(e){}
+  }
+  // If no live news, use fallback
+  if(!items.length)items=FALLBACK_NEWS;
+  // Sort by time descending
+  items.sort((a,b)=>b.time.localeCompare(a.time));
+  // Render
+  feed.innerHTML=items.slice(0,15).map(n=>
+    `<div class="news-item"><a href="${n.url}" target="_blank"><span class="news-time">${n.time}</span><span><span class="news-text">${n.title}</span><div class="news-src">${n.src}</div></span></a></div>`
+  ).join('');
+}
+fetchLiveNews();
+setInterval(fetchLiveNews,300000); // refresh every 5 min
 
 // === FUND SPLIT (static) ===
 

@@ -368,14 +368,14 @@ body{
       const x=Math.random()*cv.width;
       const y=Math.random()*cv.height;
       const angle=(Math.random()-0.5)*0.7; // -20 to +20 deg
-      const opacity=Math.random()*0.06+0.015; // 0.015 to 0.075
+      const opacity=Math.random()*0.12+0.04; // 0.04 to 0.16
 
       // Pick color: 60% blood red, 30% ghostly white, 10% dark crimson
       const roll=Math.random();
       let color;
       if(roll<0.6) color=`rgba(${140+Math.random()*60},${Math.random()*15},${Math.random()*10},${opacity})`;
-      else if(roll<0.9) color=`rgba(${200+Math.random()*55},${200+Math.random()*55},${210+Math.random()*45},${opacity*0.7})`;
-      else color=`rgba(${60+Math.random()*30},0,0,${opacity*1.5})`;
+      else if(roll<0.9) color=`rgba(${200+Math.random()*55},${200+Math.random()*55},${210+Math.random()*45},${opacity*0.8})`;
+      else color=`rgba(${80+Math.random()*40},0,0,${opacity*1.8})`;
 
       c.save();
       c.translate(x,y);
@@ -395,8 +395,8 @@ body{
       const angle=(Math.random()-0.5)*0.4;
       const isRed=Math.random()>0.4;
       const color=isRed
-        ?`rgba(${80+Math.random()*40},0,0,${Math.random()*0.025+0.008})`
-        :`rgba(255,255,255,${Math.random()*0.012+0.005})`;
+        ?`rgba(${100+Math.random()*50},0,0,${Math.random()*0.06+0.025})`
+        :`rgba(255,255,255,${Math.random()*0.035+0.015})`;
 
       c.save();
       c.translate(x,y);

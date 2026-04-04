@@ -101,8 +101,12 @@ body{
 .cpu-section{padding:0.5vh 1vh;border-top:0.1vh solid var(--c3)}
 .cpu-title{font-size:0.9vh;opacity:0.6;letter-spacing:0.1vh;margin-bottom:0.2vh}
 .cpu-sub{font-size:0.85vh;opacity:0.35;margin-bottom:0.4vh}
-.wave-box{height:4vh;border:0.1vh solid var(--c3);margin-bottom:0.5vh;position:relative;overflow:hidden}
-.wave-box canvas{width:100%;height:100%}
+.chart-box{height:8vh;margin-bottom:0.5vh;position:relative;overflow:hidden;cursor:pointer;border:1px solid rgba(170,207,209,0.06);border-radius:0.3vh;transition:border-color 0.2s}
+.chart-box:hover{border-color:rgba(170,207,209,0.2)}
+.tv-chart{width:100%;height:100%}
+.tv-chart iframe{width:100%;height:100%;border:none}
+.chart-click-hint{position:absolute;bottom:0.3vh;right:0.5vh;font-size:0.65vh;color:var(--c15);opacity:0;transition:opacity 0.2s;letter-spacing:0.05vh}
+.chart-box:hover .chart-click-hint{opacity:1}
 
 .stat-grid{display:flex;gap:0.5vh;font-size:0.9vh;border-top:0.1vh solid var(--c3);padding:0.5vh 1vh}
 .stat-grid div{flex:1;text-align:center}
@@ -260,11 +264,15 @@ body{
     <div class="info-row"><b>ENGINE</b> Claude AI + LangGraph</div>
     <div class="cpu-section">
       <div class="cpu-title">NIFTY 50 — LIVE</div>
-      <div class="cpu-sub" id="niftyChartLabel">22,480 +0.62%</div>
-      <div class="wave-box"><canvas id="wave1"></canvas></div>
+      <div class="chart-box" onclick="window.open('https://www.tradingview.com/chart/?symbol=NSE%3ANIFTY','_blank')">
+        <div class="tv-chart" id="tvNifty"></div>
+        <div class="chart-click-hint">click to expand</div>
+      </div>
       <div class="cpu-title">SENSEX — LIVE</div>
-      <div class="cpu-sub" id="sensexChartLabel">73,950 +0.48%</div>
-      <div class="wave-box"><canvas id="wave2"></canvas></div>
+      <div class="chart-box" onclick="window.open('https://www.tradingview.com/chart/?symbol=BSE%3ASENSEX','_blank')">
+        <div class="tv-chart" id="tvSensex"></div>
+        <div class="chart-click-hint">click to expand</div>
+      </div>
     </div>
     <div class="stat-grid">
       <div>NIFTY<br><span class="val" id="sgNifty">--</span></div>
@@ -521,71 +529,34 @@ setInterval(fetchLiveNews,300000); // refresh every 5 min
 
 // === FUND SPLIT (static) ===
 
-// === LIVE PRICE CHARTS ===
-function initLiveChart(id,basePrice,label){
-  const cv=document.getElementById(id);if(!cv)return;
-  const ctx=cv.getContext('2d');
-  const points=[];
-  let price=basePrice;
-  // Seed with 100 historical points
-  for(let i=0;i<100;i++){
-    price+=price*(Math.random()-0.498)*0.001;
-    points.push(price);
-  }
-  function draw(){
-    const w=cv.width=cv.parentElement.clientWidth;
-    const h=cv.height=cv.parentElement.clientHeight;
-    // Add new price tick
-    price+=price*(Math.random()-0.498)*0.0008;
-    points.push(price);
-    if(points.length>200)points.shift();
-    const min=Math.min(...points);
-    const max=Math.max(...points);
-    const range=max-min||1;
-    const startPrice=points[0];
-    const isUp=price>=startPrice;
-    ctx.clearRect(0,0,w,h);
-    // Fill gradient
-    const grad=ctx.createLinearGradient(0,0,0,h);
-    if(isUp){grad.addColorStop(0,'rgba(80,200,120,0.15)');grad.addColorStop(1,'rgba(80,200,120,0)');}
-    else{grad.addColorStop(0,'rgba(232,80,80,0.15)');grad.addColorStop(1,'rgba(232,80,80,0)');}
-    ctx.beginPath();
-    for(let i=0;i<points.length;i++){
-      const x=(i/(points.length-1))*w;
-      const y=h-((points[i]-min)/range)*h*0.85-h*0.05;
-      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
-    }
-    ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();
-    ctx.fillStyle=grad;ctx.fill();
-    // Line
-    ctx.beginPath();
-    for(let i=0;i<points.length;i++){
-      const x=(i/(points.length-1))*w;
-      const y=h-((points[i]-min)/range)*h*0.85-h*0.05;
-      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
-    }
-    ctx.strokeStyle=isUp?'rgba(80,200,120,0.7)':'rgba(232,80,80,0.7)';
-    ctx.lineWidth=1.5;ctx.stroke();
-    // Current price dot
-    const lastX=w;
-    const lastY=h-((points[points.length-1]-min)/range)*h*0.85-h*0.05;
-    ctx.beginPath();ctx.arc(lastX-2,lastY,2.5,0,Math.PI*2);
-    ctx.fillStyle=isUp?'#50c878':'#e85050';ctx.fill();
-    // Update label
-    const change=((price-startPrice)/startPrice*100).toFixed(2);
-    const lbl=document.getElementById(label);
-    if(lbl){
-      lbl.textContent=price.toLocaleString('en-IN',{maximumFractionDigits:0})+' '+(change>=0?'+':'')+change+'%';
-      lbl.style.color=isUp?'#50c878':'#e85050';
-    }
-    requestAnimationFrame(draw);
-  }
-  draw();
+// === TRADINGVIEW CHARTS ===
+function loadTVChart(containerId,symbol){
+  const el=document.getElementById(containerId);if(!el)return;
+  const s=document.createElement('script');
+  s.src='https://s3.tradingview.com/external-embedding/embed-widget-mini-symbol-overview.js';
+  s.async=true;
+  s.textContent=JSON.stringify({
+    symbol:symbol,
+    width:'100%',
+    height:'100%',
+    locale:'en',
+    dateRange:'1D',
+    colorTheme:'dark',
+    isTransparent:true,
+    autosize:true,
+    largeChartUrl:'',
+    noTimeScale:true,
+    chartOnly:true
+  });
+  const wrap=document.createElement('div');
+  wrap.className='tradingview-widget-container';
+  wrap.appendChild(s);
+  el.appendChild(wrap);
 }
 setTimeout(()=>{
-  initLiveChart('wave1',22480,'niftyChartLabel');
-  initLiveChart('wave2',73950,'sensexChartLabel');
-},100);
+  loadTVChart('tvNifty','NSE:NIFTY');
+  loadTVChart('tvSensex','BSE:SENSEX');
+},500);
 
 // === KEYBOARD ===
 document.addEventListener('keydown',e=>{document.querySelectorAll('.kk').forEach(k=>{if(k.textContent.trim()===e.key.toUpperCase()||(e.key==='Enter'&&k.textContent==='ENTER')||(e.key===' '&&k.classList.contains('space'))||(e.key==='Backspace'&&k.textContent==='BACK')){k.classList.add('active');setTimeout(()=>k.classList.remove('active'),120)}})});

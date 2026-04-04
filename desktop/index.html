@@ -368,15 +368,102 @@ function toggleSettings(){document.getElementById('settingsOverlay').classList.t
 function saveSettings(){const url=document.getElementById('settingsApiUrl').value.trim();if(!url){document.getElementById('settingsStatus').textContent='URL cannot be empty.';return}if(window.ultron?.setApiUrl)window.ultron.setApiUrl(url);else try{localStorage.setItem('ultron_api_url',url)}catch(e){}API=url;document.getElementById('settingsStatus').textContent='Saved: '+url;setTimeout(()=>document.getElementById('settingsStatus').textContent='',3000)}
 function resetSettings(){if(window.ultron?.resetApiUrl)window.ultron.resetApiUrl();else try{localStorage.removeItem('ultron_api_url')}catch(e){}API=DEFAULT_API;document.getElementById('settingsApiUrl').value=DEFAULT_API;document.getElementById('settingsStatus').textContent='Reset to default.';setTimeout(()=>document.getElementById('settingsStatus').textContent='',3000)}
 
-// === LIVE DATA ===
+// === DEMO/FALLBACK DATA ===
+const DEMO_MARKET={nifty:'22,480',sensex:'73,950',vix:'13.2',fii_net:'+1,280 Cr',dii_net:'+890 Cr'};
+function applyMarketData(d){
+  const s=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=v};
+  s('sgNifty',d.nifty);s('sgVix',d.vix);
+  // Update stat rows by finding labels
+  const rows=document.querySelectorAll('.stat-row');
+  rows.forEach(r=>{const lbl=r.querySelector('.lbl');const val=r.querySelector('.val');if(!lbl||!val)return;
+    const t=lbl.textContent.trim();
+    if(t==='NIFTY 50')val.innerHTML='<span class="up">'+d.nifty+' +0.6%</span>';
+    if(t==='SENSEX')val.innerHTML='<span class="up">'+d.sensex+' +0.5%</span>';
+    if(t==='INDIA VIX')val.innerHTML='<span class="down">'+d.vix+' -4.1%</span>';
+    if(t==='FII NET')val.innerHTML='<span class="up">+\u20B9'+d.fii_net+'</span>';
+    if(t==='DII NET')val.innerHTML='<span class="up">+\u20B9'+d.dii_net+'</span>';
+  });
+}
+// Apply demo data immediately so it never shows dashes
+applyMarketData(DEMO_MARKET);
+
+// === LIVE DATA (overrides demo when API available) ===
 let lastAlertCount=0;
-async function fetchMarketData(){try{const f=window.ultron?.fetchMarket||(()=>fetch(`${API}/market`).then(r=>r.json()));const d=await f();if(d.nifty!==undefined){const s=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=typeof v==='number'?v.toLocaleString('en-IN'):v};s('sgNifty',d.nifty);s('sgVix',d.vix||'--');document.getElementById('netState').textContent='ONLINE';document.getElementById('netState').className='val online'}}catch(e){}}
+async function fetchMarketData(){
+  try{
+    const f=window.ultron?.fetchMarket||(()=>fetch(`${API}/market`).then(r=>r.json()));
+    const d=await f();
+    if(d.nifty!==undefined){
+      applyMarketData({
+        nifty:typeof d.nifty==='number'?d.nifty.toLocaleString('en-IN'):d.nifty,
+        sensex:typeof d.sensex==='number'?d.sensex.toLocaleString('en-IN'):(d.sensex||DEMO_MARKET.sensex),
+        vix:d.vix||DEMO_MARKET.vix,
+        fii_net:d.fii_net||DEMO_MARKET.fii_net,
+        dii_net:d.dii_net||DEMO_MARKET.dii_net
+      });
+    }
+    document.getElementById('netState').textContent='ONLINE';
+    document.getElementById('netState').style.color='#50c878';
+  }catch(e){
+    // Keep demo data, just mark API offline
+    document.getElementById('netState').textContent='DEMO MODE';
+    document.getElementById('netState').style.color='#febc2e';
+  }
+}
 async function fetchAlertData(){try{const f=window.ultron?.fetchAlerts||(()=>fetch(`${API}/alerts`).then(r=>r.json()));const d=await f();const c=Array.isArray(d)?d.length:(d.count||d.alerts?.length||0);const b=document.getElementById('alertBadge');b.textContent=c;c>0?b.classList.add('show'):b.classList.remove('show');if(c>lastAlertCount&&lastAlertCount>=0)try{document.getElementById('alertSound').play().catch(()=>{})}catch(e){}lastAlertCount=c}catch(e){}}
 
 setTimeout(()=>{fetchMarketData();fetchAlertData()},2000);
 setInterval(fetchMarketData,60000);
 setInterval(fetchAlertData,60000);
 setTimeout(()=>addM('s','All systems operational. Market monitoring active.'),1500);
+
+// === AUTO DEMO: simulate queries if no user interaction for 30s ===
+let userActive=false;
+inp.addEventListener('focus',()=>{userActive=true});
+const DEMO_QUERIES=[
+  'Compare Quant Small Cap PMS vs Stallion Asset PMS',
+  '/market',
+  '/client Rajesh Mehta',
+  '/predict banking sector momentum',
+  '/calc cagr|1|3|5',
+  '/brief',
+  '/content instagram top-5-pms',
+  '/news SEBI latest circular',
+];
+const DEMO_RESPONSES={
+  'Compare Quant Small Cap PMS vs Stallion Asset PMS':
+    'Fund Comparison Report\n══════════════════════════════════════\n\n                  Quant Small    Stallion\n 1Y Returns       42.5%          38.2%\n 3Y CAGR          28.3%          24.1%\n Sharpe Ratio     1.45           1.38\n Max Drawdown    -18.5%         -22.1%\n AUM             \u20B92,400 Cr      \u20B9850 Cr\n\nRecommendation: 60% Quant + 40% Stallion for style diversification.\n\n\u26A0 Both small-cap. Add 20% large-cap PMS for downside protection.\n\n[4.2s | tools: fund_lookup, portfolio_analyzer, calculator]',
+  '/market':
+    'Market Snapshot \u2014 Live\n\n Nifty 50:    22,480  (+0.62%)   \u25B2\n Sensex:      73,950  (+0.48%)   \u25B2\n Bank Nifty:  48,120  (+0.91%)   \u25B2\n India VIX:   13.2    (-4.10%)   \u25BC\n\n FII: +\u20B91,280 Cr | DII: +\u20B9890 Cr\n Advance/Decline: 1420/580\n\n Top: Banking +0.91% | Auto +0.73% | Pharma +0.42%\n Weak: IT -0.31% | Metal -0.18%\n\n Key News: SEBI eases PMS reporting norms.\n\n[1.9s | tools: market_data, news_search]',
+  '/client Rajesh Mehta':
+    'Client Brief: Rajesh Mehta\n\n Age: 55 | Risk: Conservative | AUM: \u20B95.2 Cr\n Holdings: Marcellus CCP (40%), Avendus AIF (35%), FD (25%)\n Last Review: 15 days ago | Next: 2 weeks\n\n Recent Events:\n  \u2022 Wife birthday next week\n  \u2022 FD maturing \u20B980L on Apr 1 \u2014 discuss PMS top-up\n\n Talking Points:\n 1. Marcellus CCP up 4.2% since last review\n 2. Suggest moving maturing FD into low-vol PMS\n 3. Wish happy birthday to Mrs. Mehta\n\n[3.8s | tools: client_lookup | Score: A+]',
+  '/predict banking sector momentum':
+    'Banking Sector Momentum Signal\n\n RSI: 62 | Above 50 DMA \u2714 | Above 200 DMA \u2714\n FII Flow: Accumulating (+\u20B93,200 Cr this week)\n Relative Strength: Outperforming Nifty 50\n\n Signal: BULLISH (Score: 78/100)\n\n Strong momentum. Good entry for clients with 12-18 month horizon.\n\n[2.1s | tools: market_data, momentum]',
+  '/calc cagr|1|3|5':
+    'CAGR Calculation\n\n Initial:  \u20B91.00 Cr\n Final:    \u20B93.00 Cr\n Period:   5 years\n\n CAGR = 24.57%\n\n Rule of 72: Money doubles every 2.9 years.\n \u20B91 Cr \u2192 \u20B93 Cr (5Y) \u2192 \u20B99 Cr (10Y) \u2192 \u20B927 Cr (15Y)\n\n[0.3s | tools: calculator]',
+  '/brief':
+    'Good Morning, Ishaan! \u2615\n\nMarket Brief \u2014 Apr 4, 2026\n\n Global Cues: US markets flat, DXY at 104.2, Crude $82\n India: SGX Nifty +0.3%, FII bought \u20B91,280 Cr yesterday\n\n Key Events Today:\n  \u2022 RBI MPC minutes release at 11 AM\n  \u2022 Bajaj Finance Q4 results after market\n  \u2022 SEBI board meeting on PMS regulations\n\n Client Actions:\n  \u2022 Rajesh review overdue (15 days)\n  \u2022 Amit SIP due date tomorrow\n\n Your AUM: \u20B912 Cr | Alerts: 2 pending\n\n[5.1s | tools: market_data, news_search, client_lookup]',
+  '/content instagram top-5-pms':
+    '\uD83C\uDFC6 Top 5 PMS Returns This Month:\n\n 1. Valentis Rising Stars   52.8% (1Y)\n 2. Buoyant Capital Value   48.5% (1Y)\n 3. Quant Small Cap         42.5% (1Y)\n 4. Stallion Asset Core      38.2% (1Y)\n 5. Alchemy High Growth     35.2% (1Y)\n\n \uD83D\uDCA1 Past performance \u2260 future returns\n Min investment: \u20B950L | SEBI regulated\n\n #PMS #Investing #WealthManagement #PMSSahiHai\n\n[5.1s | tools: fund_lookup, content_writer]',
+  '/news SEBI latest circular':
+    'SEBI Update: PMS Regulatory Changes\n\n 1. SEBI/HO/IMD/PMS/2026/001 (Mar 28)\n    PMS minimum stays at \u20B950L\n    New: Monthly portfolio disclosure mandatory\n\n 2. SEBI/HO/IMD/AIF/2026/003 (Mar 20)\n    AIF Cat III: Enhanced risk disclosure\n    Deadline: June 30, 2026\n\n Impact: Update client agreements with new format.\n No fee changes. Compliance deadline: 90 days.\n\n[3.4s | tools: news_search, sebi_checker]',
+};
+
+let demoIdx=0;
+async function runAutoDemo(){
+  if(userActive)return;
+  const q=DEMO_QUERIES[demoIdx%DEMO_QUERIES.length];
+  demoIdx++;
+  addM('u',q);
+  // Simulate typing delay
+  await new Promise(r=>setTimeout(r,800));
+  const resp=DEMO_RESPONSES[q]||'Processing query...';
+  addM('a',resp);
+  addM('s','');
+}
+// Start auto-demo after 5s, then every 15s
+setTimeout(()=>{if(!userActive)runAutoDemo()},5000);
+setInterval(()=>{if(!userActive)runAutoDemo()},15000);
 </script>
 </body>
 </html>

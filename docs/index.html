@@ -753,9 +753,11 @@
 
 <script>
 // ========== LOADER ==========
-window.addEventListener('load', () => {
-    setTimeout(() => document.getElementById('loader').classList.add('hidden'), 2200);
-});
+function hideLoader() { document.getElementById('loader').classList.add('hidden'); }
+if (document.readyState === 'complete') { setTimeout(hideLoader, 800); }
+else { window.addEventListener('load', () => setTimeout(hideLoader, 2200)); }
+// Failsafe — always hide after 3.5s no matter what
+setTimeout(hideLoader, 3500);
 
 // ========== CUSTOM CURSOR ==========
 const cursor = document.getElementById('cursor');

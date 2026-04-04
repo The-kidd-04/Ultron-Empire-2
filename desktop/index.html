@@ -489,18 +489,7 @@ const NEWS_RSS_SOURCES=[
   {url:'https://www.livemint.com/rss/markets',name:'Livemint'},
   {url:'https://www.moneycontrol.com/rss/marketreports.xml',name:'Moneycontrol'},
 ];
-const FALLBACK_NEWS=[
-  {title:'SEBI eases PMS monthly reporting norms — effective Q2 2026',url:'https://www.sebi.gov.in/legal/circulars.html',src:'SEBI',time:'14:30'},
-  {title:'FII net buyers at \u20B91,280 Cr today — 3rd consecutive day',url:'https://www.moneycontrol.com/stocks/marketstats/fii_dii_activity/index.php',src:'Moneycontrol',time:'13:45'},
-  {title:'RBI holds repo rate at 6.5% — dovish commentary hints at June cut',url:'https://www.rbi.org.in/Scripts/BS_PressReleaseDisplay.aspx',src:'RBI',time:'12:20'},
-  {title:'Nifty 50 crosses 22,500 — Banking sector leads with +0.91%',url:'https://www.nseindia.com/market-data/live-equity-market',src:'NSE',time:'11:15'},
-  {title:'Bajaj Finance Q4 preview: NII growth expected at 22% YoY',url:'https://economictimes.indiatimes.com/markets',src:'ET Markets',time:'10:30'},
-  {title:'US Fed minutes signal patience — no rate cut before September',url:'https://www.reuters.com/markets/',src:'Reuters',time:'09:45'},
-  {title:'SGX Nifty flat at 22,430 — Crude at $82, Gold at $2,310',url:'https://www.investing.com/indices/sgx-nifty',src:'Investing',time:'09:15'},
-  {title:'Quant Small Cap PMS NAV up 1.2% — top performer this week',url:'https://www.pmsbazaar.com/',src:'PMS Bazaar',time:'08:30'},
-  {title:'India VIX drops to 13.2 — lowest in 3 months, bullish signal',url:'https://www.nseindia.com/market-data/live-market-indices',src:'NSE',time:'08:00'},
-  {title:'DII bought \u20B9890 Cr — mutual fund inflows remain strong',url:'https://www.amfiindia.com/',src:'AMFI',time:'07:30'},
-];
+const FALLBACK_NEWS=[];
 
 async function fetchLiveNews(){
   const feed=document.getElementById('newsFeed');
@@ -519,13 +508,12 @@ async function fetchLiveNews(){
       }
     }catch(e){}
   }
-  // If no live news, use fallback
-  if(!items.length)items=FALLBACK_NEWS;
-  // Sort by time descending
+  // Only show real news with valid URLs — no fallback fakes
+  items=items.filter(n=>n.url&&n.url.startsWith('http')&&n.title);
+  if(!items.length){feed.innerHTML='<div class="news-item"><span class="news-text" style="opacity:0.3">No live news available right now</span></div>';return}
   items.sort((a,b)=>b.time.localeCompare(a.time));
-  // Render
   feed.innerHTML=items.slice(0,15).map(n=>
-    `<div class="news-item"><a href="${n.url}" target="_blank"><span class="news-time">${n.time}</span><span><span class="news-text">${n.title}</span><div class="news-src">${n.src}</div></span></a></div>`
+    `<div class="news-item"><a href="${n.url}" target="_blank" rel="noopener"><span class="news-time">${n.time}</span><span><span class="news-text">${n.title}</span><div class="news-src">${n.src}</div></span></a></div>`
   ).join('');
 }
 fetchLiveNews();

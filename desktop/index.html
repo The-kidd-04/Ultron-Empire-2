@@ -259,11 +259,11 @@ body{
     <div class="info-row"><b>PLATFORM</b> PMS Sahi Hai Wealth OS</div>
     <div class="info-row"><b>ENGINE</b> Claude AI + LangGraph</div>
     <div class="cpu-section">
-      <div class="cpu-title">MARKET STATUS</div>
-      <div class="cpu-sub">Nifty 50 | India VIX | Momentum</div>
+      <div class="cpu-title">NIFTY 50 — LIVE</div>
+      <div class="cpu-sub" id="niftyChartLabel">22,480 +0.62%</div>
       <div class="wave-box"><canvas id="wave1"></canvas></div>
-      <div class="cpu-title">SECTOR FLOW</div>
-      <div class="cpu-sub">Banking | IT | Pharma | Auto</div>
+      <div class="cpu-title">SENSEX — LIVE</div>
+      <div class="cpu-sub" id="sensexChartLabel">73,950 +0.48%</div>
       <div class="wave-box"><canvas id="wave2"></canvas></div>
     </div>
     <div class="stat-grid">
@@ -521,9 +521,71 @@ setInterval(fetchLiveNews,300000); // refresh every 5 min
 
 // === FUND SPLIT (static) ===
 
-// === WAVES ===
-function initWave(id){const cv=document.getElementById(id);if(!cv)return;const ctx=cv.getContext('2d');let o=0;function draw(){const w=cv.width=cv.parentElement.clientWidth,h=cv.height=cv.parentElement.clientHeight;ctx.clearRect(0,0,w,h);ctx.strokeStyle='rgba(170,207,209,0.35)';ctx.lineWidth=1;ctx.beginPath();for(let x=0;x<w;x++){const y=h/2+Math.sin((x+o)*0.05)*h*0.3+Math.sin((x+o)*0.02)*h*0.15;x===0?ctx.moveTo(x,y):ctx.lineTo(x,y)}ctx.stroke();o+=0.8;requestAnimationFrame(draw)}draw()}
-setTimeout(()=>{initWave('wave1');initWave('wave2')},100);
+// === LIVE PRICE CHARTS ===
+function initLiveChart(id,basePrice,label){
+  const cv=document.getElementById(id);if(!cv)return;
+  const ctx=cv.getContext('2d');
+  const points=[];
+  let price=basePrice;
+  // Seed with 100 historical points
+  for(let i=0;i<100;i++){
+    price+=price*(Math.random()-0.498)*0.001;
+    points.push(price);
+  }
+  function draw(){
+    const w=cv.width=cv.parentElement.clientWidth;
+    const h=cv.height=cv.parentElement.clientHeight;
+    // Add new price tick
+    price+=price*(Math.random()-0.498)*0.0008;
+    points.push(price);
+    if(points.length>200)points.shift();
+    const min=Math.min(...points);
+    const max=Math.max(...points);
+    const range=max-min||1;
+    const startPrice=points[0];
+    const isUp=price>=startPrice;
+    ctx.clearRect(0,0,w,h);
+    // Fill gradient
+    const grad=ctx.createLinearGradient(0,0,0,h);
+    if(isUp){grad.addColorStop(0,'rgba(80,200,120,0.15)');grad.addColorStop(1,'rgba(80,200,120,0)');}
+    else{grad.addColorStop(0,'rgba(232,80,80,0.15)');grad.addColorStop(1,'rgba(232,80,80,0)');}
+    ctx.beginPath();
+    for(let i=0;i<points.length;i++){
+      const x=(i/(points.length-1))*w;
+      const y=h-((points[i]-min)/range)*h*0.85-h*0.05;
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.lineTo(w,h);ctx.lineTo(0,h);ctx.closePath();
+    ctx.fillStyle=grad;ctx.fill();
+    // Line
+    ctx.beginPath();
+    for(let i=0;i<points.length;i++){
+      const x=(i/(points.length-1))*w;
+      const y=h-((points[i]-min)/range)*h*0.85-h*0.05;
+      i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.strokeStyle=isUp?'rgba(80,200,120,0.7)':'rgba(232,80,80,0.7)';
+    ctx.lineWidth=1.5;ctx.stroke();
+    // Current price dot
+    const lastX=w;
+    const lastY=h-((points[points.length-1]-min)/range)*h*0.85-h*0.05;
+    ctx.beginPath();ctx.arc(lastX-2,lastY,2.5,0,Math.PI*2);
+    ctx.fillStyle=isUp?'#50c878':'#e85050';ctx.fill();
+    // Update label
+    const change=((price-startPrice)/startPrice*100).toFixed(2);
+    const lbl=document.getElementById(label);
+    if(lbl){
+      lbl.textContent=price.toLocaleString('en-IN',{maximumFractionDigits:0})+' '+(change>=0?'+':'')+change+'%';
+      lbl.style.color=isUp?'#50c878':'#e85050';
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+setTimeout(()=>{
+  initLiveChart('wave1',22480,'niftyChartLabel');
+  initLiveChart('wave2',73950,'sensexChartLabel');
+},100);
 
 // === KEYBOARD ===
 document.addEventListener('keydown',e=>{document.querySelectorAll('.kk').forEach(k=>{if(k.textContent.trim()===e.key.toUpperCase()||(e.key==='Enter'&&k.textContent==='ENTER')||(e.key===' '&&k.classList.contains('space'))||(e.key==='Backspace'&&k.textContent==='BACK')){k.classList.add('active');setTimeout(()=>k.classList.remove('active'),120)}})});

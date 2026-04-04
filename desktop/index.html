@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <title>ULTRON EMPIRE</title>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500;700&family=Share+Tech+Mono&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500;700&family=Share+Tech+Mono&family=Creepster&family=Nosifer&display=swap');
 
 *{margin:0;padding:0;box-sizing:border-box}
 :root{
@@ -23,7 +23,32 @@ body{
   font-family:'Fira Mono','Share Tech Mono',monospace;
   font-size:1.4vh;user-select:none;
   display:flex;flex-direction:column;
+  position:relative;
 }
+
+/* === CREEPY BACKGROUND === */
+.bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+
+/* Messy black texture */
+.bg-noise{
+  position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(30,5,5,0.4), transparent 60%),
+    radial-gradient(ellipse at 80% 30%, rgba(20,0,0,0.3), transparent 50%),
+    radial-gradient(ellipse at 50% 80%, rgba(10,5,15,0.3), transparent 50%);
+}
+.bg-noise::after{
+  content:'';position:absolute;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E");
+  mix-blend-mode:overlay;
+}
+
+/* Creepy text canvas */
+#bgText{position:absolute;inset:0;opacity:1}
+
+/* All real content above background */
+.top,.bottom{position:relative;z-index:1}
+.settings-overlay{z-index:200}
 
 /* === TOP SECTION (60% height) === */
 .top{display:flex;height:60%}
@@ -163,6 +188,12 @@ body{
 </style>
 </head>
 <body>
+
+<!-- CREEPY BACKGROUND -->
+<div class="bg-layer">
+  <div class="bg-noise"></div>
+  <canvas id="bgText"></canvas>
+</div>
 
 <!-- TOP SECTION -->
 <div class="top">
@@ -317,6 +348,73 @@ body{
 </audio>
 
 <script>
+// === CREEPY BACKGROUND TEXT ===
+(function(){
+  const cv=document.getElementById('bgText');
+  const c=cv.getContext('2d');
+  cv.width=window.innerWidth;cv.height=window.innerHeight;
+  window.addEventListener('resize',()=>{cv.width=innerWidth;cv.height=innerHeight;draw()});
+
+  const words=['ULTRON','EMPIRE','ULTRON EMPIRE','U L T R O N','E M P I R E','ULTRON','EMPIRE'];
+  const fonts=['Nosifer','Creepster'];
+
+  function draw(){
+    c.clearRect(0,0,cv.width,cv.height);
+    // Draw ~120 scattered creepy text instances
+    for(let i=0;i<120;i++){
+      const text=words[Math.floor(Math.random()*words.length)];
+      const font=fonts[Math.floor(Math.random()*fonts.length)];
+      const size=Math.random()*60+14; // 14px to 74px
+      const x=Math.random()*cv.width;
+      const y=Math.random()*cv.height;
+      const angle=(Math.random()-0.5)*0.7; // -20 to +20 deg
+      const opacity=Math.random()*0.06+0.015; // 0.015 to 0.075
+
+      // Pick color: 60% blood red, 30% ghostly white, 10% dark crimson
+      const roll=Math.random();
+      let color;
+      if(roll<0.6) color=`rgba(${140+Math.random()*60},${Math.random()*15},${Math.random()*10},${opacity})`;
+      else if(roll<0.9) color=`rgba(${200+Math.random()*55},${200+Math.random()*55},${210+Math.random()*45},${opacity*0.7})`;
+      else color=`rgba(${60+Math.random()*30},0,0,${opacity*1.5})`;
+
+      c.save();
+      c.translate(x,y);
+      c.rotate(angle);
+      c.font=`${size}px '${font}', cursive`;
+      c.fillStyle=color;
+      c.fillText(text,0,0);
+      c.restore();
+    }
+
+    // Add some extra large faded ones for depth
+    for(let i=0;i<8;i++){
+      const text=i%2===0?'ULTRON':'EMPIRE';
+      const size=Math.random()*180+100;
+      const x=Math.random()*cv.width-100;
+      const y=Math.random()*cv.height;
+      const angle=(Math.random()-0.5)*0.4;
+      const isRed=Math.random()>0.4;
+      const color=isRed
+        ?`rgba(${80+Math.random()*40},0,0,${Math.random()*0.025+0.008})`
+        :`rgba(255,255,255,${Math.random()*0.012+0.005})`;
+
+      c.save();
+      c.translate(x,y);
+      c.rotate(angle);
+      c.font=`${size}px 'Nosifer', cursive`;
+      c.fillStyle=color;
+      c.fillText(text,0,0);
+      c.restore();
+    }
+  }
+
+  // Wait for fonts to load then draw
+  document.fonts.ready.then(()=>{draw()});
+  setTimeout(draw,500);
+  // Subtle animation: redraw every 8 seconds with slight variation
+  setInterval(draw,8000);
+})();
+
 // === API ===
 const DEFAULT_API='http://localhost:8000/api/v1';
 function getApiUrl(){if(window.ultron?.getApiUrl)return window.ultron.getApiUrl();try{const s=localStorage.getItem('ultron_api_url');if(s)return s}catch(e){}return DEFAULT_API}

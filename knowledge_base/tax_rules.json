@@ -1,0 +1,43 @@
+{
+  "metadata": {
+    "description": "Tax rules for PMS, AIF, and MF investments (Post Finance Act 2024)",
+    "last_updated": "2026-04-01"
+  },
+  "pms": {
+    "taxation_type": "Individual stock level — each buy/sell is a separate transaction",
+    "stcg": {
+      "rate": "20%",
+      "holding_period": "Less than 12 months",
+      "note": "Updated from 15% to 20% from July 23, 2024"
+    },
+    "ltcg": {
+      "rate": "12.5%",
+      "holding_period": "12 months or more",
+      "exemption": "₹1.25 lakh per year",
+      "note": "Updated from 10% to 12.5% and exemption from ₹1L to ₹1.25L from July 23, 2024"
+    },
+    "key_point": "PMS generates multiple taxable events — higher tax complexity than MF"
+  },
+  "aif": {
+    "cat1_cat2": {
+      "taxation_type": "Pass-through — income taxed in hands of investor",
+      "business_income": "Taxed at investor's slab rate",
+      "capital_gains": "Same as direct equity STCG/LTCG rates"
+    },
+    "cat3": {
+      "taxation_type": "Fund-level taxation",
+      "rate": "Maximum marginal rate (42.7% for income > ₹5Cr)",
+      "note": "No pass-through benefit — tax inefficient for HNIs"
+    }
+  },
+  "mutual_funds": {
+    "equity": {
+      "stcg": "20% (holding < 12 months)",
+      "ltcg": "12.5% above ₹1.25L exemption (holding >= 12 months)"
+    },
+    "debt": {
+      "taxation": "Taxed at slab rate regardless of holding period",
+      "note": "No indexation benefit since April 2023"
+    }
+  }
+}

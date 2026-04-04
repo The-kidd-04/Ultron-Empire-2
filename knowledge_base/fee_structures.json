@@ -1,0 +1,13 @@
+{
+  "metadata": {"description": "Common PMS/AIF fee structures"},
+  "pms_fee_models": {
+    "fixed_only": {"description": "Fixed management fee, no performance fee", "typical_range": "1.5% - 2.5%", "example": "Marcellus CCP (1.25%)"},
+    "fixed_plus_performance": {"description": "Lower fixed fee + performance fee above hurdle", "typical_range": "1-1.5% fixed + 15-20% perf above 8-10% hurdle", "example": "Stallion Asset (1.5% + 15% above 8%)"},
+    "performance_only": {"description": "Zero fixed fee, only performance fee", "typical_range": "0% fixed + 20% perf above hurdle", "example": "2Point2 Capital (0% + 20% above 8%)"}
+  },
+  "aif_fee_models": {
+    "cat2_pe": {"typical_fixed": "2.0%", "typical_performance": "20%", "typical_hurdle": "8%"},
+    "cat3_hedge": {"typical_fixed": "2.0%", "typical_performance": "20%", "typical_hurdle": "0-8%"}
+  },
+  "investor_tip": "Lower fixed fee = fund manager aligned with your returns. But check if hurdle rate exists — no hurdle means they earn on first rupee of profit."
+}

@@ -1,0 +1,12 @@
+{
+  "metadata": {"description": "Indian market benchmark indices"},
+  "indices": {
+    "Nifty 50": {"ticker": "^NSEI", "type": "Large Cap", "historical_cagr_10y": 12.5},
+    "Nifty 500": {"ticker": "^CRSLDX", "type": "Broad Market", "historical_cagr_10y": 13.0},
+    "Nifty Midcap 150": {"ticker": "", "type": "Mid Cap", "historical_cagr_10y": 15.0},
+    "Nifty Smallcap 250": {"ticker": "", "type": "Small Cap", "historical_cagr_10y": 14.5},
+    "Sensex": {"ticker": "^BSESN", "type": "Large Cap", "historical_cagr_10y": 12.0},
+    "Bank Nifty": {"ticker": "^NSEBANK", "type": "Sector", "historical_cagr_10y": 11.0},
+    "Nifty IT": {"ticker": "^CNXIT", "type": "Sector", "historical_cagr_10y": 14.0}
+  }
+}

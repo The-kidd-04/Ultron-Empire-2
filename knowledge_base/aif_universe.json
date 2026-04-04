@@ -1,0 +1,13 @@
+{
+  "metadata": {"description": "AIF Universe — All tracked Alternative Investment Funds", "last_updated": "2026-04-01"},
+  "categories": {
+    "Cat_I": {"types": ["Venture Capital", "SME Fund", "Social Venture", "Infrastructure"], "min_investment_cr": 1, "taxation": "Pass-through to investor"},
+    "Cat_II": {"types": ["PE Fund", "Debt Fund", "Fund of Funds", "Real Estate"], "min_investment_cr": 1, "taxation": "Pass-through to investor"},
+    "Cat_III": {"types": ["Hedge Fund", "PIPE Fund", "Long-Short", "Market Neutral"], "min_investment_cr": 1, "taxation": "Fund-level at max marginal rate"}
+  },
+  "tracked_funds": {
+    "Cat_II": ["IIFL Special Opportunities", "Vivriti Emerging Corporate Bond", "Kotak Pre-IPO", "Edelweiss Crossover"],
+    "Cat_III": ["Alchemy Long Short", "Avendus Absolute Return", "True Beacon One"],
+    "Cat_I": ["Blume Ventures Fund IV", "Chiratae Ventures Fund IV"]
+  }
+}

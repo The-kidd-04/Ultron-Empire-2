@@ -1,0 +1,31 @@
+{
+  "metadata": {
+    "description": "Risk profiling framework for PMS Sahi Hai clients"
+  },
+  "profiles": {
+    "Conservative": {
+      "equity_allocation": "30-50%",
+      "suitable_pms": ["Marcellus CCP", "ICICI Prudential Contra", "ASK Growth"],
+      "suitable_aif": ["Cat II Debt Funds", "Structured Credit"],
+      "max_drawdown_tolerance": "10-15%",
+      "typical_client": "Age 55+, retired, capital preservation focus",
+      "recommended_mix": "40% Large Cap PMS + 30% Debt AIF + 30% FD/Bonds"
+    },
+    "Moderate": {
+      "equity_allocation": "50-70%",
+      "suitable_pms": ["Stallion Asset", "White Oak", "Motilal Oswal NEXT", "Carnelian Compounder"],
+      "suitable_aif": ["Cat II PE Funds", "Cat II Fund of Funds"],
+      "max_drawdown_tolerance": "15-25%",
+      "typical_client": "Age 35-55, working professional, wealth growth focus",
+      "recommended_mix": "50% Multi/Flexi Cap PMS + 25% Mid Cap PMS + 25% Debt"
+    },
+    "Aggressive": {
+      "equity_allocation": "70-100%",
+      "suitable_pms": ["Quant Small Cap", "Buoyant Capital", "Valentis Rising Star", "Aequitas"],
+      "suitable_aif": ["Cat III Long-Short", "Cat III PIPE"],
+      "max_drawdown_tolerance": "25-40%",
+      "typical_client": "Age 25-40, tech/startup, high risk appetite, long horizon",
+      "recommended_mix": "40% Small Cap PMS + 30% Mid Cap PMS + 30% Cat III AIF"
+    }
+  }
+}

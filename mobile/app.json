@@ -1,0 +1,36 @@
+{
+  "expo": {
+    "name": "Ultron Empire",
+    "slug": "ultron-empire-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "ultron",
+    "userInterfaceStyle": "automatic",
+    "splash": {
+      "backgroundColor": "#003235",
+      "resizeMode": "contain"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.pmssahihai.ultron"
+    },
+    "android": {
+      "package": "com.pmssahihai.ultron",
+      "adaptiveIcon": {
+        "backgroundColor": "#003235"
+      }
+    },
+    "plugins": [
+      "expo-router",
+      "expo-notifications",
+      "expo-av"
+    ],
+    "extra": {
+      "apiUrl": "https://api.ultron.pmssahihai.com",
+      "eas": {
+        "projectId": "ultron-empire"
+      }
+    }
+  }
+}

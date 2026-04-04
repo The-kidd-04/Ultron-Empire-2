@@ -1,0 +1,22 @@
+{
+  "metadata": {"description": "Key SEBI regulations for PMS/AIF/MF", "last_updated": "2026-04-01"},
+  "pms_regulations": {
+    "min_investment": "₹50 Lakhs",
+    "min_aum_for_registration": "₹50 Cr (direct) / ₹25 Cr (non-discretionary)",
+    "max_fee": "No cap, but must be disclosed upfront",
+    "reporting": "Monthly portfolio statements mandatory",
+    "benchmark": "Must declare and report against benchmark"
+  },
+  "aif_regulations": {
+    "min_investment_cat1_2": "₹1 Cr",
+    "min_investment_cat3": "₹1 Cr",
+    "min_fund_size": "₹20 Cr",
+    "max_investors": "1000 per scheme",
+    "lock_in": "Cat I/II: 3 years min. Cat III: No mandatory lock-in"
+  },
+  "distributor_regulations": {
+    "registration": "SEBI-registered Investment Adviser or AMFI-registered distributor",
+    "disclosure": "Must disclose all commissions/fees to clients",
+    "compliance": "Annual compliance audit required"
+  }
+}

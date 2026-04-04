@@ -1,0 +1,19 @@
+{
+  "metadata": {
+    "description": "PMS Universe — All tracked Portfolio Management Services",
+    "last_updated": "2026-04-01",
+    "source": "PMS Sahi Hai Research"
+  },
+  "categories": {
+    "Large Cap": ["Marcellus CCP", "ASK Growth", "White Oak India Equity", "ICICI Prudential PMS"],
+    "Mid Cap": ["Alchemy High Growth", "Nine Rivers Capital", "Avendus Growth"],
+    "Small Cap": ["Quant Small Cap", "Buoyant Capital", "Aequitas", "Valentis Rising Star", "Samvitti Active Alpha", "InCred Emerging Business"],
+    "Multi Cap": ["Stallion Asset Core", "Motilal Oswal NEXT", "Green Portfolio Growth", "Unifi Blended Rangoli"],
+    "Flexi Cap": ["ASK Growth", "Carnelian Compounder", "2Point2 Capital"],
+    "Special Situations": ["Kotak Special Situations"],
+    "Contra": ["ICICI Prudential Contra"],
+    "Multi Strategy": ["Edelweiss Multi-Strategy"]
+  },
+  "min_investment_lakhs": 50,
+  "sebi_regulation": "PMS requires minimum ₹50L investment as per SEBI guidelines"
+}

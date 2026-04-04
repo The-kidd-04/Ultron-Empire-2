@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultron Empire — AI-Powered Wealth Management OS | PMS Sahi Hai</title>
+    <meta name="description" content="India's 1st AI Powered PMS & AIF Marketplace. Ultron Empire is your personal AI analyst, market monitor, and client manager.">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><circle cx='24' cy='24' r='24' fill='%23003235'/><text x='24' y='32' text-anchor='middle' fill='white' font-size='24' font-weight='bold'>U</text></svg>">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --deep-teal: #003235;
+            --emerald: #008C6F;
+            --mint: #63D2B7;
+            --forest: #10645C;
+            --light-bg: #F5F7FA;
+            --near-black: #1A1A1A;
+            --light-gray: #D3D3D3;
+        }
+        body { font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; color: var(--near-black); }
+        a { text-decoration: none; color: inherit; }
+
+        /* Nav */
+        nav { background: var(--deep-teal); padding: 16px 40px; display: flex; justify-content: space-between; align-items: center; position: fixed; width: 100%; top: 0; z-index: 100; }
+        .nav-logo { display: flex; align-items: center; gap: 12px; }
+        .nav-icon { width: 36px; height: 36px; background: var(--emerald); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 18px; }
+        .nav-brand { color: white; font-size: 20px; font-weight: 700; }
+        .nav-sub { color: var(--mint); font-size: 11px; }
+        .nav-links { display: flex; gap: 28px; align-items: center; }
+        .nav-links a { color: rgba(255,255,255,0.8); font-size: 14px; transition: color 0.2s; }
+        .nav-links a:hover { color: var(--mint); }
+        .nav-cta { background: var(--emerald); color: white !important; padding: 10px 24px; border-radius: 8px; font-weight: 600; }
+        .nav-cta:hover { background: var(--forest); }
+
+        /* Hero */
+        .hero { background: linear-gradient(135deg, var(--deep-teal) 0%, #004a4f 50%, var(--forest) 100%); padding: 160px 40px 100px; text-align: center; color: white; position: relative; overflow: hidden; }
+        .hero::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(99,210,183,0.08) 0%, transparent 50%); animation: pulse 8s infinite; }
+        @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.1); } }
+        .hero h1 { font-size: 56px; font-weight: 800; line-height: 1.1; max-width: 800px; margin: 0 auto 20px; position: relative; }
+        .hero h1 span { color: var(--mint); }
+        .hero p { font-size: 20px; opacity: 0.85; max-width: 600px; margin: 0 auto 40px; line-height: 1.6; }
+        .hero-buttons { display: flex; gap: 16px; justify-content: center; position: relative; }
+        .btn-primary { background: var(--emerald); color: white; padding: 16px 36px; border-radius: 10px; font-size: 16px; font-weight: 700; border: none; cursor: pointer; transition: all 0.3s; }
+        .btn-primary:hover { background: var(--mint); color: var(--deep-teal); transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0,140,111,0.3); }
+        .btn-secondary { background: transparent; color: white; padding: 16px 36px; border-radius: 10px; font-size: 16px; font-weight: 600; border: 2px solid rgba(255,255,255,0.3); cursor: pointer; transition: all 0.3s; }
+        .btn-secondary:hover { border-color: var(--mint); color: var(--mint); }
+        .hero-stats { display: flex; justify-content: center; gap: 60px; margin-top: 60px; position: relative; }
+        .hero-stat { text-align: center; }
+        .hero-stat-num { font-size: 36px; font-weight: 800; color: var(--mint); }
+        .hero-stat-label { font-size: 13px; opacity: 0.7; margin-top: 4px; }
+
+        /* Sections */
+        section { padding: 100px 40px; }
+        .section-title { text-align: center; margin-bottom: 60px; }
+        .section-title h2 { font-size: 40px; font-weight: 800; color: var(--deep-teal); margin-bottom: 12px; }
+        .section-title p { font-size: 18px; color: #666; max-width: 600px; margin: 0 auto; }
+
+        /* Features */
+        .features { background: var(--light-bg); }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; max-width: 1200px; margin: 0 auto; }
+        .feature-card { background: white; border-radius: 16px; padding: 32px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); transition: all 0.3s; border: 1px solid transparent; }
+        .feature-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.1); border-color: var(--mint); }
+        .feature-icon { font-size: 40px; margin-bottom: 16px; }
+        .feature-card h3 { font-size: 20px; font-weight: 700; color: var(--deep-teal); margin-bottom: 10px; }
+        .feature-card p { color: #666; line-height: 1.6; font-size: 14px; }
+
+        /* Download */
+        .download { background: var(--deep-teal); color: white; text-align: center; }
+        .download h2 { font-size: 40px; font-weight: 800; margin-bottom: 16px; }
+        .download p { font-size: 18px; opacity: 0.8; margin-bottom: 40px; }
+        .download-buttons { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
+        .download-btn { display: flex; align-items: center; gap: 12px; background: white; color: var(--deep-teal); padding: 16px 32px; border-radius: 12px; font-weight: 700; font-size: 16px; transition: all 0.3s; }
+        .download-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 25px rgba(0,0,0,0.3); }
+        .download-btn svg { width: 28px; height: 28px; }
+
+        /* Surfaces */
+        .surfaces-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; max-width: 1100px; margin: 0 auto; }
+        .surface-card { text-align: center; padding: 28px 20px; background: white; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .surface-card .icon { font-size: 48px; margin-bottom: 12px; }
+        .surface-card h4 { font-size: 16px; font-weight: 700; color: var(--deep-teal); }
+        .surface-card p { font-size: 13px; color: #888; margin-top: 6px; }
+
+        /* Pricing */
+        .pricing { background: var(--light-bg); }
+        .pricing-card { max-width: 500px; margin: 0 auto; background: white; border-radius: 20px; padding: 48px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border: 2px solid var(--emerald); }
+        .pricing-card h3 { font-size: 28px; color: var(--deep-teal); font-weight: 800; }
+        .pricing-price { font-size: 48px; font-weight: 800; color: var(--emerald); margin: 16px 0; }
+        .pricing-price span { font-size: 18px; color: #999; font-weight: 400; }
+        .pricing-features { text-align: left; margin: 24px 0; }
+        .pricing-features li { padding: 8px 0; font-size: 15px; color: #555; list-style: none; }
+        .pricing-features li::before { content: '✅ '; }
+
+        /* Contact */
+        .contact { text-align: center; }
+        .contact-info { display: flex; gap: 40px; justify-content: center; margin-top: 40px; flex-wrap: wrap; }
+        .contact-item { font-size: 16px; color: #555; }
+        .contact-item strong { color: var(--deep-teal); display: block; margin-bottom: 4px; }
+
+        /* Footer */
+        footer { background: var(--deep-teal); color: rgba(255,255,255,0.6); padding: 40px; text-align: center; font-size: 13px; }
+        footer a { color: var(--mint); }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            nav { padding: 12px 20px; }
+            .nav-links { display: none; }
+            .hero { padding: 120px 20px 60px; }
+            .hero h1 { font-size: 32px; }
+            .hero p { font-size: 16px; }
+            .hero-stats { gap: 30px; }
+            .hero-stat-num { font-size: 24px; }
+            section { padding: 60px 20px; }
+            .section-title h2 { font-size: 28px; }
+            .hero-buttons { flex-direction: column; align-items: center; }
+            .download-buttons { flex-direction: column; align-items: center; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+    <div class="nav-logo">
+        <div class="nav-icon">U</div>
+        <div>
+            <div class="nav-brand">Ultron Empire</div>
+            <div class="nav-sub">by PMS Sahi Hai</div>
+        </div>
+    </div>
+    <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#surfaces">Surfaces</a>
+        <a href="#download">Download</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#contact">Contact</a>
+        <a href="https://t.me/Ultron_Empire1_bot" class="nav-cta" target="_blank">Try on Telegram</a>
+    </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+    <h1>Your AI-Powered <span>Wealth Management</span> Operating System</h1>
+    <p>Ultron Empire is your personal AI analyst, market monitor, client manager, content creator — available 24/7 on every surface of your life.</p>
+    <div class="hero-buttons">
+        <a href="https://t.me/Ultron_Empire1_bot" target="_blank"><button class="btn-primary">🤖 Try on Telegram</button></a>
+        <a href="#download"><button class="btn-secondary">📱 Download App</button></a>
+    </div>
+    <div class="hero-stats">
+        <div class="hero-stat"><div class="hero-stat-num">50+</div><div class="hero-stat-label">PMS & AIF Funds Tracked</div></div>
+        <div class="hero-stat"><div class="hero-stat-num">24/7</div><div class="hero-stat-label">Market Monitoring</div></div>
+        <div class="hero-stat"><div class="hero-stat-num">&lt;10s</div><div class="hero-stat-label">AI Response Time</div></div>
+        <div class="hero-stat"><div class="hero-stat-num">7</div><div class="hero-stat-label">AI Intelligence Layers</div></div>
+    </div>
+</section>
+
+<!-- Features -->
+<section class="features" id="features">
+    <div class="section-title">
+        <h2>What Ultron Does For You</h2>
+        <p>Like having a ₹50 lakh/year analyst in your pocket, available at 2 AM</p>
+    </div>
+    <div class="features-grid">
+        <div class="feature-card">
+            <div class="feature-icon">🧠</div>
+            <h3>AI Analyst Brain</h3>
+            <p>Compare funds, analyze portfolios, get client briefs — all powered by Claude AI. Ask anything about PMS, AIF, markets.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">📊</div>
+            <h3>24/7 Market Monitoring</h3>
+            <p>News scanning every 15 min, SEBI circulars every hour, FII/DII flows, earnings tracker. Never miss a market event.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">📈</div>
+            <h3>Prediction & Patterns</h3>
+            <p>Sector momentum scores, Monte Carlo simulations, PE percentile analysis, historical pattern matching with probabilities.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">👥</div>
+            <h3>Smart Client CRM</h3>
+            <p>Pre-meeting briefs in 30 seconds, review reminders, life event detection, gifting intelligence, family mapping.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">✍️</div>
+            <h3>Content Engine</h3>
+            <p>Morning briefs, weekly recaps, newsletters, Instagram posts, WhatsApp replies, blog posts — all auto-generated.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🔔</div>
+            <h3>Smart Alerts</h3>
+            <p>Critical alerts on ALL surfaces. Important on Telegram. Info batched daily. Priority-based routing with cooldowns.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🎤</div>
+            <h3>Voice Assistant</h3>
+            <p>"Brief me on Rajesh Mehta" — Ultron speaks back through your phone, car Bluetooth, or AirPods. Hands-free intelligence.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">📄</div>
+            <h3>Document Processing</h3>
+            <p>Upload CAS statements, PMS factsheets, AIF term sheets — Ultron reads, analyzes, and flags what matters.</p>
+        </div>
+        <div class="feature-card">
+            <div class="feature-icon">🏆</div>
+            <h3>Competitive Intelligence</h3>
+            <p>Track competitors, new fund launches, AUM flows, emerging fund managers. Always stay one step ahead.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Surfaces -->
+<section id="surfaces">
+    <div class="section-title">
+        <h2>Available Everywhere</h2>
+        <p>Ultron lives on every surface — like Jarvis from Iron Man</p>
+    </div>
+    <div class="surfaces-grid">
+        <div class="surface-card"><div class="icon">💻</div><h4>Web Dashboard</h4><p>Bloomberg-like war room</p></div>
+        <div class="surface-card"><div class="icon">📱</div><h4>Mobile App</h4><p>iOS + Android</p></div>
+        <div class="surface-card"><div class="icon">💬</div><h4>Telegram Bot</h4><p>Always-on commands</p></div>
+        <div class="surface-card"><div class="icon">📲</div><h4>WhatsApp</h4><p>Client-facing + broadcast</p></div>
+        <div class="surface-card"><div class="icon">🎤</div><h4>Voice</h4><p>Whisper + Eleven Labs</p></div>
+        <div class="surface-card"><div class="icon">📧</div><h4>Email</h4><p>Newsletters + reports</p></div>
+        <div class="surface-card"><div class="icon">📅</div><h4>Calendar</h4><p>Auto meeting briefs</p></div>
+        <div class="surface-card"><div class="icon">⌚</div><h4>Smart Watch</h4><p>Critical alert haptics</p></div>
+    </div>
+</section>
+
+<!-- Download -->
+<section class="download" id="download">
+    <h2>Download Ultron Empire</h2>
+    <p>Get Ultron on your phone, laptop, and everywhere</p>
+    <div class="download-buttons">
+        <a href="https://t.me/Ultron_Empire1_bot" target="_blank" class="download-btn">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm5.94 8.13l-2.01 9.47c-.15.68-.54.84-1.1.52l-3.03-2.24-1.46 1.41c-.16.16-.3.3-.62.3l.22-3.07 5.58-5.04c.24-.22-.05-.34-.38-.13l-6.89 4.34-2.97-.93c-.64-.2-.66-.64.14-.95l11.59-4.47c.53-.2 1-.05.93.79z"/></svg>
+            Telegram Bot
+        </a>
+        <a href="#" class="download-btn" onclick="alert('Mobile app coming soon! Use Telegram bot for now.')">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.53 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+            iOS App (Coming Soon)
+        </a>
+        <a href="#" class="download-btn" onclick="alert('Mobile app coming soon! Use Telegram bot for now.')">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M1 18h4.5v-7H1v7zm0-8h4.5V3H1v7zm5.5 8H11v-7H6.5v7zm0-8H11V3H6.5v7zm5.5 8h4.5v-7H12v7zm0-8h4.5V3H12v7zm5.5 8H22v-7h-4.5v7zm0-8H22V3h-4.5v7z"/></svg>
+            Android App (Coming Soon)
+        </a>
+        <a href="https://github.com/The-kidd-04/Ultron-Empire-2" target="_blank" class="download-btn">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/></svg>
+            GitHub Source
+        </a>
+    </div>
+</section>
+
+<!-- Pricing -->
+<section class="pricing" id="pricing">
+    <div class="section-title">
+        <h2>Simple Pricing</h2>
+        <p>Everything you need for AI-powered wealth management</p>
+    </div>
+    <div class="pricing-card">
+        <h3>Ultron Empire Premium</h3>
+        <div class="pricing-price">₹8K-20K<span>/month</span></div>
+        <ul class="pricing-features">
+            <li>Claude AI analyst (unlimited queries)</li>
+            <li>24/7 market monitoring & alerts</li>
+            <li>50+ PMS/AIF fund database</li>
+            <li>Client CRM with smart briefs</li>
+            <li>Content generation engine</li>
+            <li>Monte Carlo simulations</li>
+            <li>Voice assistant (Whisper + Eleven Labs)</li>
+            <li>Telegram + WhatsApp delivery</li>
+            <li>Web dashboard + mobile app</li>
+            <li>Compliance & audit trail</li>
+            <li>Competitive intelligence</li>
+            <li>Auto-recovery (never goes down)</li>
+        </ul>
+        <a href="https://t.me/Ultron_Empire1_bot" target="_blank"><button class="btn-primary" style="width:100%;margin-top:20px">Get Started Free →</button></a>
+    </div>
+</section>
+
+<!-- Contact -->
+<section class="contact" id="contact">
+    <div class="section-title">
+        <h2>Get In Touch</h2>
+        <p>Built for PMS Sahi Hai — India's 1st AI Powered PMS & AIF Marketplace</p>
+    </div>
+    <div class="contact-info">
+        <div class="contact-item"><strong>📞 Phone</strong>+91 7455899555</div>
+        <div class="contact-item"><strong>📧 Email</strong>info@pmssahihai.com</div>
+        <div class="contact-item"><strong>🌐 Website</strong><a href="https://www.pmssahihai.com" target="_blank">pmssahihai.com</a></div>
+        <div class="contact-item"><strong>📍 Office</strong>C-20, G Block, BKC, Mumbai</div>
+    </div>
+</section>
+
+<!-- Footer -->
+<footer>
+    <p>© 2026 PMS Sahi Hai (Nyra Capital Private Limited). All rights reserved.</p>
+    <p style="margin-top:8px">Powered by <a href="https://github.com/The-kidd-04/Ultron-Empire-2" target="_blank">Ultron Empire</a> — India's 1st AI Wealth Management OS</p>
+    <p style="margin-top:12px;font-size:11px;opacity:0.5">SEBI-registered distributor & advisor. Investments in PMS/AIF are subject to market risks.</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,24 @@
+{
+  "metadata": {"description": "Ishaan's preferred funds and investment biases"},
+  "preferred_pms": {
+    "top_picks": ["Quant Small Cap PMS", "Stallion Asset Core", "Marcellus CCP", "Buoyant Capital"],
+    "reason": "Consistent alpha generation, strong fund managers, proven track record"
+  },
+  "preferred_aif": {
+    "cat2": ["Vivriti Emerging Corporate Bond", "IIFL Special Opportunities"],
+    "cat3": ["Avendus Absolute Return"]
+  },
+  "biases": {
+    "prefers_performance_fee_model": true,
+    "dislikes_high_fixed_fee": true,
+    "favors_small_mid_cap": true,
+    "values_low_drawdown": true,
+    "minimum_sharpe_ratio": 1.2
+  },
+  "client_approach": {
+    "conservative_clients": "Always start with Marcellus CCP or ASK Growth",
+    "aggressive_clients": "Quant Small Cap + Buoyant Capital combo",
+    "first_time_pms": "Start with multi-cap (Stallion or White Oak), build confidence, then diversify"
+  },
+  "note": "Ultron should flag when Ishaan's preferred funds aren't the best fit for a specific client"
+}

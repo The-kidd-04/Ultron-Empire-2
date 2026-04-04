@@ -1,0 +1,24 @@
+{
+  "metadata": {"description": "Financial terms glossary for Ultron"},
+  "terms": {
+    "PMS": "Portfolio Management Service — SEBI-regulated, min ₹50L investment, individual stock portfolio",
+    "AIF": "Alternative Investment Fund — SEBI-regulated, min ₹1Cr, categories I/II/III",
+    "NAV": "Net Asset Value — per-unit value of a fund",
+    "CAGR": "Compound Annual Growth Rate — annualized return",
+    "Sharpe Ratio": "Risk-adjusted return measure — higher is better, >1.0 is good",
+    "Sortino Ratio": "Like Sharpe but only penalizes downside volatility",
+    "Max Drawdown": "Largest peak-to-trough decline — measures worst-case loss",
+    "Alpha": "Excess return over benchmark — fund manager's value-add",
+    "FII": "Foreign Institutional Investors — global funds investing in India",
+    "DII": "Domestic Institutional Investors — Indian MFs, insurance, pension funds",
+    "VIX": "Volatility Index — measures market fear. <14 = calm, >25 = high fear",
+    "PE Ratio": "Price-to-Earnings — valuation metric. Nifty historical avg ~20.5",
+    "LTCG": "Long Term Capital Gains — equity held >12 months, taxed at 12.5%",
+    "STCG": "Short Term Capital Gains — equity held <12 months, taxed at 20%",
+    "SIP": "Systematic Investment Plan — regular monthly investment",
+    "STP": "Systematic Transfer Plan — gradual transfer from liquid to equity",
+    "HNI": "High Net Worth Individual — typically ₹5Cr+ investable wealth",
+    "UHNI": "Ultra High Net Worth Individual — ₹25Cr+ investable wealth",
+    "NRI": "Non-Resident Indian — specific tax and regulatory considerations"
+  }
+}

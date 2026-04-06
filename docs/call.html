@@ -76,78 +76,80 @@ const statusEl = document.getElementById('status');
 let vapi = null;
 let active = false;
 
-async function loadVapi() {
-  if (vapi) return vapi;
-  try {
-    statusEl.textContent = 'Loading...';
-    statusEl.className = 'status live';
-    const module = await import('https://cdn.jsdelivr.net/npm/@vapi-ai/web@latest/+esm');
-    const VapiClass = module.default;
-    vapi = new VapiClass(PUBLIC_KEY);
-
-    vapi.on('call-start', () => {
-      active = true;
-      orbWrap.classList.add('active');
-      callBtn.classList.add('active');
-      btnText.textContent = 'END CALL';
-      statusEl.textContent = 'Connected — speak now';
-      statusEl.className = 'status live';
-    });
-
-    vapi.on('call-end', () => {
-      active = false;
-      orbWrap.classList.remove('active');
-      callBtn.classList.remove('active');
-      btnText.textContent = 'CALL ULTRON';
-      statusEl.textContent = 'Call ended';
-      statusEl.className = 'status';
-      setTimeout(() => { if (!active) statusEl.textContent = ''; }, 3000);
-    });
-
-    vapi.on('speech-start', () => {
-      if (active) { statusEl.textContent = 'Ultron is speaking...'; }
-    });
-
-    vapi.on('speech-end', () => {
-      if (active) { statusEl.textContent = 'Listening...'; }
-    });
-
-    vapi.on('error', (e) => {
-      console.error('Vapi error:', e);
-      statusEl.textContent = 'Error: ' + (e?.message || 'Connection failed');
-      statusEl.className = 'status err';
-      active = false;
-      orbWrap.classList.remove('active');
-      callBtn.classList.remove('active');
-      btnText.textContent = 'CALL ULTRON';
-    });
-
-    statusEl.textContent = '';
-    return vapi;
-  } catch (e) {
-    console.error('Failed to load Vapi SDK:', e);
-    statusEl.textContent = 'Failed to load. Please refresh and try again.';
-    statusEl.className = 'status err';
-    return null;
-  }
-}
-
 callBtn.addEventListener('click', async () => {
-  const v = await loadVapi();
-  if (!v) return;
+  // If active, stop the call
+  if (active && vapi) {
+    vapi.stop();
+    return;
+  }
 
-  if (!active) {
-    statusEl.textContent = 'Connecting...';
+  // Load SDK if not loaded
+  if (!vapi) {
+    statusEl.textContent = 'Loading SDK...';
     statusEl.className = 'status live';
     try {
-      await v.start(ASSISTANT_ID);
+      const mod = await import('https://cdn.jsdelivr.net/npm/@vapi-ai/web@latest/+esm');
+      // Handle double-wrapped default export
+      let VapiClass = mod.default;
+      if (VapiClass && VapiClass.default) VapiClass = VapiClass.default;
+      if (typeof VapiClass !== 'function') {
+        // Try other export patterns
+        for (const key of Object.keys(mod)) {
+          if (typeof mod[key] === 'function') { VapiClass = mod[key]; break; }
+        }
+      }
+      if (typeof VapiClass !== 'function') {
+        throw new Error('Could not find Vapi constructor in SDK');
+      }
+      vapi = new VapiClass(PUBLIC_KEY);
+
+      vapi.on('call-start', () => {
+        active = true;
+        orbWrap.classList.add('active');
+        callBtn.classList.add('active');
+        btnText.textContent = 'END CALL';
+        statusEl.textContent = 'Connected — speak now';
+        statusEl.className = 'status live';
+      });
+
+      vapi.on('call-end', () => {
+        active = false;
+        orbWrap.classList.remove('active');
+        callBtn.classList.remove('active');
+        btnText.textContent = 'CALL ULTRON';
+        statusEl.textContent = 'Call ended';
+        statusEl.className = 'status';
+        setTimeout(() => { if (!active) statusEl.textContent = ''; }, 3000);
+      });
+
+      vapi.on('speech-start', () => { if (active) statusEl.textContent = 'Ultron is speaking...'; });
+      vapi.on('speech-end', () => { if (active) statusEl.textContent = 'Listening...'; });
+      vapi.on('error', (e) => {
+        console.error('Vapi error:', e);
+        statusEl.textContent = 'Error: ' + (e?.message || e?.error?.message || 'Connection failed');
+        statusEl.className = 'status err';
+        active = false;
+        orbWrap.classList.remove('active');
+        callBtn.classList.remove('active');
+        btnText.textContent = 'CALL ULTRON';
+      });
     } catch (e) {
-      console.error('Start error:', e);
-      statusEl.textContent = 'Failed: ' + (e?.message || 'Allow microphone and try again');
+      console.error('SDK load failed:', e);
+      statusEl.textContent = 'SDK load failed: ' + e.message;
       statusEl.className = 'status err';
+      return;
     }
-  } else {
-    v.stop();
+  }
+
+  // Start call
+  statusEl.textContent = 'Connecting...';
+  statusEl.className = 'status live';
+  try {
+    await vapi.start(ASSISTANT_ID);
+  } catch (e) {
+    console.error('Call start failed:', e);
+    statusEl.textContent = (e?.message || 'Failed') + ' — allow microphone and try again';
+    statusEl.className = 'status err';
   }
 });
 </script>

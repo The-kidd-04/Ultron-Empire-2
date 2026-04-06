@@ -8,6 +8,8 @@ from langchain_anthropic import ChatAnthropic
 from langchain_core.messages import HumanMessage, SystemMessage
 from backend.config import settings
 from backend.utils.brand import BRAND_NAME, TAGLINE, WEBSITE, TELEGRAM_FOOTER
+from backend.prompts.content_writer import CONTENT_WRITER_PROMPT
+from backend.prompts.market_commentator import MARKET_COMMENTATOR_PROMPT
 
 logger = logging.getLogger(__name__)
 
@@ -31,24 +33,86 @@ Website: {WEBSITE}
 """
 
 
-async def generate_morning_brief(market_data: dict, news: list, fii_dii: dict) -> str:
-    """Generate the daily morning brief."""
+async def generate_morning_brief(market_data: dict = None, news: list = None, fii_dii: dict = None) -> str:
+    """Generate the daily morning brief with live market data.
+
+    If market_data/news/fii_dii are not provided, fetches live data automatically.
+    """
+    # Fetch live market data if not provided
+    if market_data is None:
+        try:
+            from backend.tools.market_data import market_data_tool
+            live_overview = market_data_tool.invoke({"indicator": "overview"})
+        except Exception as e:
+            logger.warning(f"Failed to fetch live market data: {e}")
+            live_overview = "Market data unavailable"
+    else:
+        live_overview = str(market_data)
+
     context = (
-        f"Market data: {market_data}\n"
-        f"Top news: {news}\n"
-        f"FII/DII flows: {fii_dii}"
+        f"Live Market Data:\n{live_overview}\n\n"
+        f"Top News: {news or 'Use your knowledge of current events'}\n"
+        f"FII/DII Flows: {fii_dii or 'Include if available from market data above'}"
     )
+
+    system_prompt = (
+        CONTENT_SYSTEM + "\n\n"
+        + MARKET_COMMENTATOR_PROMPT + "\n\n"
+        "Generate a morning market brief for Telegram using the structure:\n"
+        "☀️ Global Cues → India Pre-Market → FII/DII → Nifty Pulse → Events Today → Ultron's Take\n\n"
+        "Use the live market data provided. Format with emojis and bold headings for Telegram."
+    )
+
     response = await llm.ainvoke([
-        SystemMessage(content=CONTENT_SYSTEM + "\nGenerate a morning market brief for Telegram. Use the morning brief template format with emojis, sections for Global Cues, India Pre-Market, Flows, Key Events, and Ultron's Take."),
+        SystemMessage(content=system_prompt),
         HumanMessage(content=context),
     ])
     return response.content
 
 
-async def generate_social_post(topic: str, data: dict = None) -> str:
-    """Generate an Instagram/LinkedIn post."""
+async def generate_social_post(
+    topic: str,
+    data: dict = None,
+    format_type: str = "instagram",
+) -> str:
+    """Generate an Instagram/LinkedIn/blog/WhatsApp post.
+
+    Args:
+        topic: The topic for the post
+        data: Optional data to include
+        format_type: One of "instagram", "linkedin", "blog", "whatsapp"
+    """
+    format_instructions = ""
+    if format_type == "whatsapp":
+        format_instructions = (
+            "\n\n**WhatsApp Group Message:**\n"
+            "- Short, punchy, emoji-rich\n"
+            "- Under 500 characters\n"
+            '- End with "— Ultron | PMS Sahi Hai"'
+        )
+    elif format_type == "blog":
+        format_instructions = (
+            "\n\nGenerate a blog post format:\n"
+            "- Compelling headline\n"
+            "- 3-5 sections with subheadings\n"
+            "- 800-1200 words\n"
+            "- Data-driven insights throughout\n"
+            "- SEO-friendly with natural keyword usage\n"
+            "- End with CTA to visit pmssahihai.com"
+        )
+    else:
+        # Use the detailed format instructions from content_writer prompt
+        format_instructions = ""
+
+    system_prompt = (
+        CONTENT_SYSTEM + "\n\n"
+        + CONTENT_WRITER_PROMPT + "\n\n"
+        + format_instructions + "\n\n"
+        f"Generate a {format_type} post. Follow the {format_type.title()} format instructions exactly."
+    )
+
     response = await llm.ainvoke([
-        SystemMessage(content=CONTENT_SYSTEM + "\nGenerate a social media post (Instagram/LinkedIn). Include data points, insights, relevant hashtags. Keep it engaging and professional."),
+        SystemMessage(content=system_prompt),
         HumanMessage(content=f"Topic: {topic}\nData: {data or 'Use your knowledge'}"),
     ])
     return response.content

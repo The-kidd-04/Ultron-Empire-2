@@ -1,0 +1,85 @@
+{
+  // Ultron Empire — OpenClaw Configuration
+  // Multi-channel AI assistant powered by Claude + Ultron API
+
+  // LLM: Use Claude directly (Ultron API handles business logic via tools)
+  agent: {
+    model: "anthropic/claude-sonnet-4-6",
+    systemPrompt: "You are Ultron, an AI-powered wealth management assistant built for PMS Sahi Hai — India's 1st AI PMS & AIF Marketplace. You help Ishaan (the owner) and his clients with fund analysis, market data, portfolio insights, compliance checks, and content generation. Always use the available tools to fetch real data before answering. Be concise, data-driven, and professional.",
+  },
+
+  // Channels — enable the ones you need
+  channels: {
+    telegram: {
+      botToken: "${TELEGRAM_BOT_TOKEN}",
+      allowFrom: ["${TELEGRAM_ALLOWED_USERS}"],
+      dmPolicy: "pairing",
+    },
+    whatsapp: {
+      allowFrom: ["${WHATSAPP_ALLOWED_NUMBERS}"],
+    },
+    discord: {
+      token: "${DISCORD_BOT_TOKEN}",
+    },
+    slack: {
+      botToken: "${SLACK_BOT_TOKEN}",
+      appToken: "${SLACK_APP_TOKEN}",
+      dmPolicy: "pairing",
+    },
+    // Uncomment to enable more channels:
+    // signal: { number: "${SIGNAL_NUMBER}" },
+    // matrix: { homeserver: "https://matrix.org", userId: "@ultron:matrix.org", accessToken: "${MATRIX_TOKEN}" },
+    // teams: { appId: "${TEAMS_APP_ID}", appPassword: "${TEAMS_APP_PASSWORD}" },
+  },
+
+  // Gateway
+  gateway: {
+    port: 18789,
+    bind: "loopback",
+    auth: {
+      token: "${OPENCLAW_GATEWAY_TOKEN}",
+    },
+    controlUi: true,
+  },
+
+  // Webhooks — let Ultron backend trigger OpenClaw
+  hooks: {
+    enabled: true,
+    token: "${OPENCLAW_WEBHOOK_SECRET}",
+    path: "/hooks",
+  },
+
+  // Tools — allow our custom Ultron tools + basic utilities
+  tools: {
+    allow: [
+      "ultron_chat",
+      "ultron_market",
+      "ultron_alerts",
+      "ultron_clients",
+      "ultron_predictions",
+      "ultron_content",
+      "ultron_reports",
+      "ultron_documents",
+      "ultron_compliance",
+      "ultron_analytics",
+      "ultron_earnings",
+      "group:fs",
+      "web_search",
+    ],
+  },
+
+  // Skills
+  skills: [
+    { path: "./skills/ultron" },
+  ],
+
+  // Plugins — our custom Ultron API tools
+  plugins: [
+    { path: "./plugins/ultron-tools" },
+  ],
+
+  // Environment variables (inline, overridden by .env file)
+  env: {
+    ULTRON_API_URL: "http://localhost:8000",
+  },
+}

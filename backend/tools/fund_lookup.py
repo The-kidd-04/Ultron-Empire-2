@@ -64,14 +64,16 @@ def fund_lookup_tool(
             holdings = fund.top_holdings or []
             top5 = ", ".join(holdings[:5]) if holdings else "N/A"
 
+            def fmt(v): return f"{v:+.1f}%" if v is not None else "N/A"
+
             output.append(
                 f"📊 {fund.fund_name} ({fund.fund_house})\n"
                 f"Category: {fund.category} | Strategy: {fund.strategy}\n"
                 f"AUM: ₹{fund.aum} Cr | Min Investment: ₹{fund.min_investment} L\n"
-                f"Returns: 1Y: {fund.returns_1y:+.1f}% | 3Y: {fund.returns_3y:+.1f}% | 5Y: {fund.returns_5y:+.1f}%\n"
-                f"Max Drawdown: {fund.max_drawdown}% | Sharpe: {fund.sharpe_ratio}\n"
-                f"Alpha (1Y): {fund.alpha_1y:+.1f}% vs {fund.benchmark}\n"
-                f"Fund Manager: {fund.fund_manager}\n"
+                f"Returns: 1Y: {fmt(fund.returns_1y)} | 3Y: {fmt(fund.returns_3y)} | 5Y: {fmt(fund.returns_5y)}\n"
+                f"Max Drawdown: {fund.max_drawdown or 'N/A'}% | Sharpe: {fund.sharpe_ratio or 'N/A'}\n"
+                f"Alpha (1Y): {fmt(fund.alpha_1y)} vs {fund.benchmark or 'N/A'}\n"
+                f"Fund Manager: {fund.fund_manager or 'N/A'}\n"
                 f"Fee: {fee_text}\n"
                 f"Top Holdings: {top5}"
             )

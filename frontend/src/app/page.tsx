@@ -1,23 +1,103 @@
+'use client';
+
+import { useEffect, useState } from 'react';
+import { fetchDashboard, fetchMarket } from '@/lib/api';
+import AlertCard from '@/components/AlertCard';
+
 export default function Dashboard() {
+  const [dash, setDash] = useState<any>(null);
+  const [market, setMarket] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      fetchDashboard().catch(() => null),
+      fetchMarket().catch(() => null),
+    ]).then(([d, m]) => {
+      setDash(d);
+      setMarket(m);
+      setLoading(false);
+    });
+  }, []);
+
+  const nifty = market?.nifty ?? '—';
+  const niftyChange = market?.nifty_change_pct;
+  const vix = market?.vix ?? '—';
+  const totalAum = dash?.aum?.total_cr ?? '—';
+  const clientCount = dash?.aum?.client_count ?? 0;
+  const criticalAlerts = (dash?.alerts?.critical ?? 0) + (dash?.alerts?.important ?? 0);
+  const recentAlerts = dash?.alerts?.recent ?? [];
+  const overdueClients = dash?.reviews?.overdue_clients ?? [];
+
   return (
     <div className="space-y-6">
       <h2 className="text-2xl font-bold text-brand-deep-teal">Dashboard</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <DashCard title="Total AUM" value="₹12 Cr" subtitle="Across 3 clients" color="emerald" />
-        <DashCard title="Active Alerts" value="2" subtitle="1 critical, 1 important" color="red" />
-        <DashCard title="Nifty 50" value="24,150" subtitle="+0.85%" color="green" />
-        <DashCard title="India VIX" value="13.2" subtitle="Low volatility" color="blue" />
+        <DashCard
+          title="Total AUM"
+          value={loading ? '...' : `₹${totalAum} Cr`}
+          subtitle={`Across ${clientCount} clients`}
+          color="emerald"
+        />
+        <DashCard
+          title="Active Alerts"
+          value={loading ? '...' : String(criticalAlerts)}
+          subtitle={`${dash?.alerts?.critical ?? 0} critical, ${dash?.alerts?.important ?? 0} important`}
+          color="red"
+        />
+        <DashCard
+          title="Nifty 50"
+          value={loading ? '...' : String(nifty)}
+          subtitle={niftyChange != null ? `${niftyChange >= 0 ? '+' : ''}${niftyChange}%` : ''}
+          color="green"
+        />
+        <DashCard
+          title="India VIX"
+          value={loading ? '...' : String(vix)}
+          subtitle={vix !== '—' ? (vix < 15 ? 'Low volatility' : vix < 20 ? 'Moderate' : 'High volatility') : ''}
+          color="blue"
+        />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <div className="bg-white rounded-lg shadow p-6">
           <h3 className="text-lg font-semibold text-brand-deep-teal mb-4">Recent Alerts</h3>
-          <p className="text-gray-500 text-sm">Connect to /api/v1/alerts for live data</p>
+          {loading ? (
+            <p className="text-gray-400 text-sm">Loading...</p>
+          ) : recentAlerts.length > 0 ? (
+            <div className="space-y-3">
+              {recentAlerts.map((a: any) => (
+                <AlertCard
+                  key={a.id}
+                  priority={a.priority}
+                  title={a.title}
+                  message=""
+                  createdAt={a.created_at}
+                />
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-400 text-sm">No recent alerts</p>
+          )}
         </div>
+
         <div className="bg-white rounded-lg shadow p-6">
           <h3 className="text-lg font-semibold text-brand-deep-teal mb-4">Client Reviews Due</h3>
-          <p className="text-gray-500 text-sm">Connect to /api/v1/clients for live data</p>
+          {loading ? (
+            <p className="text-gray-400 text-sm">Loading...</p>
+          ) : overdueClients.length > 0 ? (
+            <div className="space-y-2">
+              {overdueClients.map((c: any, i: number) => (
+                <div key={i} className="flex justify-between items-center py-2 border-b last:border-0">
+                  <span className="text-sm font-medium text-brand-deep-teal">{c.name}</span>
+                  <span className="text-xs text-red-500">Due: {c.due}</span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-400 text-sm">No overdue reviews</p>
+          )}
         </div>
       </div>
     </div>

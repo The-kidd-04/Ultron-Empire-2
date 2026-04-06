@@ -1,0 +1,130 @@
+services:
+  # =========================================================================
+  # 1. Ultron API — The brain (FastAPI backend)
+  # =========================================================================
+  - type: web
+    name: ultron-api
+    runtime: python
+    buildCommand: chmod +x build.sh && ./build.sh
+    startCommand: uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: CLAUDE_MODEL
+        value: claude-sonnet-4-20250514
+      - key: DATABASE_URL
+        value: sqlite:///ultron.db
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_CHAT_ID
+        sync: false
+      - key: TAVILY_API_KEY
+        sync: false
+      - key: APP_ENV
+        value: production
+      - key: APP_NAME
+        value: Ultron Empire
+      - key: SECRET_KEY
+        sync: false
+      - key: BRAND_NAME
+        value: PMS Sahi Hai
+      - key: BRAND_WEBSITE
+        value: https://www.pmssahihai.com
+      - key: BRAND_EMAIL
+        value: info@pmssahihai.com
+      - key: BRAND_PHONE
+        value: "+917455899555"
+      - key: PYTHON_VERSION
+        value: "3.12.3"
+      # Tell the bot/OpenClaw where the API lives
+      - key: ULTRON_API_URL
+        fromService:
+          name: ultron-api
+          type: web
+          property: host
+      # CORS — allow Render domains + your custom domains
+      - key: CORS_ORIGINS
+        value: "https://ultron.pmssahihai.com,https://www.pmssahihai.com,https://the-kidd-04.github.io"
+
+  # =========================================================================
+  # 2. Telegram Bot — Polls Telegram, calls Ultron API
+  # =========================================================================
+  - type: worker
+    name: ultron-telegram-bot
+    runtime: python
+    buildCommand: chmod +x build.sh && ./build.sh
+    startCommand: python -m telegram_bot.bot
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: CLAUDE_MODEL
+        value: claude-sonnet-4-20250514
+      - key: DATABASE_URL
+        value: sqlite:///ultron.db
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_CHAT_ID
+        sync: false
+      - key: TAVILY_API_KEY
+        sync: false
+      - key: APP_ENV
+        value: production
+      - key: APP_NAME
+        value: Ultron Empire
+      - key: SECRET_KEY
+        sync: false
+      - key: BRAND_NAME
+        value: PMS Sahi Hai
+      - key: BRAND_WEBSITE
+        value: https://www.pmssahihai.com
+      - key: BRAND_EMAIL
+        value: info@pmssahihai.com
+      - key: BRAND_PHONE
+        value: "+917455899555"
+      - key: PYTHON_VERSION
+        value: "3.12.3"
+
+  # =========================================================================
+  # 3. OpenClaw — Multi-channel messenger (Telegram, WhatsApp, Discord, Slack)
+  # =========================================================================
+  - type: worker
+    name: ultron-openclaw
+    runtime: node
+    buildCommand: |
+      npm install -g openclaw@latest &&
+      cd openclaw/plugins/ultron-tools &&
+      npm install &&
+      npm run build
+    startCommand: openclaw start --headless
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: OPENCLAW_GATEWAY_TOKEN
+        sync: false
+      - key: OPENCLAW_WEBHOOK_SECRET
+        sync: false
+      # Point OpenClaw to the Ultron API service
+      - key: ULTRON_API_URL
+        fromService:
+          name: ultron-api
+          type: web
+          envVarKey: RENDER_EXTERNAL_URL
+      # Telegram (separate bot token for OpenClaw — different from main bot)
+      - key: TELEGRAM_BOT_TOKEN
+        sync: false
+      - key: TELEGRAM_ALLOWED_USERS
+        sync: false
+      # Discord
+      - key: DISCORD_BOT_TOKEN
+        sync: false
+      # Slack
+      - key: SLACK_BOT_TOKEN
+        sync: false
+      - key: SLACK_APP_TOKEN
+        sync: false
+      # WhatsApp
+      - key: WHATSAPP_ALLOWED_NUMBERS
+        sync: false
+      - key: NODE_VERSION
+        value: "22.16.0"

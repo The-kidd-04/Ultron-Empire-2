@@ -65,8 +65,10 @@ def broadcast_market_update(market_data: dict):
     import asyncio
     data = {"type": "market_update", **market_data}
     try:
-        loop = asyncio.get_event_loop()
-        if loop.is_running():
-            asyncio.ensure_future(broadcast(data))
-    except Exception:
-        pass
+        loop = asyncio.get_running_loop()
+        asyncio.ensure_future(broadcast(data))
+    except RuntimeError:
+        # No running event loop — nothing to broadcast to
+        logger.debug("No running event loop for market update broadcast")
+    except Exception as e:
+        logger.error(f"Market update broadcast failed: {e}")

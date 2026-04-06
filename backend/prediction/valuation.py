@@ -4,6 +4,8 @@ PE/PB percentile analysis and expected return estimation.
 """
 
 import logging
+import re
+from typing import Optional
 import numpy as np
 
 logger = logging.getLogger(__name__)
@@ -74,3 +76,52 @@ def get_pe_percentile(current_pe: float) -> dict:
         "recommendation": recommendation,
         "deviation_from_mean": round(current_pe - history["mean"], 1),
     }
+
+
+def get_live_nifty_pe() -> Optional[float]:
+    """Try to fetch the current Nifty 50 PE ratio from live sources.
+
+    Strategy:
+    1. yfinance ticker(\"^NSEI\").info  — trailingPE or forwardPE
+    2. Tavily search for \"Nifty 50 PE ratio today\"
+    3. Return None so callers can fall back to their own default
+    """
+    # --- Attempt 1: yfinance ---
+    try:
+        import yfinance as yf
+
+        ticker = yf.Ticker("^NSEI")
+        info = ticker.info or {}
+        pe = info.get("trailingPE") or info.get("forwardPE")
+        if pe and isinstance(pe, (int, float)) and 5 < pe < 100:
+            logger.info(f"Nifty PE from yfinance: {pe}")
+            return round(float(pe), 2)
+    except Exception as exc:
+        logger.warning(f"yfinance PE fetch failed: {exc}")
+
+    # --- Attempt 2: Tavily search ---
+    try:
+        from backend.config import settings
+        from tavily import TavilyClient
+
+        if settings.TAVILY_API_KEY:
+            client = TavilyClient(api_key=settings.TAVILY_API_KEY)
+            response = client.search(
+                query="Nifty 50 PE ratio today",
+                search_depth="basic",
+                max_results=3,
+            )
+            for result in response.get("results", []):
+                content = result.get("content", "")
+                # Look for PE-like numbers (e.g. "PE 22.5", "P/E: 21.3")
+                matches = re.findall(r"(?:PE|P/E)[:\s]*(\d{1,2}\.\d{1,2})", content, re.IGNORECASE)
+                if matches:
+                    pe_val = float(matches[0])
+                    if 5 < pe_val < 100:
+                        logger.info(f"Nifty PE from Tavily: {pe_val}")
+                        return round(pe_val, 2)
+    except Exception as exc:
+        logger.warning(f"Tavily PE fetch failed: {exc}")
+
+    logger.info("Could not fetch live Nifty PE — returning None")
+    return None

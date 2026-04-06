@@ -18,6 +18,8 @@ from langchain_anthropic import ChatAnthropic
 from langchain_core.messages import HumanMessage, SystemMessage
 from langgraph.prebuilt import create_react_agent
 
+from langchain_core.tools import tool
+
 from backend.tools.fund_lookup import fund_lookup_tool
 from backend.tools.nav_fetcher import nav_fetcher_tool
 from backend.tools.news_search import news_search_tool
@@ -72,6 +74,52 @@ def _get_memory():
     return _memory
 
 
+@tool
+def deep_analysis_tool(query: str) -> str:
+    """Perform deep multi-agent analysis for complex queries requiring multiple expert perspectives.
+
+    Use this for: fund comparisons needing risk + compliance + client perspective,
+    portfolio restructuring recommendations, new client onboarding analysis,
+    or any query where multiple expert viewpoints would add value.
+
+    Args:
+        query: The complex question requiring deep analysis
+
+    Returns:
+        Comprehensive analysis from Research, Risk, Client Advisory, and Compliance perspectives.
+    """
+    try:
+        from backend.agents.crew import deep_analysis
+        import asyncio
+        import threading
+
+        # deep_analysis is async — run it in a separate thread with its own event loop
+        # to avoid conflicts with the caller's running loop.
+        result_container: dict = {}
+        error_container: dict = {}
+
+        def _run():
+            try:
+                result_container["result"] = asyncio.run(deep_analysis(query))
+            except Exception as exc:
+                error_container["error"] = exc
+
+        t = threading.Thread(target=_run, daemon=True)
+        t.start()
+        t.join(timeout=120)
+
+        if t.is_alive():
+            return "Deep analysis timed out after 120 seconds. Try a simpler query."
+        if "error" in error_container:
+            raise error_container["error"]
+
+        return result_container.get("result", "Deep analysis completed but returned no output.")
+    except ImportError as e:
+        return f"Deep analysis unavailable (CrewAI not installed): {str(e)}. Proceeding with standard analysis."
+    except Exception as e:
+        return f"Deep analysis unavailable: {str(e)}. Proceeding with standard analysis."
+
+
 # Register all tools
 tools = [
     fund_lookup_tool,
@@ -84,6 +132,7 @@ tools = [
     calculator_tool,
     backtester_tool,
     semantic_search_tool,
+    deep_analysis_tool,
 ]
 
 # Create the ReAct agent using LangGraph prebuilt

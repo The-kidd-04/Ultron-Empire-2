@@ -1,60 +1,64 @@
 """
-Ultron Empire — Pinecone Vector Store Integration
-Handles embeddings generation and semantic search via Pinecone.
+Ultron Empire — Vector Store Integration
+Uses ChromaDB (local) + sentence-transformers for free, local semantic search.
+No external API keys required.
 """
 
 import logging
 from typing import Optional
 
-from openai import OpenAI
-
-from backend.config import settings
+import chromadb
 
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
-# Pinecone + OpenAI clients (lazy-initialized)
+# Embedding model (local, free)
 # ---------------------------------------------------------------------------
-_pinecone_index = None
-_openai_client = None
-
-EMBEDDING_MODEL = "text-embedding-3-small"
-EMBEDDING_DIMENSION = 1536
+_embedding_model = None
 
 
-def _get_openai_client() -> Optional[OpenAI]:
-    """Return a cached OpenAI client, or None if no key is configured."""
-    global _openai_client
-    if _openai_client is not None:
-        return _openai_client
-    if not settings.OPENAI_API_KEY:
-        logger.warning("OPENAI_API_KEY not configured — embeddings unavailable")
-        return None
-    _openai_client = OpenAI(api_key=settings.OPENAI_API_KEY)
-    return _openai_client
+def _get_embedding_model():
+    """Lazy-load the sentence-transformers model."""
+    global _embedding_model
+    if _embedding_model is None:
+        try:
+            from sentence_transformers import SentenceTransformer
+            _embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
+            logger.info("Loaded embedding model: all-MiniLM-L6-v2")
+        except ImportError:
+            logger.warning("sentence-transformers not installed — embeddings unavailable")
+            return None
+        except Exception as e:
+            logger.warning(f"Embedding model load failed: {e}")
+            return None
+    return _embedding_model
 
 
-def _get_pinecone_index():
-    """Return a cached Pinecone Index object, or None if not configured."""
-    global _pinecone_index
-    if _pinecone_index is not None:
-        return _pinecone_index
-    if not settings.PINECONE_API_KEY:
-        logger.warning("PINECONE_API_KEY not configured — vector search unavailable")
-        return None
+# ---------------------------------------------------------------------------
+# ChromaDB client (local persistent storage)
+# ---------------------------------------------------------------------------
+_chroma_client = None
+_collection = None
+
+COLLECTION_NAME = "ultron_knowledge"
+CHROMA_PATH = "./data/chroma_db"
+
+
+def _get_collection():
+    """Get or create the ChromaDB collection."""
+    global _chroma_client, _collection
+    if _collection is not None:
+        return _collection
     try:
-        from pinecone import Pinecone
-
-        pc = Pinecone(api_key=settings.PINECONE_API_KEY)
-        _pinecone_index = pc.Index(settings.PINECONE_INDEX)
-        logger.info(
-            "Connected to Pinecone index '%s' in '%s'",
-            settings.PINECONE_INDEX,
-            settings.PINECONE_ENVIRONMENT,
+        _chroma_client = chromadb.PersistentClient(path=CHROMA_PATH)
+        _collection = _chroma_client.get_or_create_collection(
+            name=COLLECTION_NAME,
+            metadata={"hnsw:space": "cosine"},
         )
-        return _pinecone_index
+        logger.info(f"ChromaDB collection '{COLLECTION_NAME}' ready ({_collection.count()} docs)")
+        return _collection
     except Exception as e:
-        logger.error("Pinecone initialization failed: %s", e)
+        logger.error(f"ChromaDB initialization failed: {e}")
         return None
 
 
@@ -64,106 +68,82 @@ def _get_pinecone_index():
 
 
 def get_embedding(text: str) -> list[float]:
-    """Generate an embedding vector for *text* using OpenAI text-embedding-3-small.
-
-    Returns an empty list if the OpenAI client is not available.
-    """
-    client = _get_openai_client()
-    if client is None:
+    """Generate an embedding vector using local sentence-transformers model."""
+    model = _get_embedding_model()
+    if model is None:
         return []
     try:
-        response = client.embeddings.create(
-            model=EMBEDDING_MODEL,
-            input=text,
-        )
-        return response.data[0].embedding
+        embedding = model.encode(text, normalize_embeddings=True)
+        return embedding.tolist()
     except Exception as e:
-        logger.error("Embedding generation failed: %s", e)
+        logger.error(f"Embedding generation failed: {e}")
         return []
 
 
 def upsert_fund_data(funds: list[dict]) -> int:
-    """Embed fund name+strategy+description and upsert into Pinecone.
-
-    Each dict should have at minimum ``id``, ``fund_name``, and optionally
-    ``strategy``, ``description``, ``category``, ``fund_house``.
-
-    Returns the number of vectors upserted (0 if Pinecone is unavailable).
-    """
-    index = _get_pinecone_index()
-    if index is None:
-        logger.warning("Pinecone not available — skipping fund data upsert")
+    """Embed fund data and store in ChromaDB."""
+    collection = _get_collection()
+    if collection is None:
         return 0
 
-    vectors = []
+    ids = []
+    documents = []
+    metadatas = []
+    embeddings = []
+
     for fund in funds:
-        text = " ".join(
-            filter(
-                None,
-                [
-                    fund.get("fund_name", ""),
-                    fund.get("strategy", ""),
-                    fund.get("description", ""),
-                    fund.get("category", ""),
-                ],
-            )
-        )
+        text = " ".join(filter(None, [
+            fund.get("fund_name", ""),
+            fund.get("strategy", ""),
+            fund.get("description", ""),
+            fund.get("category", ""),
+            fund.get("fund_house", ""),
+        ]))
+
         embedding = get_embedding(text)
         if not embedding:
             continue
 
-        metadata = {
+        fund_id = f"fund-{fund.get('id', fund.get('fund_name', '').replace(' ', '-').lower())}"
+        ids.append(fund_id)
+        documents.append(text)
+        metadatas.append({
             "type": "fund",
             "fund_name": fund.get("fund_name", ""),
             "category": fund.get("category", ""),
             "strategy": fund.get("strategy", ""),
             "fund_house": fund.get("fund_house", ""),
-        }
-        vectors.append(
-            {
-                "id": f"fund-{fund.get('id', fund.get('fund_name', '').replace(' ', '-').lower())}",
-                "values": embedding,
-                "metadata": metadata,
-            }
-        )
+        })
+        embeddings.append(embedding)
 
-    if not vectors:
+    if not ids:
         return 0
 
-    # Pinecone recommends batches of 100
-    batch_size = 100
-    upserted = 0
-    for i in range(0, len(vectors), batch_size):
-        batch = vectors[i : i + batch_size]
-        try:
-            index.upsert(vectors=batch)
-            upserted += len(batch)
-        except Exception as e:
-            logger.error("Pinecone upsert batch failed: %s", e)
-    logger.info("Upserted %d fund vectors to Pinecone", upserted)
-    return upserted
+    try:
+        collection.upsert(ids=ids, documents=documents, metadatas=metadatas, embeddings=embeddings)
+        logger.info(f"Upserted {len(ids)} fund vectors to ChromaDB")
+        return len(ids)
+    except Exception as e:
+        logger.error(f"ChromaDB fund upsert failed: {e}")
+        return 0
 
 
 def upsert_knowledge(doc_id: str, text: str, metadata: dict) -> bool:
-    """Embed and store a single knowledge-base document chunk.
-
-    Returns True on success, False otherwise.
-    """
-    index = _get_pinecone_index()
-    if index is None:
-        logger.warning("Pinecone not available — skipping knowledge upsert")
+    """Embed and store a single knowledge-base document chunk."""
+    collection = _get_collection()
+    if collection is None:
         return False
 
     embedding = get_embedding(text)
     if not embedding:
         return False
 
-    meta = {**metadata, "type": "knowledge", "text": text[:1000]}
+    meta = {**metadata, "type": metadata.get("type", "knowledge"), "text": text[:1000]}
     try:
-        index.upsert(vectors=[{"id": doc_id, "values": embedding, "metadata": meta}])
+        collection.upsert(ids=[doc_id], documents=[text], metadatas=[meta], embeddings=[embedding])
         return True
     except Exception as e:
-        logger.error("Knowledge upsert failed for '%s': %s", doc_id, e)
+        logger.error(f"Knowledge upsert failed for '{doc_id}': {e}")
         return False
 
 
@@ -172,14 +152,9 @@ def search_similar(
     top_k: int = 5,
     filter: Optional[dict] = None,
 ) -> list[dict]:
-    """Perform semantic search over the Pinecone index.
-
-    Returns a list of dicts with keys ``id``, ``score``, and ``metadata``.
-    Returns an empty list if Pinecone/OpenAI are not configured.
-    """
-    index = _get_pinecone_index()
-    if index is None:
-        logger.warning("Pinecone not available — returning empty search results")
+    """Perform semantic search over the ChromaDB collection."""
+    collection = _get_collection()
+    if collection is None:
         return []
 
     embedding = get_embedding(query)
@@ -188,24 +163,41 @@ def search_similar(
 
     try:
         kwargs = {
-            "vector": embedding,
-            "top_k": top_k,
-            "include_metadata": True,
+            "query_embeddings": [embedding],
+            "n_results": top_k,
+            "include": ["metadatas", "distances", "documents"],
         }
         if filter:
-            kwargs["filter"] = filter
-        response = index.query(**kwargs)
+            kwargs["where"] = filter
 
-        results = []
-        for match in response.get("matches", []):
-            results.append(
-                {
-                    "id": match["id"],
-                    "score": round(match["score"], 4),
-                    "metadata": match.get("metadata", {}),
-                }
-            )
-        return results
+        results = collection.query(**kwargs)
+
+        output = []
+        if results and results.get("ids") and results["ids"][0]:
+            for i, doc_id in enumerate(results["ids"][0]):
+                # ChromaDB returns distances; convert to similarity score
+                distance = results["distances"][0][i] if results.get("distances") else 0
+                score = max(0, 1 - distance)  # cosine distance to similarity
+
+                metadata = results["metadatas"][0][i] if results.get("metadatas") else {}
+                output.append({
+                    "id": doc_id,
+                    "score": round(score, 4),
+                    "metadata": metadata,
+                })
+        return output
     except Exception as e:
-        logger.error("Pinecone search failed: %s", e)
+        logger.error(f"ChromaDB search failed: {e}")
         return []
+
+
+def get_collection_stats() -> dict:
+    """Get stats about the ChromaDB collection."""
+    collection = _get_collection()
+    if collection is None:
+        return {"status": "unavailable", "count": 0}
+    return {
+        "status": "ready",
+        "count": collection.count(),
+        "name": COLLECTION_NAME,
+    }

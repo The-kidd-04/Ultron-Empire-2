@@ -166,11 +166,11 @@ async def _generate_and_send(subject: str, analysis_type: str, deliver_via: str,
 
     except Exception as e:
         logger.error(f"Delivery failed for {subject}: {e}")
-        # Try to send error notification
+        # Try to send error notification (best-effort)
         try:
             await _send_telegram(f"❌ Analysis generation failed for {subject}: {str(e)[:200]}")
-        except Exception:
-            pass
+        except Exception as notify_err:
+            logger.debug(f"Could not send error notification: {notify_err}")
 
 
 async def _send_telegram(text: str):

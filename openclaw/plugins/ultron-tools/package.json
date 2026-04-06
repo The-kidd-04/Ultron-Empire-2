@@ -1,0 +1,15 @@
+{
+  "name": "openclaw-plugin-ultron-tools",
+  "version": "1.0.0",
+  "description": "OpenClaw plugin — connects to Ultron Empire FastAPI backend",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "^5.5.0",
+    "openclaw": "latest"
+  }
+}

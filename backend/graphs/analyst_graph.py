@@ -88,8 +88,8 @@ async def store_memory(state: AnalystState) -> dict:
                 f"User asked: {state['query']}\nUltron responded: {state['response'][:500]}",
                 user_id=state["user_id"],
             )
-        except Exception:
-            pass
+        except Exception as e:
+            logger.warning(f"Memory storage failed: {e}")
     return {}
 
 

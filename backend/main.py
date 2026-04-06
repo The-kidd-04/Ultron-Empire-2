@@ -67,13 +67,23 @@ app = FastAPI(
 # ---------------------------------------------------------------------------
 
 # CORS (outermost — runs first)
+_default_origins = [
+    "http://localhost:3000",
+    "http://localhost:3030",
+    "http://localhost:8000",
+    "https://ultron.pmssahihai.com",
+    "https://www.pmssahihai.com",
+    "https://the-kidd-04.github.io",
+]
+# Allow extra origins from environment (comma-separated)
+import os
+_extra = os.getenv("CORS_ORIGINS", "")
+if _extra:
+    _default_origins.extend(o.strip() for o in _extra.split(",") if o.strip())
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "https://ultron.pmssahihai.com",
-        "https://www.pmssahihai.com",
-    ],
+    allow_origins=_default_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

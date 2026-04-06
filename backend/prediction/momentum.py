@@ -5,6 +5,7 @@ Scores sectors from -100 to +100 based on multiple factors.
 
 import logging
 from datetime import date
+from typing import List, Optional
 from backend.db.database import SessionLocal
 from backend.db.models import PredictionSignal
 
@@ -128,3 +129,145 @@ def get_all_sector_momentum() -> dict:
         return result
     finally:
         session.close()
+
+
+# ---------------------------------------------------------------------------
+# Sector index tickers: (display_name, primary_ticker, fallback_ticker)
+# ---------------------------------------------------------------------------
+SECTOR_TICKERS = [
+    ("Banking", "^NSEBANK", None),
+    ("IT", "^CNXIT", None),
+    ("Pharma", "^CNXPHARMA", "PHARMA.NS"),
+    ("Auto", "^CNXAUTO", "AUTO.NS"),
+    ("Realty", "^CNXREALTY", "REALTY.NS"),
+    ("Metal", "^CNXMETAL", "METAL.NS"),
+    ("FMCG", "^CNXFMCG", "FMCG.NS"),
+    ("Energy", "^CNXENERGY", "ENERGY.NS"),
+]
+
+NIFTY_TICKER = "^NSEI"
+
+
+def _fetch_sector_hist(ticker: str, fallback: Optional[str], period: str = "3mo"):
+    """Fetch historical data via yfinance; try fallback ticker on failure."""
+    import yfinance as yf
+
+    try:
+        data = yf.download(ticker, period=period, progress=False, threads=False)
+        if data is not None and not data.empty:
+            return data
+    except Exception as exc:
+        logger.warning(f"yfinance primary {ticker} failed: {exc}")
+
+    if fallback:
+        try:
+            data = yf.download(fallback, period=period, progress=False, threads=False)
+            if data is not None and not data.empty:
+                return data
+        except Exception as exc:
+            logger.warning(f"yfinance fallback {fallback} failed: {exc}")
+
+    return None
+
+
+def _compute_rsi(closes, period: int = 14) -> float:
+    """Calculate RSI-14 from a Series of closing prices."""
+    import numpy as np
+
+    deltas = closes.diff().dropna()
+    gains = deltas.clip(lower=0)
+    losses = (-deltas.clip(upper=0))
+
+    avg_gain = gains.rolling(window=period, min_periods=period).mean().iloc[-1]
+    avg_loss = losses.rolling(window=period, min_periods=period).mean().iloc[-1]
+
+    if avg_loss == 0:
+        return 100.0
+    rs = avg_gain / avg_loss
+    return float(round(100 - (100 / (1 + rs)), 2))
+
+
+def compute_live_sector_momentum() -> List[dict]:
+    """Fetch live data via yfinance for all sectors and compute momentum signals.
+
+    Returns a list of dicts, one per sector, each containing sector name and
+    the full momentum result from ``calculate_momentum_score``.
+    """
+    import yfinance as yf
+
+    # 1. Fetch Nifty 50 benchmark data for relative-strength comparison
+    nifty_hist = _fetch_sector_hist(NIFTY_TICKER, fallback=None)
+    if nifty_hist is not None and not nifty_hist.empty:
+        nifty_close = nifty_hist["Close"].squeeze()
+        nifty_return = float((nifty_close.iloc[-1] - nifty_close.iloc[0]) / nifty_close.iloc[0])
+    else:
+        nifty_return = 0.0
+        logger.warning("Nifty 50 data unavailable — relative strength defaults to inline")
+
+    results: List[dict] = []
+
+    for sector_name, primary, fallback in SECTOR_TICKERS:
+        try:
+            hist = _fetch_sector_hist(primary, fallback)
+            if hist is None or hist.empty:
+                logger.warning(f"Skipping {sector_name}: no data available")
+                continue
+
+            close = hist["Close"].squeeze()
+            if len(close) < 50:
+                logger.warning(f"Skipping {sector_name}: insufficient data ({len(close)} rows)")
+                continue
+
+            current_price = float(close.iloc[-1])
+
+            # 50-DMA & 200-DMA
+            dma_50 = float(close.rolling(window=50, min_periods=50).mean().iloc[-1])
+            above_50dma = current_price > dma_50
+
+            if len(close) >= 200:
+                dma_200 = float(close.rolling(window=200, min_periods=200).mean().iloc[-1])
+            else:
+                # Not enough data for true 200-DMA; use all available data
+                dma_200 = float(close.mean())
+            above_200dma = current_price > dma_200
+
+            # RSI-14
+            rsi = _compute_rsi(close, period=14)
+
+            # Relative strength vs Nifty
+            sector_return = float((close.iloc[-1] - close.iloc[0]) / close.iloc[0])
+            diff = sector_return - nifty_return
+            if diff > 0.02:
+                relative_strength = "outperforming"
+            elif diff < -0.02:
+                relative_strength = "underperforming"
+            else:
+                relative_strength = "inline"
+
+            # FII flow trend — not available from yfinance; default to neutral
+            fii_flow_trend = "neutral"
+
+            # Score & persist
+            momentum = calculate_momentum_score(
+                above_50dma=above_50dma,
+                above_200dma=above_200dma,
+                rsi=rsi,
+                fii_flow_trend=fii_flow_trend,
+                relative_strength=relative_strength,
+            )
+            store_momentum_signal(sector_name, momentum)
+
+            results.append({
+                "sector": sector_name,
+                "score": momentum["score"],
+                "signal": momentum["signal"],
+                "confidence": momentum["confidence"],
+                "factors": momentum["factors"],
+                "date": str(date.today()),
+            })
+
+        except Exception as exc:
+            logger.error(f"Momentum computation failed for {sector_name}: {exc}")
+            continue
+
+    return results

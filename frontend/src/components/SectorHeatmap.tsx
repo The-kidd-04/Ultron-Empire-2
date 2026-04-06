@@ -13,8 +13,7 @@ export default function SectorHeatmap({ sectors }: { sectors: SectorData[] }) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-6">
-      <h3 className="font-semibold text-brand-deep-teal mb-4">Sector Heatmap</h3>
+    <div>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         {sectors.map((s) => (
           <div key={s.name} className={`${getColor(s.changePct)} rounded-lg p-3 text-center`}>
@@ -26,3 +25,4 @@ export default function SectorHeatmap({ sectors }: { sectors: SectorData[] }) {
     </div>
   );
 }
+

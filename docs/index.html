@@ -515,7 +515,6 @@
     </button>
     <div class="nav-links" id="navLinks">
         <a href="#features">Features</a>
-        <a href="#call-ultron">Voice AI</a>
         <a href="#surfaces">Surfaces</a>
         <a href="#download">Download</a>
         <a href="#pricing">Pricing</a>
@@ -626,95 +625,6 @@
     </div>
 </section>
 
-<!-- Call Ultron — Voice AI Agent -->
-<section class="voice-section" id="call-ultron">
-    <div class="section-header reveal">
-        <span class="section-label">Voice AI</span>
-        <div class="section-divider"></div>
-        <h2>Talk to Ultron</h2>
-        <p>Real-time voice conversations with your AI wealth analyst</p>
-    </div>
-    <div class="voice-wrap reveal">
-        <div class="voice-orb-container" id="voiceOrb">
-            <div class="voice-pulse"></div>
-            <div class="voice-pulse"></div>
-            <div class="voice-pulse"></div>
-            <div class="voice-orb"></div>
-        </div>
-
-        <a href="https://elevenlabs.io/app/talk-to?agent_id=agent_6901kngq94krfmmv3gj2as11q0mk" target="_blank" class="voice-call-btn" id="voiceCallBtn">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-            </svg>
-            <span id="voiceBtnText">Call Ultron</span>
-        </a>
-
-        <div class="voice-status" id="voiceStatus"></div>
-
-        <div class="voice-features">
-            <div class="voice-feat">
-                <div class="voice-feat-icon">&#x1F4CA;</div>
-                <h4>Market Intel</h4>
-                <p>Ask about Nifty, sectors, FII/DII flows in real-time</p>
-            </div>
-            <div class="voice-feat">
-                <div class="voice-feat-icon">&#x1F4BC;</div>
-                <h4>Fund Analysis</h4>
-                <p>Compare PMS & AIF strategies by voice</p>
-            </div>
-            <div class="voice-feat">
-                <div class="voice-feat-icon">&#x1F464;</div>
-                <h4>Client Briefs</h4>
-                <p>Get pre-meeting client summaries hands-free</p>
-            </div>
-        </div>
-    </div>
-</section>
-
-<script>
-(function(){
-    const AGENT_ID = 'agent_6901kngq94krfmmv3gj2as11q0mk';
-    let voiceActive = false;
-    window.toggleVoiceCall = function() {
-        const btn = document.getElementById('voiceCallBtn');
-        const txt = document.getElementById('voiceBtnText');
-        const orb = document.getElementById('voiceOrb');
-        const status = document.getElementById('voiceStatus');
-
-        if (!voiceActive) {
-            // Start — inject ElevenLabs widget
-            let w = document.querySelector('elevenlabs-convai');
-            if (!w) {
-                w = document.createElement('elevenlabs-convai');
-                w.setAttribute('agent-id', AGENT_ID);
-                w.style.position = 'fixed';
-                w.style.bottom = '24px';
-                w.style.right = '24px';
-                w.style.zIndex = '9999';
-                document.body.appendChild(w);
-            }
-            voiceActive = true;
-            btn.classList.add('active');
-            orb.classList.add('active');
-            txt.textContent = 'End Call';
-            status.textContent = 'Connected — use the widget in the bottom-right corner';
-            status.className = 'voice-status connected';
-        } else {
-            // End
-            const w = document.querySelector('elevenlabs-convai');
-            if (w) w.remove();
-            voiceActive = false;
-            btn.classList.remove('active');
-            orb.classList.remove('active');
-            txt.textContent = 'Call Ultron';
-            status.textContent = 'Call ended';
-            status.className = 'voice-status';
-            setTimeout(() => { if (!voiceActive) status.textContent = ''; }, 3000);
-        }
-    };
-})();
-</script>
-<script src="https://elevenlabs.io/convai-widget/index.js" async></script>
 
 <!-- Surfaces -->
 <section id="surfaces">

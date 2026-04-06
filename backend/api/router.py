@@ -19,6 +19,7 @@ from backend.api.dashboard import router as dashboard_router
 from backend.api.ws import router as ws_router
 from backend.api.compliance import router as compliance_router
 from backend.api.deliver import router as deliver_router
+from backend.api.vapi_webhook import router as vapi_router
 
 api_router = APIRouter()
 
@@ -36,3 +37,4 @@ api_router.include_router(dashboard_router, prefix="/dashboard", tags=["Dashboar
 api_router.include_router(ws_router, prefix="/ws", tags=["WebSocket"])
 api_router.include_router(compliance_router, prefix="/compliance", tags=["Compliance"])
 api_router.include_router(deliver_router, prefix="/deliver", tags=["Deliver"])
+api_router.include_router(vapi_router, prefix="/vapi", tags=["Vapi"])

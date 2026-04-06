@@ -3,196 +3,252 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Ultron — AI Wealth Analyst</title>
-<meta name="description" content="Talk to Ultron — AI-powered wealth analyst by PMS Sahi Hai">
+<title>Talk to Ultron — AI Wealth Analyst</title>
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#0a0a0a">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><circle cx='24' cy='24' r='24' fill='%230a0a0a'/><text x='24' y='32' text-anchor='middle' fill='%2300ffc8' font-size='24' font-weight='bold'>U</text></svg>">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#050508">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'><circle cx='24' cy='24' r='24' fill='%23050508'/><text x='24' y='32' text-anchor='middle' fill='%2300ffc8' font-size='24' font-weight='bold'>U</text></svg>">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-html,body{width:100%;height:100%;overflow:hidden;font-family:'Inter',system-ui,sans-serif}
+html,body{width:100%;height:100%;overflow:hidden;font-family:'Space Grotesk',system-ui,sans-serif}
 body{
-  background:#0a0a0a;color:#fff;
+  background:#050508;color:#e8e8f0;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
 }
 
+/* Background */
+.bg{position:fixed;inset:0;z-index:0}
+.bg-grid{
+  position:fixed;inset:0;
+  background-image:linear-gradient(rgba(0,255,200,0.03) 1px,transparent 1px),
+                    linear-gradient(90deg,rgba(0,255,200,0.03) 1px,transparent 1px);
+  background-size:60px 60px;
+}
+.bg-orb1{position:fixed;width:500px;height:500px;border-radius:50%;filter:blur(120px);
+  background:rgba(0,255,200,0.08);top:-150px;left:-150px;animation:f1 20s ease-in-out infinite}
+.bg-orb2{position:fixed;width:400px;height:400px;border-radius:50%;filter:blur(100px);
+  background:rgba(123,92,255,0.08);bottom:-100px;right:-100px;animation:f2 25s ease-in-out infinite}
+@keyframes f1{0%,100%{transform:translate(0,0)}50%{transform:translate(80px,60px)}}
+@keyframes f2{0%,100%{transform:translate(0,0)}50%{transform:translate(-60px,-80px)}}
+
 .container{
+  position:relative;z-index:1;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   text-align:center;padding:2rem;width:100%;max-width:500px;
-  position:relative;z-index:1;
+}
+
+/* Logo */
+.logo{
+  width:44px;height:44px;border-radius:12px;
+  background:linear-gradient(135deg,#00ffc8,#00d4ff);
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:20px;color:#050508;
+  box-shadow:0 0 20px rgba(0,255,200,0.15);
+  margin-bottom:2rem;
 }
 
 /* Orb */
-.orb-wrap{position:relative;width:260px;height:260px;margin-bottom:2.5rem}
-@media(max-width:400px){.orb-wrap{width:200px;height:200px}}
-
+.orb-wrap{position:relative;width:240px;height:240px;margin-bottom:2rem}
+@media(max-width:400px){.orb-wrap{width:180px;height:180px}}
 .orb{
   width:100%;height:100%;border-radius:50%;
-  background:conic-gradient(from 0deg,#1a0000,#cc0000,#ff3333,#880000,#cc0000,#330000,#ff1111,#990000,#1a0000);
-  animation:spin 8s linear infinite;
-  box-shadow:0 0 80px rgba(200,0,0,0.2),inset 0 0 80px rgba(0,0,0,0.7);
+  background:conic-gradient(from 0deg,#050508,#00ffc8,#00d4ff,#7b5cff,#00ffc8,#050508);
+  animation:spin 10s linear infinite;
+  box-shadow:0 0 80px rgba(0,255,200,0.12),inset 0 0 80px rgba(5,5,8,0.8);
   position:relative;
 }
 .orb::after{
-  content:'';position:absolute;inset:10%;border-radius:50%;
-  background:radial-gradient(circle at 30% 30%,rgba(255,255,255,0.15),rgba(0,0,0,0.6) 60%);
-}
-.orb::before{
-  content:'';position:absolute;inset:0;border-radius:50%;
-  background:radial-gradient(circle at 60% 70%,rgba(255,50,50,0.3),transparent 50%);
+  content:'';position:absolute;inset:12%;border-radius:50%;
+  background:radial-gradient(circle at 30% 30%,rgba(0,255,200,0.1),rgba(5,5,8,0.9) 60%);
 }
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* Pulse rings on active */
+/* Pulse */
 .orb-wrap.active .pulse{
-  position:absolute;inset:-8%;border-radius:50%;
-  border:1px solid rgba(255,50,50,0.4);
+  position:absolute;inset:-10%;border-radius:50%;
+  border:1px solid rgba(0,255,200,0.3);
   animation:pulse 2s ease-out infinite;
 }
-.orb-wrap.active .pulse:nth-child(2){animation-delay:0.5s}
-.orb-wrap.active .pulse:nth-child(3){animation-delay:1s}
-@keyframes pulse{0%{transform:scale(0.85);opacity:0.6}100%{transform:scale(1.3);opacity:0}}
+.orb-wrap.active .pulse:nth-child(2){animation-delay:0.6s}
+.orb-wrap.active .pulse:nth-child(3){animation-delay:1.2s}
+@keyframes pulse{0%{transform:scale(0.85);opacity:0.5}100%{transform:scale(1.35);opacity:0}}
 
 /* Call button */
 .call-btn{
-  position:absolute;bottom:-12px;left:50%;transform:translateX(-50%);
-  width:48px;height:48px;border-radius:50%;
-  background:#fff;border:none;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  box-shadow:0 4px 20px rgba(0,0,0,0.3);
-  transition:all 0.3s;z-index:2;
+  display:inline-flex;align-items:center;gap:10px;
+  padding:14px 36px;border-radius:100px;
+  background:transparent;border:1px solid #00ffc8;
+  color:#00ffc8;font-family:inherit;font-size:15px;
+  font-weight:600;letter-spacing:1px;text-transform:uppercase;
+  cursor:pointer;transition:all 0.3s;
 }
-.call-btn:hover{transform:translateX(-50%) scale(1.1)}
-.call-btn.active{background:#dc2626;box-shadow:0 4px 20px rgba(220,38,38,0.4)}
-.call-btn.active svg{stroke:#fff}
-.call-btn svg{width:22px;height:22px;stroke:#111;stroke-width:2;fill:none}
+.call-btn:hover{background:#00ffc8;color:#050508;box-shadow:0 0 30px rgba(0,255,200,0.2)}
+.call-btn.active{background:#dc2626;border-color:#dc2626;color:#fff;animation:cpulse 1.5s ease-in-out infinite}
+.call-btn.active:hover{background:#b91c1c}
+@keyframes cpulse{0%,100%{box-shadow:0 0 20px rgba(220,38,38,0.2)}50%{box-shadow:0 0 40px rgba(220,38,38,0.4)}}
+.call-btn svg{width:20px;height:20px}
 
-/* Text */
-.welcome{font-size:1.25rem;font-weight:500;margin-bottom:0.5rem;letter-spacing:-0.3px}
-.powered{font-size:0.75rem;color:rgba(255,255,255,0.35)}
-.powered a{color:rgba(255,255,255,0.5);text-decoration:none}
-.status{font-size:0.8rem;color:rgba(255,255,255,0.4);margin-top:1.5rem;min-height:1.2em}
-.status.live{color:#4ade80}
+/* Status */
+.status{font-size:13px;color:rgba(232,232,240,0.4);margin-top:1.5rem;min-height:1.5em}
+.status.live{color:#00ffc8}
+.status.connecting{color:#facc15}
 
-/* Chat toggle */
-.chat-btn{
-  position:fixed;top:1.2rem;right:1.2rem;
-  width:36px;height:36px;border-radius:8px;
-  background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;color:rgba(255,255,255,0.4);font-size:1rem;
-  transition:background 0.2s;z-index:10;
+/* Title */
+.title{font-size:1.4rem;font-weight:600;margin-bottom:0.4rem;letter-spacing:-0.5px}
+.subtitle{font-size:0.8rem;color:rgba(232,232,240,0.3);margin-bottom:2.5rem}
+.subtitle a{color:rgba(0,255,200,0.6);text-decoration:none}
+
+/* Volume indicator */
+.volume-bar{
+  display:flex;gap:3px;align-items:center;justify-content:center;
+  height:30px;margin-top:1rem;opacity:0;transition:opacity 0.3s;
 }
-.chat-btn:hover{background:rgba(255,255,255,0.1)}
-
-/* Settings icon */
-.settings-btn{
-  position:fixed;top:1.2rem;right:3.5rem;
-  width:36px;height:36px;border-radius:8px;
-  background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;color:rgba(255,255,255,0.4);font-size:0.9rem;
-  transition:background 0.2s;z-index:10;display:none;
+.volume-bar.show{opacity:1}
+.volume-bar span{
+  width:4px;background:#00ffc8;border-radius:2px;
+  animation:none;transition:height 0.1s;
 }
 
-/* Transcript */
-.transcript{
-  position:fixed;bottom:0;left:0;right:0;
-  max-height:50vh;overflow-y:auto;
-  background:rgba(10,10,10,0.97);
-  border-top:1px solid rgba(255,255,255,0.08);
-  padding:1rem 1.5rem;font-size:0.85rem;line-height:1.6;
-  display:none;z-index:5;
-  backdrop-filter:blur(20px);
-}
-.transcript.show{display:block}
-.t-agent{color:#ff6b6b}
-.t-user{color:rgba(255,255,255,0.6)}
-
-/* Bottom bar */
-.bottom-bar{
-  position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%);
-  display:flex;align-items:center;gap:1.5rem;
-  padding:0.6rem 1.5rem;border-radius:100px;
-  background:rgba(255,255,255,0.06);
-  border:1px solid rgba(255,255,255,0.08);
-  font-size:0.75rem;color:rgba(255,255,255,0.3);
-  display:none;
-}
-.bottom-bar.show{display:flex}
-.bottom-bar button{
-  background:none;border:none;color:rgba(255,255,255,0.4);
-  cursor:pointer;font-family:inherit;font-size:0.75rem;
-  display:flex;align-items:center;gap:0.4rem;
-}
-.bottom-bar button:hover{color:#fff}
-
-/* Subtle bg */
-.bg{
-  position:fixed;inset:0;z-index:0;
-  background:radial-gradient(ellipse at 50% 40%,rgba(100,0,0,0.08),transparent 70%);
+/* Footer */
+.footer{
+  position:fixed;bottom:1.5rem;
+  font-size:0.7rem;color:rgba(232,232,240,0.2);
 }
 </style>
 </head>
 <body>
 
-<div class="bg"></div>
-<div class="chat-btn" onclick="toggleTranscript()">💬</div>
+<div class="bg">
+  <div class="bg-grid"></div>
+  <div class="bg-orb1"></div>
+  <div class="bg-orb2"></div>
+</div>
 
 <div class="container">
+  <div class="logo">U</div>
+
   <div class="orb-wrap" id="orbWrap">
     <div class="pulse"></div>
     <div class="pulse"></div>
     <div class="pulse"></div>
     <div class="orb"></div>
-    <button class="call-btn" id="callBtn" onclick="toggleCall()">
-      <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-      </svg>
-    </button>
   </div>
 
-  <p class="welcome">Welcome to Ultron</p>
-  <p class="powered">Powered by <a href="https://www.pmssahihai.com" target="_blank">PMS Sahi Hai</a></p>
+  <p class="title">Ultron Empire</p>
+  <p class="subtitle">AI Wealth Analyst by <a href="https://www.pmssahihai.com" target="_blank">PMS Sahi Hai</a></p>
+
+  <button class="call-btn" id="callBtn" onclick="toggleCall()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+    </svg>
+    <span id="btnText">Call Ultron</span>
+  </button>
+
   <p class="status" id="status"></p>
+
+  <div class="volume-bar" id="volumeBar">
+    <span style="height:8px"></span><span style="height:12px"></span><span style="height:16px"></span>
+    <span style="height:20px"></span><span style="height:14px"></span><span style="height:10px"></span>
+    <span style="height:18px"></span><span style="height:8px"></span>
+  </div>
 </div>
 
-<div class="transcript" id="transcript"></div>
+<div class="footer">Powered by PMS Sahi Hai &bull; pmssahihai.com</div>
 
-<elevenlabs-convai agent-id="agent_6901kngq94krfmmv3gj2as11q0mk" style="position:fixed;bottom:1rem;right:1rem;z-index:100;display:none" id="widget"></elevenlabs-convai>
-<script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/@vapi-ai/web@latest/dist/vapi.min.js"></script>
 <script>
+const VAPI_PUBLIC_KEY = 'd9c0293b-6b42-4315-9293-0ea16b1981e0';
+const ASSISTANT_ID = 'c9a96928-b30a-4ca0-9fbb-928124b66cd7';
+
+let vapi = null;
 let active = false;
+
 const orbWrap = document.getElementById('orbWrap');
 const callBtn = document.getElementById('callBtn');
+const btnText = document.getElementById('btnText');
 const status = document.getElementById('status');
-const widget = document.getElementById('widget');
-const transcript = document.getElementById('transcript');
+const volumeBar = document.getElementById('volumeBar');
 
-function toggleCall() {
-  if (!active) {
+function initVapi() {
+  if (vapi) return;
+  vapi = new window.Vapi(VAPI_PUBLIC_KEY);
+
+  vapi.on('call-start', () => {
     active = true;
     orbWrap.classList.add('active');
     callBtn.classList.add('active');
-    widget.style.display = 'block';
-    status.textContent = 'Connected — speak or use the widget';
+    btnText.textContent = 'End Call';
+    status.textContent = 'Connected — speak now';
     status.className = 'status live';
-  } else {
+    volumeBar.classList.add('show');
+    animateVolume();
+  });
+
+  vapi.on('call-end', () => {
     active = false;
     orbWrap.classList.remove('active');
     callBtn.classList.remove('active');
-    widget.style.display = 'none';
+    btnText.textContent = 'Call Ultron';
     status.textContent = 'Call ended';
     status.className = 'status';
-    setTimeout(() => { if (!active) status.textContent = ''; }, 2000);
+    volumeBar.classList.remove('show');
+    setTimeout(() => { if (!active) status.textContent = ''; }, 3000);
+  });
+
+  vapi.on('speech-start', () => {
+    status.textContent = 'Ultron is speaking...';
+    status.className = 'status live';
+  });
+
+  vapi.on('speech-end', () => {
+    if (active) {
+      status.textContent = 'Listening...';
+      status.className = 'status live';
+    }
+  });
+
+  vapi.on('error', (e) => {
+    console.error('Vapi error:', e);
+    status.textContent = 'Connection error. Try again.';
+    status.className = 'status';
+    active = false;
+    orbWrap.classList.remove('active');
+    callBtn.classList.remove('active');
+    btnText.textContent = 'Call Ultron';
+    volumeBar.classList.remove('show');
+  });
+}
+
+async function toggleCall() {
+  initVapi();
+
+  if (!active) {
+    status.textContent = 'Connecting...';
+    status.className = 'status connecting';
+    try {
+      await vapi.start(ASSISTANT_ID);
+    } catch (e) {
+      console.error('Start failed:', e);
+      status.textContent = 'Failed to connect. Check microphone permissions.';
+      status.className = 'status';
+    }
+  } else {
+    vapi.stop();
   }
 }
 
-function toggleTranscript() {
-  transcript.classList.toggle('show');
+function animateVolume() {
+  const bars = volumeBar.querySelectorAll('span');
+  function frame() {
+    if (!active) return;
+    bars.forEach(b => {
+      const h = 4 + Math.random() * 24;
+      b.style.height = h + 'px';
+    });
+    requestAnimationFrame(frame);
+  }
+  frame();
 }
 </script>
 
